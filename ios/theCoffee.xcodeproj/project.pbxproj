@@ -37,6 +37,8 @@
 		C502A4E8A1174FDD9BD7650F /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2D861C9C147B4A7598FAD1B1 /* Octicons.ttf */; };
 		538CF25E6F7A4C7ABE7DFA04 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C56215F16E664B8DA3330907 /* SimpleLineIcons.ttf */; };
 		664EB01C44184C179A2E50C7 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E9BD56F90E124EC096CAB28C /* Zocial.ttf */; };
+		F7C85361B87A4AA8B5D07CF3 /* Pacifico-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8AD866509FD64935BDE666E9 /* Pacifico-Regular.ttf */; };
+		75C527F87BAA44D8982AF497 /* Sriracha-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B623972539D84B63B92F8F78 /* Sriracha-Regular.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,6 +88,8 @@
 		2D861C9C147B4A7598FAD1B1 /* Octicons.ttf */ = {isa = PBXFileReference; name = "Octicons.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		C56215F16E664B8DA3330907 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; name = "SimpleLineIcons.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		E9BD56F90E124EC096CAB28C /* Zocial.ttf */ = {isa = PBXFileReference; name = "Zocial.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		8AD866509FD64935BDE666E9 /* Pacifico-Regular.ttf */ = {isa = PBXFileReference; name = "Pacifico-Regular.ttf"; path = "../assets/fonts/Pacifico-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		B623972539D84B63B92F8F78 /* Sriracha-Regular.ttf */ = {isa = PBXFileReference; name = "Sriracha-Regular.ttf"; path = "../assets/fonts/Sriracha-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -203,6 +207,8 @@
 				2D861C9C147B4A7598FAD1B1 /* Octicons.ttf */,
 				C56215F16E664B8DA3330907 /* SimpleLineIcons.ttf */,
 				E9BD56F90E124EC096CAB28C /* Zocial.ttf */,
+				8AD866509FD64935BDE666E9 /* Pacifico-Regular.ttf */,
+				B623972539D84B63B92F8F78 /* Sriracha-Regular.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -323,6 +329,8 @@
 				C502A4E8A1174FDD9BD7650F /* Octicons.ttf in Resources */,
 				538CF25E6F7A4C7ABE7DFA04 /* SimpleLineIcons.ttf in Resources */,
 				664EB01C44184C179A2E50C7 /* Zocial.ttf in Resources */,
+				F7C85361B87A4AA8B5D07CF3 /* Pacifico-Regular.ttf in Resources */,
+				75C527F87BAA44D8982AF497 /* Sriracha-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

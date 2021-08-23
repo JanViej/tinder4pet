@@ -15,6 +15,7 @@ import Login from '../Login';
 import Signup from '../Signup';
 import Map from '../Map';
 import HistoryDetails from '../HistoryDetails';
+import IntroSlider from '../IntroSlider';
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -71,6 +72,7 @@ const MenuStack = createStackNavigator();
 
 const MenuStackScreen = () => (
   <MenuStack.Navigator headerMode={false}>
+    <MenuStack.Screen name="IntroSlider" component={IntroSlider} />
     <MenuStack.Screen name="Splash" component={Splash} />
     <MenuStack.Screen name="Menu" component={BottomNavigation} />
     <MenuStack.Screen name="Details" component={Details} />

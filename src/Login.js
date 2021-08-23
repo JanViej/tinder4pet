@@ -1,142 +1,157 @@
+/*eslint-disable*/
 import React, {useState} from 'react';
-import {useDispatch} from 'react-redux';
 import {
   Text,
   View,
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  ImageBackground,
+  Dimensions,
+  Image,
 } from 'react-native';
-import {Button} from 'react-native-elements';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import {login} from './redux/user/actions';
+import Feather from 'react-native-vector-icons/Feather';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import background from './assets/image/background.png';
+import logofull from './assets/image/logofull.png';
+import paw from './assets/image/paw.png';
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
+    // width: '100%',
+    // position: 'relative',
     // alignItems: 'center',
-    // backgroundColor: 'red',
-    backgroundColor: '#fff',
-    paddingHorizontal: 20,
     flex: 1,
+    // backgroundColor: 'red',
   },
-  header: {
-    marginBottom: 15,
-    marginTop: 150,
+  image: {
+    height: Dimensions.get('window').height,
+    width: Dimensions.get('window').width,
   },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#1F5D74',
+  paw: {
+    bottom: -10,
+    position: 'absolute',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  signup: {
-    flexDirection: 'row',
-    marginBottom: 40,
-  },
-  signup1: {
-    color: '#8dc1d0',
-    fontSize: 18,
-    marginBottom: 15,
-  },
-  signup2: {
-    color: '#5ca4b8',
-    fontWeight: 'bold',
-    fontSize: 18,
+  logo: {
+    width: 60,
+    height: 60,
   },
   input: {
-    color: '#1F5D74',
+    color: '#6A9CFD',
     paddingHorizontal: 10,
-    marginVertical: 10,
-    borderRadius: 10,
+    marginVertical: 3,
     fontSize: 18,
     fontWeight: '600',
-    backgroundColor: '#e1eff5',
-    paddingVertical: 15,
+    width: '90%',
   },
-  btnContainer: {
-    justifyContent: 'flex-end',
-    marginBottom: 30,
-    flexGrow: 1,
+  inputContainer: {
+    marginTop: 50,
+    paddingHorizontal: 30,
+    marginBottom: 35,
   },
-  buttonStyle: {
-    paddingVertical: 15,
+  inputWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
     borderRadius: 10,
-    backgroundColor: '#5fa2b7',
+    paddingHorizontal: 10,
+    marginTop: 30,
+    elevation: 5,
   },
-  back: {
-    backgroundColor: '#5fa4b7',
-    padding: 5,
-    borderRadius: 8,
-    marginTop: 15,
-    width: 30,
+  btnLogin: {
+    backgroundColor: '#6A9CFD',
+    height: 50,
+    borderRadius: 10,
+    marginHorizontal: 30,
+    elevation: 5,
+    justifyContent: 'center',
+  },
+  signInRow: {
+    marginTop: 20,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    width: '100%',
+  },
+  title: {
+    fontFamily: 'Pacifico-Regular',
+    fontSize: 26,
+    color: '#6A9CFD',
   },
 });
 
 const Login = ({navigation}) => {
-  const dispatch = useDispatch();
   const [inputUsername, onChangeInputUsername] = useState('');
   const [inputPassword, onChangeInputPassword] = useState('');
-
-  const onClickLogin = () => {
-    if(inputUsername.trim() && inputPassword.trim()) {
-      dispatch(login({
-        username: inputUsername,
-        password: inputPassword,
-      })).then(response => {
-        if (!response.error)
-          navigation.push('Splash');
-      })
-    }
+  const handleClickSignIn = () => {
+    navigation.navigate('Menu');
   };
-
-  const onClickSignUp = () => {
-    console.log('hihi');
-    navigation.push('Signup');
-  };
-
-  const onClickBack = () => {
-    navigation.push('Menu');
-  };
-
+  const handleClickForgot = () => {};
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.back} onPress={onClickBack}>
-        <AntDesign name="left" color="#fff" size={18} />
-      </TouchableOpacity>
-      <View style={styles.header}>
-        <Text style={styles.title}>Hey,</Text>
-        <Text style={styles.title}>Login Now.</Text>
-      </View>
-      <View style={styles.signup}>
-        <Text style={styles.signup1}>If you are new / </Text>
-        <Text style={styles.signup2} onPress={onClickSignUp}>
-          Create new
-        </Text>
-      </View>
-      <View>
-        <TextInput
-          style={styles.input}
-          placeholder="Username"
-          placeholderTextColor="#5ca4b8"
-          onChangeText={onChangeInputUsername}
-        value={inputUsername}
-        />
-        <TextInput
-          style={styles.input}
-          secureTextEntry={true}
-          placeholder="Password"
-          placeholderTextColor="#5ca4b8"
-          onChangeText={onChangeInputPassword}
-        value={inputPassword}
-        />
-      </View>
-      <Button
-        onPress={onClickLogin}
-        title="Login"
-        titleStyle={{fontSize: 20}}
-        containerStyle={styles.btnContainer}
-        buttonStyle={styles.buttonStyle}
-      />
+      <ImageBackground source={background} style={styles.image}>
+        <View style={{width: '100%', alignItems: 'center', marginTop: 100}}>
+          <Image source={logofull} style={styles.logo} />
+          <Text style={styles.title}>Tinder4pet</Text>
+        </View>
+        <View style={styles.inputContainer}>
+          <View style={styles.inputWrap}>
+            <Ionicons name="ios-mail-outline" color="#6A9CFD" size={25} />
+            <TextInput
+              style={styles.input}
+              placeholder="Username"
+              placeholderTextColor="#AEE4FF"
+              onChangeText={onChangeInputUsername}
+              value={inputUsername}
+            />
+          </View>
+          <View style={styles.inputWrap}>
+            <Feather name="key" color="#6A9CFD" size={25} />
+            <TextInput
+              style={styles.input}
+              secureTextEntry={true}
+              placeholder="Password"
+              placeholderTextColor="#AEE4FF"
+              onChangeText={onChangeInputPassword}
+              value={inputPassword}
+            />
+          </View>
+        </View>
+        <TouchableOpacity style={styles.btnLogin} onPress={handleClickSignIn}>
+          <Text
+            style={{
+              textAlign: 'center',
+              color: '#fff',
+              fontSize: 20,
+              fontWeight: '700',
+            }}>
+            Login
+          </Text>
+        </TouchableOpacity>
+        <View style={styles.signInRow}>
+          <Text style={{fontSize: 14}}>Dont have an account? </Text>
+          <TouchableOpacity onPress={handleClickSignIn}>
+            <Text style={{color: '#6A9CFD', fontWeight: '700', fontSize: 15}}>
+              Sign up
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity style={styles.signInRow} onPress={handleClickForgot}>
+          <Text
+            style={{
+              color: '#6A9CFD',
+              fontSize: 15,
+              textDecorationLine: 'underline',
+            }}>
+            Forgot Password
+          </Text>
+        </TouchableOpacity>
+        <View style={styles.paw}>
+          <Image source={paw} />
+        </View>
+      </ImageBackground>
     </View>
   );
 };

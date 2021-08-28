@@ -99,7 +99,7 @@ const IntroSlider = ({navigation}) => {
 
   return (
     <View style={{flex: 1}}>
-      <StatusBar translucent backgroundColor="transparent" />
+      {/* <StatusBar translucent backgroundColor="transparent" /> */}
       <AppIntroSlider
         renderItem={_renderItem}
         data={data}

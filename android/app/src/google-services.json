@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "84625329035",
+    "firebase_url": "https://tinder4pet-default-rtdb.firebaseio.com",
+    "project_id": "tinder4pet",
+    "storage_bucket": "tinder4pet.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:84625329035:android:d9b02e63f63490fbd03d8e",
+        "android_client_info": {
+          "package_name": "com.tinder4pet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "84625329035-f756jep1pme8jfedh2551ncimlm7rp3v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tinder4pet",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "84625329035-6ch887rsp4oui16i8cnujjgib4g1ervs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrAK-yKNZMY0ad6Qao5xNXy4A_mDO0tUQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "84625329035-6ch887rsp4oui16i8cnujjgib4g1ervs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

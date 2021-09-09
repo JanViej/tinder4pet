@@ -1,5 +1,6 @@
 /*eslint-disable*/
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
+import {useDispatch} from 'react-redux';
 import {
   Text,
   View,
@@ -15,14 +16,13 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import background from './assets/image/background.png';
 import logofull from './assets/image/logofull.png';
 import paw from './assets/image/paw.png';
+import auth from '@react-native-firebase/auth';
+import {login, logout, register} from './redux/auth/actions';
+import {getAccount} from './redux/user/actions';
 
 const styles = StyleSheet.create({
   container: {
-    // width: '100%',
-    // position: 'relative',
-    // alignItems: 'center',
     flex: 1,
-    // backgroundColor: 'red',
   },
   image: {
     height: Dimensions.get('window').height,
@@ -85,10 +85,19 @@ const styles = StyleSheet.create({
 const Login = ({navigation}) => {
   const [inputUsername, onChangeInputUsername] = useState('');
   const [inputPassword, onChangeInputPassword] = useState('');
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getAccount());
+  }, []);
   const handleClickSignIn = () => {
-    navigation.navigate('Menu');
+    dispatch(login());
   };
-  const handleClickForgot = () => {};
+  const handleClickForgot = () => {
+    dispatch(logout());
+  };
+  const handleClickSignUp = () => {
+    dispatch(register());
+  };
   return (
     <View style={styles.container}>
       <ImageBackground source={background} style={styles.image}>
@@ -132,7 +141,7 @@ const Login = ({navigation}) => {
         </TouchableOpacity>
         <View style={styles.signInRow}>
           <Text style={{fontSize: 14}}>Dont have an account? </Text>
-          <TouchableOpacity onPress={handleClickSignIn}>
+          <TouchableOpacity onPress={handleClickSignUp}>
             <Text style={{color: '#6A9CFD', fontWeight: '700', fontSize: 15}}>
               Sign up
             </Text>

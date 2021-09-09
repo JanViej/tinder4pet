@@ -11,6 +11,7 @@ export const initialState = {
   token: '',
   isActive: false,
   password: '',
+  currentCategory: {},
 };
 
 export const {reducer, actions} = createSlice({
@@ -30,6 +31,9 @@ export const {reducer, actions} = createSlice({
         ...state.data,
         ...payload,
       };
+    },
+    setCurrentCategory: (state, {payload}) => {
+      state.currentCategory = payload;
     },
   },
   extraReducers: {

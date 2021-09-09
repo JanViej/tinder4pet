@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>theCoffee</string>
+	<string>Tinder4pet</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -78,6 +78,7 @@
 		<string>Zocial.ttf</string>
 		<string>Pacifico-Regular.ttf</string>
 		<string>Sriracha-Regular.ttf</string>
+		<string>FredokaOne-Regular.ttf</string>
 	</array>
 </dict>
 </plist>

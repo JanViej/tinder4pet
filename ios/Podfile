@@ -3,7 +3,7 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 
 platform :ios, '10.0'
 
-target 'theCoffee' do
+target 'Tinder4pet' do
   config = use_native_modules!
 
   use_react_native!(
@@ -15,7 +15,7 @@ target 'theCoffee' do
   pod 'RNSVG', :path => '../node_modules/react-native-svg'
   pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-async-storage/async-storage'
 
-  target 'theCoffeeTests' do
+  target 'Tinder4petTests' do
     inherit! :complete
     # Pods for testing
   end

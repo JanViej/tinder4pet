@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "theCoffee.app"
-               BlueprintName = "theCoffee"
-               ReferencedContainer = "container:theCoffee.xcodeproj">
+               BuildableName = "Tinder4pet.app"
+               BlueprintName = "Tinder4pet"
+               ReferencedContainer = "container:Tinder4pet.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "theCoffeeTests.xctest"
-               BlueprintName = "theCoffeeTests"
-               ReferencedContainer = "container:theCoffee.xcodeproj">
+               BuildableName = "Tinder4petTests.xctest"
+               BlueprintName = "Tinder4petTests"
+               ReferencedContainer = "container:Tinder4pet.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "theCoffee.app"
-            BlueprintName = "theCoffee"
-            ReferencedContainer = "container:theCoffee.xcodeproj">
+            BuildableName = "Tinder4pet.app"
+            BlueprintName = "Tinder4pet"
+            ReferencedContainer = "container:Tinder4pet.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "theCoffee.app"
-            BlueprintName = "theCoffee"
-            ReferencedContainer = "container:theCoffee.xcodeproj">
+            BuildableName = "Tinder4pet.app"
+            BlueprintName = "Tinder4pet"
+            ReferencedContainer = "container:Tinder4pet.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

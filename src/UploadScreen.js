@@ -8,6 +8,7 @@ import {
   Platform,
   Alert,
   Image,
+  Dimensions,
 } from 'react-native';
 // import * as ImagePicker from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
@@ -28,17 +29,17 @@ const UploadScreen = () => {
         path: 'images',
       },
     };
+
     launchImageLibrary(options, response => {
-      console.log('response', response.assets[0].uri);
-      if (response.didCancel) {
+      console.log('response', response?.assets?.[0]?.uri);
+      if (response?.didCancel) {
         console.log('User cancelled image picker');
-      } else if (response.error) {
+      } else if (response?.error) {
         console.log('ImagePicker Error: ', response.error);
-      } else if (response.customButton) {
+      } else if (response?.customButton) {
         console.log('User tapped custom button: ', response.customButton);
       } else {
-        const source = {uri: response.assets[0].uri};
-        console.log(source);
+        const source = {uri: response?.assets?.[0]?.uri};
         setImage(source);
       }
     });
@@ -58,15 +59,18 @@ const UploadScreen = () => {
       );
     });
     try {
-      await task;
+      const res = await task;
+      console.log('res', res);
+      if (res?.state === 'success') {
+        Alert.alert(
+          'Photo uploaded!',
+          'Your photo has been uploaded to Firebase Cloud Storage!',
+        );
+      }
     } catch (e) {
       console.error(e);
     }
     setUploading(false);
-    Alert.alert(
-      'Photo uploaded!',
-      'Your photo has been uploaded to Firebase Cloud Storage!',
-    );
     setImage(null);
   };
 
@@ -97,8 +101,10 @@ export default UploadScreen;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     alignItems: 'center',
+    marginVertical: 50,
+    width: '100%',
+    height: '100%',
     backgroundColor: '#bbded6',
   },
   selectButton: {

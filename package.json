@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.15.3",
+    "@react-native-community/datetimepicker": "^3.5.2",
     "@react-native-community/geolocation": "^2.0.2",
     "@react-native-community/masked-view": "^0.1.10",
     "@react-native-firebase/app": "^12.7.3",
@@ -22,8 +23,10 @@
     "@react-navigation/stack": "^5.14.4",
     "@reduxjs/toolkit": "^1.5.1",
     "axios": "^0.21.1",
+    "i": "^0.3.6",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
+    "npm": "^7.22.0",
     "react": "17.0.1",
     "react-native": "0.64.0",
     "react-native-app-intro-slider": "^4.0.4",

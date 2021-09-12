@@ -27,7 +27,9 @@ const Account = ({navigation}) => {
         />
       ),
       icBackground: '#F5576A',
-      onClick: () => {},
+      onClick: () => {
+        navigation.push('Detail');
+      },
     },
     {
       id: 1,
@@ -140,6 +142,5 @@ const styles = StyleSheet.create({
     height: 90,
     borderRadius: 100,
     margin: 10,
-    backgroundColor: 'red',
   },
 });

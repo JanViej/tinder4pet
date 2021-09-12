@@ -26,6 +26,7 @@ import Account from '../Account';
 import Gallery from '../Gallery';
 import ImageView from '../ImageView';
 import Profile from '../Profile';
+import FormProfile from '../FormProfile';
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -74,6 +75,7 @@ const MenuStackScreen = () => (
   <MenuStack.Navigator headerMode={false}>
       <MenuStack.Screen name="Account" component={Account} />
       <MenuStack.Screen name="Profile" component={Profile} />
+      <MenuStack.Screen name="FormProfile" component={FormProfile} />
       <MenuStack.Screen name="Gallery" component={Gallery} />
       <MenuStack.Screen name="ImageView" component={ImageView} />
       <MenuStack.Screen name="UploadScreen" component={UploadScreen} />

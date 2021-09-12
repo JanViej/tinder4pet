@@ -11,6 +11,7 @@ import {
 import Entypo from 'react-native-vector-icons/Entypo';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Fontisto from 'react-native-vector-icons/Fontisto';
+import Feather from 'react-native-vector-icons/Feather';
 
 const _renderItem = ({item, index}, parallaxProps) => {
   return (
@@ -54,7 +55,7 @@ const entries = [
   },
 ];
 
-const Detail = () => {
+const Detail = ({navigation}) => {
   const [activeSlide, setActiveSlide] = useState(entries[0]);
   return (
     <View>
@@ -74,11 +75,16 @@ const Detail = () => {
           contentContainerCustomStyle={styles.sliderContentContainer}
           hasParallaxImages={true}
         />
-        <TouchableOpacity style={{...styles.headerBtn, left: 30}}>
+        <TouchableOpacity
+          style={{...styles.headerBtn, left: 30}}
+          onPress={() => navigation.goBack()}>
           <Entypo name="chevron-left" color="#A5A5A5" size={28} />
         </TouchableOpacity>
-        <TouchableOpacity style={{...styles.headerBtn, right: 30}}>
-          <AntDesign name="heart" color="#FF8C76" size={24} />
+        <TouchableOpacity
+          style={{...styles.headerBtn, right: 30}}
+          onPress={() => navigation.push('FormProfile')}>
+          {/* <AntDesign name="heart" color="#FF8C76" size={24} /> */}
+          <Feather name="edit-2" color="#FF8C76" size={24} />
         </TouchableOpacity>
         <Pagination
           dotsLength={entries.length}

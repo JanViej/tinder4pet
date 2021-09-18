@@ -95,19 +95,6 @@ export const getAccount = createAsyncThunk(
   },
 );
 
-export const register = createAsyncThunk(
-  'user/register',
-  async (payload, thunkAPI) => {
-    try {
-      const res = await apiWrapper({}, registerApi, payload);
-      console.log('regis', res);
-      return res;
-    } catch (error) {
-      return thunkAPI.rejectWithValue();
-    }
-  },
-);
-
 export const changePassword = createAsyncThunk(
   'user/changePassword',
   async (payload, thunkAPI) => {

@@ -27,6 +27,7 @@ import Gallery from '../Gallery';
 import ImageView from '../ImageView';
 import Profile from '../Profile';
 import FormProfile from '../FormProfile';
+import Questionnaire from '../Questionnaire';
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -73,27 +74,28 @@ const MenuStack = createStackNavigator();
 
 const MenuStackScreen = () => (
   <MenuStack.Navigator headerMode={false}>
-      <MenuStack.Screen name="Account" component={Account} />
-      <MenuStack.Screen name="Profile" component={Profile} />
-      <MenuStack.Screen name="FormProfile" component={FormProfile} />
-      <MenuStack.Screen name="Gallery" component={Gallery} />
-      <MenuStack.Screen name="ImageView" component={ImageView} />
-      <MenuStack.Screen name="UploadScreen" component={UploadScreen} />
-      <MenuStack.Screen name="Message" component={Message} />
-      <MenuStack.Screen name="Room" component={Room} />
-      <MenuStack.Screen name="Recommend" component={Recommend} />
-      <MenuStack.Screen name="Detail" component={Detail} />
-      <MenuStack.Screen name="Home" component={Home} />
-      <MenuStack.Screen name="IntroSlider" component={IntroSlider} />
-      <MenuStack.Screen name="Splash" component={Splash} />
-      <MenuStack.Screen name="Menu" component={BottomNavigation} />
-      <MenuStack.Screen name="Details" component={Details} />
-      <MenuStack.Screen name="Cart" component={Cart} />
-      <MenuStack.Screen name="PhoneSignIn" component={PhoneSignIn} />
-      <MenuStack.Screen name="Login" component={Login} />
-      <MenuStack.Screen name="Signup" component={Signup} />
-      <MenuStack.Screen name="HistoryDetails" component={HistoryDetails} />
-      <MenuStack.Screen name="Map" component={Map} />
+    <MenuStack.Screen name="Login" component={Login} />
+    <MenuStack.Screen name="IntroSlider" component={IntroSlider} />
+    <MenuStack.Screen name="Questionnaire" component={Questionnaire} />
+    <MenuStack.Screen name="Account" component={Account} />
+    <MenuStack.Screen name="Profile" component={Profile} />
+    <MenuStack.Screen name="FormProfile" component={FormProfile} />
+    <MenuStack.Screen name="Gallery" component={Gallery} />
+    <MenuStack.Screen name="ImageView" component={ImageView} />
+    <MenuStack.Screen name="UploadScreen" component={UploadScreen} />
+    <MenuStack.Screen name="Message" component={Message} />
+    <MenuStack.Screen name="Room" component={Room} />
+    <MenuStack.Screen name="Recommend" component={Recommend} />
+    <MenuStack.Screen name="Detail" component={Detail} />
+    <MenuStack.Screen name="Home" component={Home} />
+    <MenuStack.Screen name="Splash" component={Splash} />
+    <MenuStack.Screen name="Menu" component={BottomNavigation} />
+    <MenuStack.Screen name="Details" component={Details} />
+    <MenuStack.Screen name="Cart" component={Cart} />
+    <MenuStack.Screen name="PhoneSignIn" component={PhoneSignIn} />
+    <MenuStack.Screen name="Signup" component={Signup} />
+    <MenuStack.Screen name="HistoryDetails" component={HistoryDetails} />
+    <MenuStack.Screen name="Map" component={Map} />
   </MenuStack.Navigator>
 );
 

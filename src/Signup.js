@@ -1,243 +1,218 @@
-/*eslint-disable*/
-import React, {useState} from 'react';
-import {useDispatch} from 'react-redux';
+import React from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import {
   Text,
   View,
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  Alert,
+  ImageBackground,
   Dimensions,
+  Image,
+  ActivityIndicator,
 } from 'react-native';
-import {Button} from 'react-native-elements';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import {register} from './redux/user/actions';
-navigator.geolocation = require('@react-native-community/geolocation');
-import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
+import Feather from 'react-native-vector-icons/Feather';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import background from './assets/image/background.png';
+import logofull from './assets/image/logofull.png';
+import paw from './assets/image/paw.png';
+import {register} from './redux/auth/actions';
+import {Formik} from 'formik';
+import * as Yup from 'yup';
+import {ScrollView} from 'react-native-gesture-handler';
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
-    // alignItems: 'center',
-    // backgroundColor: 'red',
-    backgroundColor: '#fff',
-    paddingHorizontal: 20,
     flex: 1,
-    flexDirection: 'column',
-    zIndex: 0,
   },
-  header: {
-    marginBottom: 15,
-    marginTop: 90,
+  image: {
+    height: Dimensions.get('window').height,
+    width: Dimensions.get('window').width,
   },
-  title2: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#1F5D74',
+  paw: {
+    bottom: -30,
+    position: 'absolute',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  title1: {
-    fontSize: 32,
-    color: '#1F5D74',
-  },
-  signup: {
-    flexDirection: 'row',
-    marginBottom: 40,
-  },
-  signup1: {
-    color: '#8dc1d0',
-    fontSize: 16,
-    marginBottom: 15,
-  },
-  signup2: {
-    color: '#5ca4b8',
-    fontWeight: 'bold',
-    fontSize: 16,
+  logo: {
+    width: 60,
+    height: 60,
   },
   input: {
-    color: '#1F5D74',
+    color: '#6A9CFD',
     paddingHorizontal: 10,
-    marginVertical: 10,
-    borderRadius: 10,
+    marginVertical: 3,
     fontSize: 18,
     fontWeight: '600',
-    backgroundColor: '#e1eff5',
-    paddingVertical: 15,
+    width: '90%',
   },
-  btnContainer: {
-    justifyContent: 'flex-end',
-    marginBottom: 30,
-    flexGrow: 1,
+  inputContainer: {
+    marginTop: 50,
+    paddingHorizontal: 30,
+    marginBottom: 35,
   },
-  buttonStyle: {
-    paddingVertical: 15,
+  inputWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
     borderRadius: 10,
-    backgroundColor: '#5fa2b7',
+    paddingHorizontal: 10,
+    marginTop: 30,
+    elevation: 5,
   },
-  back: {
-    backgroundColor: '#5fa4b7',
-    padding: 5,
-    borderRadius: 8,
-    marginTop: 15,
-    width: 30,
+  btnLogin: {
+    backgroundColor: '#6A9CFD',
+    height: 50,
+    borderRadius: 10,
+    marginHorizontal: 30,
+    elevation: 5,
+    justifyContent: 'center',
+  },
+  signInRow: {
+    marginTop: 20,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    width: '100%',
+  },
+  title: {
+    fontFamily: 'Pacifico-Regular',
+    fontSize: 26,
+    color: '#6A9CFD',
   },
 });
 
-const Signup = ({navigation}) => {
+const SignUp = ({navigation}) => {
+  const loading = useSelector(state => state.auth.loading);
   const dispatch = useDispatch();
-  const [inputUsername, onChangeInputUsername] = useState('');
-  const [inputPassword, onChangeInputPassword] = useState('');
-  // const [inputAddress, onChangeInputAddress] = useState('');
-  const [inputPhoneNo, onChangeInputPhoneNo] = useState('');
-  const [value, setValue] = useState('');
-  const [location, setLocation] = useState('');
-  const width = Dimensions.get('window').width - 40;
-
-  const onClickSignUp = () => {
-    if (
-      !(
-        inputUsername.trim() &&
-        value.trim() &&
-        inputPassword.trim() &&
-        inputPhoneNo.trim()
-      )
-    )
-      createTwoButtonAlert();
-    else {
-      dispatch(
-        register({
-          username: inputUsername,
-          password: inputPassword,
-          phone: inputPhoneNo,
-          address: value,
-          position: location
-        }),
-      ).then(() => {
-        navigation.push('Login');
-      });
-    }
-  };
-
-  const onClickLogin = () => {
+  const handleClickSignUp = () => {
     navigation.push('Login');
   };
 
-  const onClickBack = () => {
-    navigation.push('Menu');
-  };
-
-  const createTwoButtonAlert = () =>
-    Alert.alert('', 'You have to fill all blank', [
-      {text: 'OK', onPress: () => console.log('OK Pressed')},
-    ]);
+  const SignupSchema = Yup.object().shape({
+    password: Yup.string().min(6, 'Too Short!').required('Required'),
+    username: Yup.string().email('Invalid email').required('Required'),
+  });
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.back} onPress={onClickBack}>
-        <AntDesign name="left" color="#fff" size={18} />
-      </TouchableOpacity>
-      <View style={styles.header}>
-        <Text style={styles.title1}>Welcome to</Text>
-        <Text style={styles.title2}>The Coffee</Text>
-      </View>
-      <View
-        style={{
-          position: 'relative',
-          // backgroundColor: 'red',
-          paddingBottom: 75
-        }}>
-        <TextInput
-          style={styles.input}
-          placeholder="Username"
-          placeholderTextColor="#5ca4b8"
-          onChangeText={onChangeInputUsername}
-          value={inputUsername}
-        />
-        <TextInput
-          style={styles.input}
-          secureTextEntry={true}
-          placeholder="Password"
-          placeholderTextColor="#5ca4b8"
-          onChangeText={onChangeInputPassword}
-          value={inputPassword}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Phone Number"
-          placeholderTextColor="#5ca4b8"
-          onChangeText={onChangeInputPhoneNo}
-          value={inputPhoneNo}
-        />
-        {/* <TextInput
-          style={styles.input}
-          placeholder="Address"
-          placeholderTextColor="#5ca4b8"
-          onChangeText={onChangeInputAddress}
-          value={inputAddress}
-        /> */}
-        <View
-          style={{
-            maxHeight: 200,
-            width: width,
-            zIndex: 30,
-            position: 'absolute',
-            justifyContent: 'center',
-            bottom: 0
-          }}>
-          <GooglePlacesAutocomplete
-            placeholder="Address"
-            enablePoweredByContainer={false}
-            onPress={(data, details = null) => {
-              setValue(data.description);
-              console.log('details', details.geometry.location)
-              console.log('details', data.description)
-              setLocation(details.geometry.location);
-
-            }}
-            query={{
-              key: 'AIzaSyDGZOhb6qWmy1PLYJrLmtBho18Vasw0C_U',
-              language: 'vi',
-            }}
-            fetchDetails={true}
-            textInputProps={{
-              placeholderTextColor: '#5ca4b8',
-              onChangeText: text => {
-                setValue(text);
-              },
-              value: value,
-              borderRadius: 10,
-            }}
-            styles={{
-              textInput: {
-                height: 60,
-                color: '#1F5D74',
-                fontSize: 16,
-                fontSize: 18,
-                fontWeight: '600',
-                backgroundColor: '#e1eff5',
-              },
-              predefinedPlacesDescription: {
-                color: '#1faadb',
-              },
-            }}
-          />
+    <ScrollView style={styles.container}>
+      <ImageBackground source={background} style={styles.image}>
+        <View style={{width: '100%', alignItems: 'center', marginTop: 90}}>
+          <Image source={logofull} style={styles.logo} />
+          <Text style={styles.title}>Tinder4pet</Text>
         </View>
-      </View>
-      <View style={styles.signup}>
-        <Text style={styles.signup1}>Already have an Account / </Text>
-        <Text style={styles.signup2} onPress={onClickLogin}>
-          Login here
-        </Text>
-      </View>
-      <Button
-        onPress={onClickSignUp}
-        title="Sign up"
-        titleStyle={{fontSize: 20}}
-        containerStyle={styles.btnContainer}
-        buttonStyle={styles.buttonStyle}
-      />
-    </View>
+        <ActivityIndicator
+          animating={loading}
+          size="large"
+          color="#1F5D74"
+          style={{
+            position: 'absolute',
+            left: '45%',
+            top: '30%',
+          }}
+        />
+        <Formik
+          initialValues={{
+            username: '',
+            password: '',
+            retypedPassword: '',
+          }}
+          validationSchema={SignupSchema}
+          onSubmit={values => {
+            if (values?.password === values.retypedPassword) {
+              dispatch(
+                register({
+                  username: values?.username,
+                  password: values?.password,
+                  navigation: navigation,
+                }),
+              );
+            }
+          }}>
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            values,
+            errors,
+            touched,
+          }) => (
+            <View>
+              <View style={styles.inputContainer}>
+                <View style={styles.inputWrap}>
+                  <Ionicons name="ios-mail-outline" color="#6A9CFD" size={25} />
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Username"
+                    placeholderTextColor="#AEE4FF"
+                    onChangeText={handleChange('username')}
+                    value={values.username}
+                  />
+                </View>
+                {errors.username && touched.username ? (
+                  <Text style={{color: '#ffac9c'}}>{errors.username}</Text>
+                ) : null}
+                <View style={styles.inputWrap}>
+                  <Feather name="key" color="#6A9CFD" size={25} />
+                  <TextInput
+                    style={styles.input}
+                    secureTextEntry={true}
+                    placeholder="Password"
+                    placeholderTextColor="#AEE4FF"
+                    onChangeText={handleChange('password')}
+                    value={values.password}
+                  />
+                </View>
+                {errors.password && touched.password ? (
+                  <Text style={{color: '#ffac9c'}}>{errors.password}</Text>
+                ) : null}
+                <View style={styles.inputWrap}>
+                  <Feather name="key" color="#6A9CFD" size={25} />
+                  <TextInput
+                    style={styles.input}
+                    secureTextEntry={true}
+                    placeholder="Retype Password"
+                    placeholderTextColor="#AEE4FF"
+                    onChangeText={handleChange('retypedPassword')}
+                    value={values.retypedPassword}
+                  />
+                </View>
+                {values.password !== values.retypedPassword ? (
+                  <Text style={{color: '#ffac9c'}}>
+                    {values.password.trim()} {values.retypedPassword.trim()}
+                    Password must match
+                  </Text>
+                ) : null}
+              </View>
+              <TouchableOpacity style={styles.btnLogin} onPress={handleSubmit}>
+                <Text
+                  style={{
+                    textAlign: 'center',
+                    color: '#fff',
+                    fontSize: 20,
+                    fontWeight: '700',
+                  }}>
+                  Sign Up
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </Formik>
+        <View style={styles.signInRow}>
+          <Text style={{fontSize: 14}}>Already have an account? </Text>
+          <TouchableOpacity onPress={handleClickSignUp}>
+            <Text style={{color: '#6A9CFD', fontWeight: '700', fontSize: 15}}>
+              Sign in
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.paw}>
+          <Image source={paw} />
+        </View>
+      </ImageBackground>
+    </ScrollView>
   );
 };
 
-export default Signup;
+export default SignUp;

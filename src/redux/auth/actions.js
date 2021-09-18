@@ -1,19 +1,21 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import {Alert} from 'react-native';
 
 export const login = createAsyncThunk(
   'user/login',
   async (payload, thunkAPI) => {
     try {
       const response = await auth().signInWithEmailAndPassword(
-        'nhannguyen.tpdn@gmail.com',
-        '123456',
+        payload?.username,
+        payload?.password,
       );
       console.log('response', response);
       return response;
     } catch (error) {
-      return thunkAPI.rejectWithValue();
+      Alert.alert('Account is Invalid');
+      return thunkAPI.rejectWithValue(error);
     }
   },
 );
@@ -23,16 +25,21 @@ export const register = createAsyncThunk(
   async (payload, thunkAPI) => {
     try {
       const response = await auth().createUserWithEmailAndPassword(
-        'nhan1.tpdn@gmail.com',
-        '123456',
+        payload?.username,
+        payload?.password,
       );
-      const writeData = await firestore().collection('account').add({
-        gmail: 'nhan1.tpdn@gmail.com',
-      });
-      console.log('response hihi', writeData);
+      console.log('response', response);
+      if (response) {
+        await firestore().collection('account').add({
+          gmail: payload?.username,
+        });
+        await thunkAPI.dispatch(logout());
+        payload?.navigation.push('Login');
+      }
       return response;
     } catch (error) {
-      return thunkAPI.rejectWithValue();
+      Alert.alert('Account is exist');
+      return thunkAPI.rejectWithValue(error);
     }
   },
 );

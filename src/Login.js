@@ -1,5 +1,4 @@
-/*eslint-disable*/
-import React, {useState, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {useDispatch} from 'react-redux';
 import {
   Text,
@@ -16,9 +15,9 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import background from './assets/image/background.png';
 import logofull from './assets/image/logofull.png';
 import paw from './assets/image/paw.png';
-import auth from '@react-native-firebase/auth';
-import {login, logout, register} from './redux/auth/actions';
-import {getAccount} from './redux/user/actions';
+// import auth from '@react-native-firebase/auth';
+import {login, logout} from './redux/auth/actions';
+import {Formik} from 'formik';
 
 const styles = StyleSheet.create({
   container: {
@@ -83,20 +82,14 @@ const styles = StyleSheet.create({
 });
 
 const Login = ({navigation}) => {
-  const [inputUsername, onChangeInputUsername] = useState('');
-  const [inputPassword, onChangeInputPassword] = useState('');
   const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(getAccount());
-  }, []);
-  const handleClickSignIn = () => {
-    dispatch(login());
-  };
+
   const handleClickForgot = () => {
     dispatch(logout());
   };
   const handleClickSignUp = () => {
-    dispatch(register());
+    // dispatch(register());
+    navigation.push('Signup');
   };
   return (
     <View style={styles.container}>
@@ -105,40 +98,51 @@ const Login = ({navigation}) => {
           <Image source={logofull} style={styles.logo} />
           <Text style={styles.title}>Tinder4pet</Text>
         </View>
-        <View style={styles.inputContainer}>
-          <View style={styles.inputWrap}>
-            <Ionicons name="ios-mail-outline" color="#6A9CFD" size={25} />
-            <TextInput
-              style={styles.input}
-              placeholder="Username"
-              placeholderTextColor="#AEE4FF"
-              onChangeText={onChangeInputUsername}
-              value={inputUsername}
-            />
-          </View>
-          <View style={styles.inputWrap}>
-            <Feather name="key" color="#6A9CFD" size={25} />
-            <TextInput
-              style={styles.input}
-              secureTextEntry={true}
-              placeholder="Password"
-              placeholderTextColor="#AEE4FF"
-              onChangeText={onChangeInputPassword}
-              value={inputPassword}
-            />
-          </View>
-        </View>
-        <TouchableOpacity style={styles.btnLogin} onPress={handleClickSignIn}>
-          <Text
-            style={{
-              textAlign: 'center',
-              color: '#fff',
-              fontSize: 20,
-              fontWeight: '700',
-            }}>
-            Login
-          </Text>
-        </TouchableOpacity>
+        <Formik
+          initialValues={{
+            username: 'nhannguyen.tpdn@gmail.com',
+            password: '123456',
+          }}
+          onSubmit={values => dispatch(login(values))}>
+          {({handleChange, handleBlur, handleSubmit, values}) => (
+            <View>
+              <View style={styles.inputContainer}>
+                <View style={styles.inputWrap}>
+                  <Ionicons name="ios-mail-outline" color="#6A9CFD" size={25} />
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Username"
+                    placeholderTextColor="#AEE4FF"
+                    onChangeText={handleChange('username')}
+                    value={values.username}
+                  />
+                </View>
+                <View style={styles.inputWrap}>
+                  <Feather name="key" color="#6A9CFD" size={25} />
+                  <TextInput
+                    style={styles.input}
+                    secureTextEntry={true}
+                    placeholder="Password"
+                    placeholderTextColor="#AEE4FF"
+                    onChangeText={handleChange('password')}
+                    value={values.password}
+                  />
+                </View>
+              </View>
+              <TouchableOpacity style={styles.btnLogin} onPress={handleSubmit}>
+                <Text
+                  style={{
+                    textAlign: 'center',
+                    color: '#fff',
+                    fontSize: 20,
+                    fontWeight: '700',
+                  }}>
+                  Login
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </Formik>
         <View style={styles.signInRow}>
           <Text style={{fontSize: 14}}>Dont have an account? </Text>
           <TouchableOpacity onPress={handleClickSignUp}>

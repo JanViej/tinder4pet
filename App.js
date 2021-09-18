@@ -15,8 +15,9 @@ import store from './src/redux/store';
 import BottomNavigation from './src/BottomNavigation';
 import Login from './src/Login';
 import PhoneSignIn from './src/PhoneSignIn';
+import IntroSlider from './src/IntroSlider';
 
-const App: () => Node = () => {
+const App: () => Node = navigation => {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
 
@@ -31,7 +32,8 @@ const App: () => Node = () => {
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     console.log('subscriber', subscriber);
-    return subscriber; // unsubscribe on unmount
+    // return subscriber; // unsubscribe on unmount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (initializing) {
@@ -41,7 +43,7 @@ const App: () => Node = () => {
   return (
     <Provider store={store}>
       <NavigationContainer>
-        {/* {user ? <BottomNavigation /> : <PhoneSignIn />} */}
+        {/* {user ? <IntroSlider /> : <BottomNavigation />} */}
         <BottomNavigation />
       </NavigationContainer>
     </Provider>

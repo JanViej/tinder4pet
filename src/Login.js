@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {
   Text,
   View,
@@ -9,6 +9,7 @@ import {
   ImageBackground,
   Dimensions,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -83,14 +84,23 @@ const styles = StyleSheet.create({
 
 const Login = ({navigation}) => {
   const dispatch = useDispatch();
-
+  const currentUser = useSelector(state => state.auth.data);
+  const loading = useSelector(state => state.auth.loading);
   const handleClickForgot = () => {
     dispatch(logout());
   };
   const handleClickSignUp = () => {
-    // dispatch(register());
     navigation.push('Signup');
   };
+  useEffect(() => {
+    if (currentUser?.data?.introSlider) {
+      navigation.push('Home');
+    } else if (!currentUser?.data?.introSlider) {
+      navigation.push('IntroSlider');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser]);
+
   return (
     <View style={styles.container}>
       <ImageBackground source={background} style={styles.image}>
@@ -98,12 +108,24 @@ const Login = ({navigation}) => {
           <Image source={logofull} style={styles.logo} />
           <Text style={styles.title}>Tinder4pet</Text>
         </View>
+        <ActivityIndicator
+          animating={loading}
+          size="large"
+          color="#1F5D74"
+          style={{
+            position: 'absolute',
+            left: '45%',
+            top: '30%',
+          }}
+        />
         <Formik
           initialValues={{
             username: 'nhannguyen.tpdn@gmail.com',
             password: '123456',
           }}
-          onSubmit={values => dispatch(login(values))}>
+          onSubmit={values => {
+            dispatch(login(values));
+          }}>
           {({handleChange, handleBlur, handleSubmit, values}) => (
             <View>
               <View style={styles.inputContainer}>

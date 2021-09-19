@@ -10,7 +10,6 @@ import {
   changePasswordApi,
 } from '../../api/user';
 import {removeData, storeData} from '../../utils';
-import firestore from '@react-native-firebase/firestore';
 
 export const login = createAsyncThunk(
   'user/login',
@@ -76,20 +75,6 @@ export const getMe = createAsyncThunk(
       return data;
     } catch (error) {
       console.log('err', error);
-      return thunkAPI.rejectWithValue();
-    }
-  },
-);
-
-
-export const getAccount = createAsyncThunk(
-  'user/account',
-  async (payload, thunkAPI) => {
-    try {
-      const res = await firestore().collection('account').get();;
-      console.log('res', res);
-      return res;
-    } catch (error) {
       return thunkAPI.rejectWithValue();
     }
   },

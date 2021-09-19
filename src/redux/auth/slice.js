@@ -1,8 +1,8 @@
 import {createSlice} from '@reduxjs/toolkit';
-import {login, register} from './actions';
+import {getAccount, register, login} from './actions';
 
 export const initialState = {
-  data: [],
+  data: {},
   loading: false,
   isAuthenticated: false,
   token: '',
@@ -23,6 +23,19 @@ export const {reducer, actions} = createSlice({
       state.loading = true;
     },
     [register.rejected]: (state, {payload}) => {
+      state.loading = false;
+    },
+    [getAccount.fulfilled]: (state, {payload}) => {
+      state.data = payload;
+      console.log('payload', payload);
+    },
+    [login.fulfilled]: (state, {payload}) => {
+      state.loading = false;
+    },
+    [login.pending]: (state, {payload}) => {
+      state.loading = true;
+    },
+    [login.rejected]: (state, {payload}) => {
       state.loading = false;
     },
   },

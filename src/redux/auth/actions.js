@@ -12,6 +12,7 @@ export const login = createAsyncThunk(
         payload?.password,
       );
       console.log('response', response);
+      thunkAPI.dispatch(getAccount(payload?.username));
       return response;
     } catch (error) {
       Alert.alert('Account is Invalid');
@@ -51,6 +52,28 @@ export const logout = createAsyncThunk(
       await auth()
         .signOut()
         .then(() => console.log('User signed out!'));
+    } catch (error) {
+      return thunkAPI.rejectWithValue();
+    }
+  },
+);
+
+export const getAccount = createAsyncThunk(
+  'user/account',
+  async (payload, thunkAPI) => {
+    try {
+      const res = await firestore()
+        .collection('account')
+        .where('gmail', '==', payload)
+        .get()
+        .then(querySnapshot => {
+          return {
+            id: querySnapshot?._docs?.[0].id,
+            data: querySnapshot?._docs?.[0]._data,
+          };
+        });
+      console.log(res);
+      return res;
     } catch (error) {
       return thunkAPI.rejectWithValue();
     }

@@ -6,6 +6,7 @@ import order from './order/slice';
 import event from './event/slice';
 import cart from './cart/slice';
 import auth from './auth/slice';
+import account from './auth/slice';
 
 const rootReducer = combineReducers({
   drink,
@@ -14,6 +15,7 @@ const rootReducer = combineReducers({
   event,
   cart,
   auth,
+  account,
 });
 
 export default rootReducer;

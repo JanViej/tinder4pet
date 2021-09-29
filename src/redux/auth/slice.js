@@ -1,5 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit';
-import {getAccount, register, login} from './actions';
+import {getAccount, register, login, logout} from './actions';
 
 export const initialState = {
   data: {},
@@ -14,7 +14,14 @@ export const initialState = {
 export const {reducer, actions} = createSlice({
   name: 'Auth',
   initialState,
-  reducers: {},
+  reducers: {
+    setUserData: (state, {payload}) => {
+      state.data = {
+        ...state.data,
+        ...payload,
+      };
+    },
+  },
   extraReducers: {
     [register.fulfilled]: (state, {payload}) => {
       state.loading = false;
@@ -27,7 +34,13 @@ export const {reducer, actions} = createSlice({
     },
     [getAccount.fulfilled]: (state, {payload}) => {
       state.data = payload;
-      console.log('payload', payload);
+      state.loading = false;
+    },
+    [getAccount.pending]: (state, {payload}) => {
+      state.loading = true;
+    },
+    [getAccount.rejected]: (state, {payload}) => {
+      state.loading = false;
     },
     [login.fulfilled]: (state, {payload}) => {
       state.loading = false;
@@ -37,6 +50,9 @@ export const {reducer, actions} = createSlice({
     },
     [login.rejected]: (state, {payload}) => {
       state.loading = false;
+    },
+    [logout.fulfilled]: (state, {payload}) => {
+      state.data = {};
     },
   },
 });

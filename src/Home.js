@@ -14,7 +14,7 @@ import Fontisto from 'react-native-vector-icons/Fontisto';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import cat from './assets/image/cat.jpg';
 import selection from './assets/image/selection.png';
-
+import {logout} from './redux/auth/actions';
 import shadow from './assets/image/shadow.png';
 import {useRef} from 'react';
 import {actions as userActions} from './redux/user/slice';
@@ -114,7 +114,9 @@ const Home = ({navigation}) => {
     navigation.push('Login');
   };
 
-  const handleClickAddress = () => {};
+  const handleClickAddress = () => {
+    dispatch(logout());
+  };
 
   const handleClickBell = () => {};
 

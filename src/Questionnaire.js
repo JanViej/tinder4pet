@@ -1,18 +1,19 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   GiftedChat,
   MessageText,
   Bubble,
   Composer,
   InputToolbar,
-  Actions,
   Avatar,
   Send,
 } from 'react-native-gifted-chat';
-import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
+import {StyleSheet, Text, View, Image} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import logofull from './assets/image/logofull.png';
+import {actions} from './redux/auth/slice';
+import {useDispatch} from 'react-redux';
+import {writeDataToAccount} from './redux/account/actions';
 
 const messagesContent = [
   {
@@ -31,11 +32,11 @@ const messagesContent = [
       values: [
         {
           title: '😋 Yes',
-          value: 'yes',
+          value: 'true',
         },
         {
           title: '😞 No. Not this time, I"ll answer it later',
-          value: 'no',
+          value: 'skip',
         },
       ],
     },
@@ -70,6 +71,7 @@ const chatBotContent = [
         },
       ],
     },
+    type: 'favorite',
   },
   {
     _id: 4,
@@ -81,10 +83,11 @@ const chatBotContent = [
       avatar:
         'https://firebasestorage.googleapis.com/v0/b/tinder4pet.appspot.com/o/ChatBotIcon%2Ftext.png?alt=media&token=8baa776e-0bb2-499e-ab67-1a16606207a2',
     },
+    type: 'petName',
   },
   {
     _id: 5,
-    text: 'What is your phone number ?',
+    text: 'What is your pet gender ?',
     createdAt: new Date(),
     user: {
       _id: 2,
@@ -92,16 +95,153 @@ const chatBotContent = [
       avatar:
         'https://firebasestorage.googleapis.com/v0/b/tinder4pet.appspot.com/o/ChatBotIcon%2Ftext.png?alt=media&token=8baa776e-0bb2-499e-ab67-1a16606207a2',
     },
+    quickReplies: {
+      type: 'radio',
+      values: [
+        {
+          title: 'Boy',
+          value: 'male',
+        },
+        {
+          title: 'Girl',
+          value: 'female',
+        },
+      ],
+    },
+    type: 'petGender',
+  },
+  {
+    _id: 6,
+    text: "What is your pet's breed ?",
+    createdAt: new Date(),
+    user: {
+      _id: 2,
+      name: 'Tinder4Pet',
+      avatar:
+        'https://firebasestorage.googleapis.com/v0/b/tinder4pet.appspot.com/o/ChatBotIcon%2Ftext.png?alt=media&token=8baa776e-0bb2-499e-ab67-1a16606207a2',
+    },
+    type: 'breed',
+  },
+  {
+    _id: 7,
+    text: 'What is your pet age ?',
+    createdAt: new Date(),
+    user: {
+      _id: 2,
+      name: 'Tinder4Pet',
+      avatar:
+        'https://firebasestorage.googleapis.com/v0/b/tinder4pet.appspot.com/o/ChatBotIcon%2Ftext.png?alt=media&token=8baa776e-0bb2-499e-ab67-1a16606207a2',
+    },
+    type: 'age',
+  },
+  {
+    _id: 8,
+    text:
+      'Now, let us know a little bit about you. What is your phone number ?',
+    createdAt: new Date(),
+    user: {
+      _id: 2,
+      name: 'Tinder4Pet',
+      avatar:
+        'https://firebasestorage.googleapis.com/v0/b/tinder4pet.appspot.com/o/ChatBotIcon%2Ftext.png?alt=media&token=8baa776e-0bb2-499e-ab67-1a16606207a2',
+    },
+    type: 'phoneNumber',
+  },
+  {
+    _id: 9,
+    text: 'Where do you live (city) ?',
+    createdAt: new Date(),
+    user: {
+      _id: 2,
+      name: 'Tinder4Pet',
+      avatar:
+        'https://firebasestorage.googleapis.com/v0/b/tinder4pet.appspot.com/o/ChatBotIcon%2Ftext.png?alt=media&token=8baa776e-0bb2-499e-ab67-1a16606207a2',
+    },
+    type: 'address',
+  },
+  {
+    _id: 10,
+    text: 'What is your name ?',
+    createdAt: new Date(),
+    user: {
+      _id: 2,
+      name: 'Tinder4Pet',
+      avatar:
+        'https://firebasestorage.googleapis.com/v0/b/tinder4pet.appspot.com/o/ChatBotIcon%2Ftext.png?alt=media&token=8baa776e-0bb2-499e-ab67-1a16606207a2',
+    },
+    type: 'ownerName',
+  },
+  {
+    _id: 11,
+    text: 'Thanks for answer all questions! Let start now 😍😍😍',
+    createdAt: new Date(),
+    user: {
+      _id: 2,
+      name: 'Tinder4Pet',
+      avatar:
+        'https://firebasestorage.googleapis.com/v0/b/tinder4pet.appspot.com/o/ChatBotIcon%2Ftext.png?alt=media&token=8baa776e-0bb2-499e-ab67-1a16606207a2',
+    },
+    quickReplies: {
+      type: 'radio',
+      values: [
+        {
+          title: 'Yeah',
+          value: 'yeah',
+        },
+      ],
+    },
+    type: 'end',
+  },
+  {
+    _id: 12,
+    text: 'You can answer it anytime 😍😍😍',
+    createdAt: new Date(),
+    user: {
+      _id: 2,
+      name: 'Tinder4Pet',
+      avatar:
+        'https://firebasestorage.googleapis.com/v0/b/tinder4pet.appspot.com/o/ChatBotIcon%2Ftext.png?alt=media&token=8baa776e-0bb2-499e-ab67-1a16606207a2',
+    },
+    quickReplies: {
+      type: 'radio',
+      values: [
+        {
+          title: 'Yeah',
+          value: 'yeah',
+        },
+      ],
+    },
+    type: 'end',
   },
 ];
 
-const Questionnaire = () => {
+const Questionnaire = ({navigation}) => {
   const [messages, setMessages] = useState(messagesContent);
+  const dispatch = useDispatch();
+  const [key, setKey] = useState('introSlider');
+  const [answer, setAnswer] = useState();
+
+  useEffect(() => {
+    dispatch(
+      actions.setUserData({
+        introSlider: true,
+      }),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSend = (newMessage = []) => {
     setMessages(GiftedChat.append(messages, newMessage));
-    // console.log('newMessage', newMessage);
-    chatBotContent.shift();
+    setKey(newMessage?.[0]?.type);
+
+    if (newMessage?.[0]?.type !== 'end') {
+      chatBotContent.shift();
+      console.log('asd chatbot');
+    }
+    setAnswer({
+      ...answer,
+      [key]: newMessage?.[1]?.text,
+    });
   };
   const renderMessageText = props => (
     <MessageText
@@ -174,37 +314,37 @@ const Questionnaire = () => {
     />
   );
 
-  const renderActions = props => (
-    <Actions
-      {...props}
-      containerStyle={{
-        width: 44,
-        height: 44,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginLeft: 4,
-        marginRight: 4,
-        marginBottom: 0,
-      }}
-      icon={() => (
-        <Image
-          style={{width: 32, height: 32}}
-          source={{
-            uri: 'https://placeimg.com/32/32/any',
-          }}
-        />
-      )}
-      options={{
-        'Choose From Library': () => {
-          console.log('Choose From Library');
-        },
-        Cancel: () => {
-          console.log('Cancel');
-        },
-      }}
-      optionTintColor="#222B45"
-    />
-  );
+  // const renderActions = props => (
+  //   <Actions
+  //     {...props}
+  //     containerStyle={{
+  //       width: 44,
+  //       height: 44,
+  //       alignItems: 'center',
+  //       justifyContent: 'center',
+  //       marginLeft: 4,
+  //       marginRight: 4,
+  //       marginBottom: 0,
+  //     }}
+  //     icon={() => (
+  //       <Image
+  //         style={{width: 32, height: 32}}
+  //         source={{
+  //           uri: 'https://placeimg.com/32/32/any',
+  //         }}
+  //       />
+  //     )}
+  //     options={{
+  //       'Choose From Library': () => {
+  //         console.log('Choose From Library');
+  //       },
+  //       Cancel: () => {
+  //         console.log('Cancel');
+  //       },
+  //     }}
+  //     optionTintColor="#222B45"
+  //   />
+  // );
 
   const renderSend = props => (
     <Send
@@ -232,51 +372,27 @@ const Questionnaire = () => {
       },
     };
 
-    if (quickReply[0].value === 'yes') {
-      // console.log('yes');
-      handleSend([chatBotContent[0], msg]);
-    } else if (quickReply[0].value === 'no') {
-      // console.log('no');
+    if (quickReply[0].value === 'yeah') {
+      dispatch(writeDataToAccount(answer));
+      navigation.push('Home2');
+    } else if (quickReply[0].value === 'skip') {
+      handleSend([chatBotContent[chatBotContent.length - 1], msg]);
     } else {
       handleSend([chatBotContent[0], msg]);
     }
   };
 
-  console.log('chatBotContent', chatBotContent);
-
   return (
     <View style={{flex: 1}}>
       <View
         style={{
-          padding: 10,
-          backgroundColor: '#fff',
           flexDirection: 'row',
-          justifyContent: 'space-between',
           alignItems: 'center',
-          elevation: 5,
+          backgroundColor: 'transparent',
         }}>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <TouchableOpacity>
-            <AntDesign name="arrowleft" color="#FF8C76" size={28} />
-          </TouchableOpacity>
-          <Image
-            source={{
-              uri:
-                'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/funny-dog-captions-1563456605.jpg?crop=0.747xw:1.00xh;0.0459xw,0&resize=768:*',
-            }}
-            style={styles.image}
-          />
-          <Text style={{fontSize: 18, fontFamily: 'FredokaOne-Regular'}}>
-            Mewo
-          </Text>
-        </View>
-        <View style={{flexDirection: 'row'}}>
-          <TouchableOpacity style={styles.headerBtn}>
-            <Feather name="phone-call" color="#FF8C76" size={24} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.headerBtn}>
-            <SimpleLineIcons name="camera" color="#FF8C76" size={24} />
-          </TouchableOpacity>
+        <View style={{width: '100%', alignItems: 'center', marginTop: 50}}>
+          <Image source={logofull} style={styles.logo} />
+          <Text style={styles.title}>Tinder4pet</Text>
         </View>
       </View>
       <GiftedChat
@@ -289,7 +405,6 @@ const Questionnaire = () => {
         renderBubble={renderBubble}
         renderComposer={renderComposer}
         renderInputToolbar={renderInputToolbar}
-        // renderActions={renderActions}
         renderAvatar={renderAvatar}
         onQuickReply={quickReply => onQuickReply(quickReply)}
         renderSend={renderSend}
@@ -306,6 +421,15 @@ const styles = StyleSheet.create({
     height: 45,
     borderRadius: 100,
     marginHorizontal: 10,
+  },
+  logo: {
+    width: 60,
+    height: 60,
+  },
+  title: {
+    fontFamily: 'Pacifico-Regular',
+    fontSize: 26,
+    color: '#6A9CFD',
   },
   headerBtn: {
     backgroundColor: '#fff',

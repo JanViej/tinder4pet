@@ -57,12 +57,8 @@ const IntroSlider = ({navigation}) => {
     );
   };
 
-  // eslint-disable-next-line no-undef
   const _onDone = () => {
-    // User finished the introduction. Show real app through
-    // navigation or simply by controlling state
-    // navigation.push('Login');
-    navigation.navigate('Login');
+    navigation.push('Questionnaire');
   };
 
   const _renderNextButton = () => {

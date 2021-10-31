@@ -11,14 +11,17 @@ import {
   Dimensions,
 } from 'react-native';
 // import * as ImagePicker from 'react-native-image-picker';
+import {writeDataToAccount} from './redux/account/actions';
+import {useDispatch} from 'react-redux';
 import storage from '@react-native-firebase/storage';
 import * as Progress from 'react-native-progress';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
-const UploadScreen = () => {
+const UploadScreen = ({propImage, setIsUpload, setModalVisible}) => {
   const [image, setImage] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
+  const dispatch = useDispatch();
 
   const selectImage = () => {
     const options = {
@@ -60,12 +63,21 @@ const UploadScreen = () => {
     });
     try {
       const res = await task;
-      console.log('res', res);
+      task.snapshot.ref.getDownloadURL().then(downloadURL => {
+        console.log(downloadURL);
+        dispatch(
+          writeDataToAccount({
+            [propImage]: downloadURL,
+          }),
+        );
+      });
       if (res?.state === 'success') {
         Alert.alert(
           'Photo uploaded!',
           'Your photo has been uploaded to Firebase Cloud Storage!',
         );
+        setIsUpload(true);
+        setModalVisible(false);
       }
     } catch (e) {
       console.error(e);

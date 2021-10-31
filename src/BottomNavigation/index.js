@@ -28,6 +28,7 @@ import ImageView from '../ImageView';
 import Profile from '../Profile';
 import FormProfile from '../FormProfile';
 import Questionnaire from '../Questionnaire';
+import Instruction from '../Instruction';
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -83,6 +84,7 @@ const MenuStackScreen = () => {
         ) : (
           <MenuStack.Screen name="IntroSlider" component={IntroSlider} />
         ))}
+      <MenuStack.Screen name="Instruction" component={Instruction} />
       <MenuStack.Screen name="Login" component={Login} />
       <MenuStack.Screen name="Home2" component={Home} />
       <MenuStack.Screen name="Questionnaire" component={Questionnaire} />

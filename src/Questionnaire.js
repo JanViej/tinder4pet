@@ -374,7 +374,7 @@ const Questionnaire = ({navigation}) => {
 
     if (quickReply[0].value === 'yeah') {
       dispatch(writeDataToAccount(answer));
-      navigation.push('Home2');
+      navigation.push('Instruction');
     } else if (quickReply[0].value === 'skip') {
       handleSend([chatBotContent[chatBotContent.length - 1], msg]);
     } else {

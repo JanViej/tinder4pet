@@ -58,7 +58,7 @@ const IntroSlider = ({navigation}) => {
   };
 
   const _onDone = () => {
-    navigation.push('Questionnaire');
+    navigation.push('Instruction');
   };
 
   const _renderNextButton = () => {

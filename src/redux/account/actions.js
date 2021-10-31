@@ -1,5 +1,6 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import firestore from '@react-native-firebase/firestore';
+import {actions} from '../auth/slice';
 
 export const writeDataToAccount = createAsyncThunk(
   'account/write',
@@ -11,6 +12,8 @@ export const writeDataToAccount = createAsyncThunk(
         .update({
           ...payload,
         });
+
+      thunkAPI.dispatch(actions.setUserData(payload));
 
       return response;
     } catch (error) {

@@ -111,7 +111,7 @@ const Home = ({navigation}) => {
   };
 
   const handelClickDetail = () => {
-    navigation.push('Login');
+    navigation.push('Gallery');
   };
 
   const handleClickAddress = () => {

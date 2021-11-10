@@ -16,12 +16,14 @@ import {useDispatch} from 'react-redux';
 import storage from '@react-native-firebase/storage';
 import * as Progress from 'react-native-progress';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import {useSelector} from 'react-redux';
 
-const UploadScreen = ({propImage, setIsUpload, setModalVisible}) => {
+const UploadScreen = ({propImage, setIsUpload = () => {}, setModalVisible}) => {
   const [image, setImage] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
   const dispatch = useDispatch();
+  const currentData = useSelector(state => state.auth.data);
 
   const selectImage = () => {
     const options = {
@@ -64,10 +66,17 @@ const UploadScreen = ({propImage, setIsUpload, setModalVisible}) => {
     try {
       const res = await task;
       task.snapshot.ref.getDownloadURL().then(downloadURL => {
-        console.log(downloadURL);
         dispatch(
           writeDataToAccount({
-            [propImage]: downloadURL,
+            ...(propImage === 'avatar' && {
+              avatar: downloadURL,
+            }),
+            images: [
+              ...currentData?.data?.images,
+              {
+                url: downloadURL,
+              },
+            ],
           }),
         );
       });

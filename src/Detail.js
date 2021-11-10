@@ -82,7 +82,11 @@ const Detail = ({navigation}) => {
         </TouchableOpacity>
         <TouchableOpacity
           style={{...styles.headerBtn, right: 30}}
-          onPress={() => navigation.push('FormProfile')}>
+          onPress={() =>
+            navigation.push('FormProfile', {
+              fromPage: 'Detail',
+            })
+          }>
           {/* <AntDesign name="heart" color="#FF8C76" size={24} /> */}
           <Feather name="edit-2" color="#FF8C76" size={24} />
         </TouchableOpacity>

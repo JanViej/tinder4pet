@@ -17,6 +17,7 @@ const ListImage = ({
   listOption,
   handleClickChoose,
   handleClickView,
+  handleClickAdd,
 }) => {
   return (
     <View style={{flexDirection: 'row', width: windowWidth, flexWrap: 'wrap'}}>
@@ -31,21 +32,22 @@ const ListImage = ({
           alignItems: 'center',
           borderColor: '#CDCBCB',
           margin: 3,
-        }}>
+        }}
+        onPress={handleClickAdd}>
         <Text style={{color: '#727070', fontWeight: '700'}}>+ Add</Text>
       </TouchableOpacity>
 
       {images?.map(item => (
         <TouchableOpacity
           onPress={handleClickView}
-          onLongPress={handleClickChoose(item?.id)}>
+          onLongPress={handleClickChoose(item?.url)}>
           <Image
             source={{
               uri: item.url,
             }}
             style={styles.image}
           />
-          {listOption?.includes(item.id) && (
+          {listOption?.includes(item.url) && (
             <AntDesign
               style={{position: 'absolute', right: 10, top: 10}}
               name="checkcircle"

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   Text,
@@ -8,80 +8,30 @@ import {
   Dimensions,
   TextInput,
   Button,
+  Modal,
   Image,
 } from 'react-native';
 import {Formik} from 'formik';
 import ListImage from './components/ListImage';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {ScrollView} from 'react-native-gesture-handler';
+import {useSelector, useDispatch} from 'react-redux';
+import {getAccount} from './redux/auth/actions';
+import UploadScreen from './UploadScreen';
 
 const {width: windowWidth} = Dimensions.get('window');
 
-const images = [
-  {
-    id: 1,
-    name: 'hi',
-    url:
-      'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/funny-dog-captions-1563456605.jpg?crop=0.747xw:1.00xh;0.0459xw,0&resize=768:*',
-  },
-  {
-    id: 2,
-    name: 'hi',
-    url:
-      'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/funny-dog-captions-1563456605.jpg?crop=0.747xw:1.00xh;0.0459xw,0&resize=768:*',
-  },
-  {
-    id: 3,
-    name: 'hi',
-    url:
-      'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/funny-dog-captions-1563456605.jpg?crop=0.747xw:1.00xh;0.0459xw,0&resize=768:*',
-  },
-  {
-    id: 4,
-    name: 'hi',
-    url:
-      'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/funny-dog-captions-1563456605.jpg?crop=0.747xw:1.00xh;0.0459xw,0&resize=768:*',
-  },
-  {
-    id: 5,
-    name: 'hi',
-    url:
-      'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/funny-dog-captions-1563456605.jpg?crop=0.747xw:1.00xh;0.0459xw,0&resize=768:*',
-  },
-  {
-    id: 6,
-    name: 'hi',
-    url:
-      'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/funny-dog-captions-1563456605.jpg?crop=0.747xw:1.00xh;0.0459xw,0&resize=768:*',
-  },
-  {
-    id: 7,
-    name: 'hi',
-    url:
-      'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/funny-dog-captions-1563456605.jpg?crop=0.747xw:1.00xh;0.0459xw,0&resize=768:*',
-  },
-  {
-    id: 8,
-    name: 'hi',
-    url:
-      'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/funny-dog-captions-1563456605.jpg?crop=0.747xw:1.00xh;0.0459xw,0&resize=768:*',
-  },
-  {
-    id: 9,
-    name: 'hi',
-    url:
-      'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/funny-dog-captions-1563456605.jpg?crop=0.747xw:1.00xh;0.0459xw,0&resize=768:*',
-  },
-  {
-    id: 10,
-    name: 'hi',
-    url:
-      'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/funny-dog-captions-1563456605.jpg?crop=0.747xw:1.00xh;0.0459xw,0&resize=768:*',
-  },
-];
-
-const FormProfile = ({navigation}) => {
+const FormProfile = ({navigation, route}) => {
   const [listOption, setListOption] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const dispatch = useDispatch();
+  // const {fromPage} = route.params;
+  const userData = useSelector(state => state.auth.data);
+  console.log('userData asd', userData);
+  const [initialValues, setInitialValues] = useState({});
+  // console.log('fromPage asd', fromPage, initialValues);
+
   const handleClickChoose = id => () => {
     const index = listOption.indexOf(id);
     if (index > -1) {
@@ -95,18 +45,30 @@ const FormProfile = ({navigation}) => {
   const handleClickView = () => {
     navigation.push('ImageView');
   };
+
+  useEffect(() => {
+    if (userData) {
+      setInitialValues({
+        name: userData?.data?.petName,
+        address: userData?.data?.address,
+        weight: '',
+        sex: userData?.data?.petGender,
+        age: userData?.data?.age,
+        description: '',
+        images: userData?.data?.images,
+      });
+    }
+  }, [userData]);
+
+  const handleClickAdd = () => {
+    setModalVisible(true);
+  };
+
   return (
     <View style={styles.container}>
       <Formik
-        initialValues={{
-          name: 'mewo',
-          address: 'DaNang, VietNam',
-          weight: '4kg',
-          sex: 'Male',
-          age: '5 Months',
-          description:
-            "If you're having a ruff time thinking of caption ideas, stop hounding yourself! We already did the work for you. From punny phrases to  touching quotes, here are the best Instagram captions for dogs that are sure to have your followers howlin",
-        }}
+        initialValues={initialValues}
+        enableReinitialize={true}
         onSubmit={values => console.log(values)}>
         {({handleChange, handleBlur, handleSubmit, values}) => (
           <View style={{flex: 1}}>
@@ -139,6 +101,8 @@ const FormProfile = ({navigation}) => {
                   paddingHorizontal: 10,
                   marginBottom: 10,
                 }}
+                placeholder="Pet Name"
+                placeholderTextColor="#2f33374f"
               />
               <View
                 style={{
@@ -148,8 +112,7 @@ const FormProfile = ({navigation}) => {
                 }}>
                 <Image
                   source={{
-                    uri:
-                      'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/funny-dog-captions-1563456605.jpg?crop=0.747xw:1.00xh;0.0459xw,0&resize=768:*',
+                    uri: userData.data.avatar,
                   }}
                   style={styles.image}
                 />
@@ -163,6 +126,8 @@ const FormProfile = ({navigation}) => {
                       textAlign: 'center',
                       marginBottom: 10,
                     }}
+                    placeholder="Address"
+                    placeholderTextColor="#2f33374f"
                   />
                   <TextInput
                     onChangeText={handleChange('age')}
@@ -173,6 +138,8 @@ const FormProfile = ({navigation}) => {
                       textAlign: 'center',
                       marginBottom: 10,
                     }}
+                    placeholder="Age"
+                    placeholderTextColor="#2f33374f"
                   />
                   <View
                     style={{
@@ -188,6 +155,8 @@ const FormProfile = ({navigation}) => {
                         textAlign: 'center',
                         width: '48%',
                       }}
+                      placeholder="Pet Gender"
+                      placeholderTextColor="#2f33374f"
                     />
                     <TextInput
                       onChangeText={handleChange('weight')}
@@ -198,6 +167,8 @@ const FormProfile = ({navigation}) => {
                         textAlign: 'center',
                         width: '48%',
                       }}
+                      placeholder="Weight"
+                      placeholderTextColor="#2f33374f"
                     />
                   </View>
                 </View>
@@ -215,18 +186,30 @@ const FormProfile = ({navigation}) => {
                   marginHorizontal: 20,
                   paddingHorizontal: 10,
                 }}
+                placeholder="Let write something about your pet here"
+                placeholderTextColor="#2f33374f"
               />
               <Text style={styles.title}>Photos</Text>
               <ListImage
-                images={images}
+                images={values.images}
                 listOption={listOption}
                 handleClickChoose={handleClickChoose}
                 handleClickView={handleClickView}
+                handleClickAdd={handleClickAdd}
               />
             </ScrollView>
           </View>
         )}
       </Formik>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}>
+        <UploadScreen propImage="images" setModalVisible={setModalVisible} />
+      </Modal>
     </View>
   );
 };

@@ -1,5 +1,7 @@
 import React from 'react';
 import AppIntroSlider from 'react-native-app-intro-slider';
+import {writeDataToAccount} from './redux/account/actions';
+import {useDispatch} from 'react-redux';
 import {
   View,
   Text,
@@ -32,6 +34,7 @@ const width = Dimensions.get('window').width;
 
 const IntroSlider = ({navigation}) => {
   // eslint-disable-next-line no-undef
+  const dispatch = useDispatch();
   const _renderItem = ({item}) => {
     return (
       <View
@@ -58,7 +61,12 @@ const IntroSlider = ({navigation}) => {
   };
 
   const _onDone = () => {
-    navigation.push('Instruction');
+    // navigation.push('Instruction');
+    dispatch(
+      writeDataToAccount({
+        introStep: 'Instruction',
+      }),
+    );
   };
 
   const _renderNextButton = () => {

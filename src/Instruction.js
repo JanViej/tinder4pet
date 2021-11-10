@@ -12,7 +12,8 @@ import {
 } from 'react-native';
 import instruction1 from './assets/image/instruction1.png';
 import UploadScreen from './UploadScreen';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
+import {writeDataToAccount} from './redux/account/actions';
 
 const styles = StyleSheet.create({
   container: {
@@ -34,9 +35,9 @@ const styles = StyleSheet.create({
 const Instruction = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [isUpload, setIsUpload] = useState(false);
-
+  const dispatch = useDispatch();
   const userData = useSelector(state => state.auth.data);
-  console.log('userData', userData);
+  console.log('instruction');
 
   const introText = [
     ...(isUpload
@@ -60,12 +61,19 @@ const Instruction = ({navigation}) => {
         'Now to let everyone know about you, press the button to create your background first!!!',
       btnTitle: 'Create background',
       onclick: () => {
-        navigation.push('FormProfile');
+        // navigation.push('FormProfile', {
+        //   fromPage: 'Instruction',
+        // });
+        dispatch(
+          writeDataToAccount({
+            introStep: 'FormProfile',
+          }),
+        );
       },
       image: (
         <Image
           source={{
-            uri: userData.avatar,
+            uri: userData.data.avatar,
           }}
           style={styles.avatar}
         />

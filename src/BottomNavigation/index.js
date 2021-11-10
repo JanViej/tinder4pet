@@ -70,27 +70,42 @@ const BottomNavigation = () => {
     </Tab.Navigator>
   );
 };
-
+const StepScreen = {
+  IntroSlider,
+  Instruction,
+  FormProfile,
+};
 const MenuStack = createStackNavigator();
 
 const MenuStackScreen = () => {
   const currentUser = useSelector(state => state.auth.data);
-
+  console.log('currentUser asd', currentUser);
+  //  steps = ['INTRO_SLIDER', 'INSTRUCTION', 'FORM_PROFILE', 'DONE']
   return (
     <MenuStack.Navigator headerMode={false}>
-      {currentUser?.data?.gmail &&
-        (currentUser?.data?.introSlider ? (
-          <MenuStack.Screen name="Home" component={Home} />
-        ) : (
-          <MenuStack.Screen name="IntroSlider" component={IntroSlider} />
-        ))}
-      <MenuStack.Screen name="Instruction" component={Instruction} />
-      <MenuStack.Screen name="Login" component={Login} />
+        <MenuStack.Screen name="Home" component={Home} />
+
+        <MenuStack.Screen name="Login" component={Login} />
+
+      {/* {currentUser?.data?.gmail ? (
+      ) : (
+      )} */}
+      {/* {currentUser?.data?.introStep !== 'Done' && (
+        <MenuStack.Screen
+          name={`${currentUser?.data?.introStep}`}
+          component={StepScreen[currentUser?.data?.introStep]}
+        />
+      )} */}
+      {/* {!currentUser?.data?.introSlider && (
+        <MenuStack.Screen name="IntroSlider" component={IntroSlider} />
+      )} */}
+
+      {/* <MenuStack.Screen name="Instruction" component={Instruction} /> */}
       <MenuStack.Screen name="Home2" component={Home} />
       <MenuStack.Screen name="Questionnaire" component={Questionnaire} />
       <MenuStack.Screen name="Account" component={Account} />
       <MenuStack.Screen name="Profile" component={Profile} />
-      <MenuStack.Screen name="FormProfile" component={FormProfile} />
+      {/* <MenuStack.Screen name="FormProfile" component={FormProfile} /> */}
       <MenuStack.Screen name="Gallery" component={Gallery} />
       <MenuStack.Screen name="ImageView" component={ImageView} />
       <MenuStack.Screen name="UploadScreen" component={UploadScreen} />
@@ -105,7 +120,6 @@ const MenuStackScreen = () => {
       <MenuStack.Screen name="PhoneSignIn" component={PhoneSignIn} />
       <MenuStack.Screen name="Signup" component={Signup} />
       <MenuStack.Screen name="HistoryDetails" component={HistoryDetails} />
-      <MenuStack.Screen name="Map" component={Map} />
     </MenuStack.Navigator>
   );
 };

@@ -18,7 +18,10 @@ export const {reducer, actions} = createSlice({
     setUserData: (state, {payload}) => {
       state.data = {
         ...state.data,
-        ...payload,
+        data: {
+          ...state.data.data,
+          ...payload,
+        },
       };
     },
   },

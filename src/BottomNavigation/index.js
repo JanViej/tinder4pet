@@ -3,8 +3,10 @@ import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
+import Foundation from 'react-native-vector-icons/Foundation';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Feather from 'react-native-vector-icons/Feather';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Menu from '../Menu';
 import Details from '../ItemDetails';
 import Cart from '../Cart';
@@ -15,6 +17,8 @@ import Signup from '../Signup';
 import Map from '../Map';
 import HistoryDetails from '../HistoryDetails';
 import IntroSlider from '../IntroSlider';
+import IntroSlider2 from '../IntroSlider';
+
 import PhoneSignIn from '../PhoneSignIn';
 import Home from '../Home';
 import Detail from '../Detail';
@@ -33,40 +37,55 @@ import Instruction from '../Instruction';
 const Tab = createMaterialBottomTabNavigator();
 
 const BottomNavigation = () => {
-  const isAuthenticated = useSelector(state => state.user.isAuthenticated);
-  const accountTabComponent = isAuthenticated ? Home : PhoneSignIn;
+  // const isAuthenticated = useSelector(state => state.user.isAuthenticated);
+  // const accountTabComponent = isAuthenticated ? Home : PhoneSignIn;
   return (
     <Tab.Navigator
       // initialRouteName="Menu"
-      activeColor="#64A1BD"
-      inactiveColor="#DDECF1"
+      activeColor="#FFAC9C"
+      inactiveColor="#FEE5E1"
       barStyle={{backgroundColor: '#fff'}}>
       <Tab.Screen
-        name="Menu"
-        component={Menu}
+        name="Home"
+        component={Home}
         options={{
-          tabBarLabel: 'Menu',
+          tabBarLabel: 'Home',
           tabBarIcon: ({color}) => (
-            <MaterialCommunityIcons
-              name="view-dashboard-outline"
-              color={color}
-              size={26}
-            />
+            <Foundation name="home" color={color} size={26} />
           ),
         }}
       />
-      {isAuthenticated && (
-        <Tab.Screen
-          name="History"
-          component={History}
-          options={{
-            tabBarLabel: 'History',
-            tabBarIcon: ({color}) => (
-              <MaterialCommunityIcons name="history" color={color} size={26} />
-            ),
-          }}
-        />
-      )}
+      <Tab.Screen
+        name="Recommend"
+        component={Recommend}
+        options={{
+          tabBarLabel: 'Discovery',
+          tabBarIcon: ({color}) => (
+            <Ionicons name="heart" color={color} size={26} />
+          ),
+        }}
+      />
+
+      <Tab.Screen
+        name="Room"
+        component={Room}
+        options={{
+          tabBarLabel: 'Connect',
+          tabBarIcon: ({color}) => (
+            <MaterialCommunityIcons name="message" color={color} size={26} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Account"
+        component={Account}
+        options={{
+          tabBarLabel: 'Account',
+          tabBarIcon: ({color}) => (
+            <FontAwesome5 name="user" color={color} size={26} />
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 };
@@ -80,32 +99,33 @@ const MenuStack = createStackNavigator();
 const MenuStackScreen = () => {
   const currentUser = useSelector(state => state.auth.data);
   console.log('currentUser asd', currentUser);
-  //  steps = ['INTRO_SLIDER', 'INSTRUCTION', 'FORM_PROFILE', 'DONE']
+  //  steps = ['INTRO_SLIDER', 'INSTRUCTION', 'FORM_PROFILE', 'DONE']S
   return (
     <MenuStack.Navigator headerMode={false}>
-        <MenuStack.Screen name="Home" component={Home} />
+      {(() => {
+        if (!currentUser?.data?.gmail)
+          return <MenuStack.Screen name="Login" component={Login} />;
+        if (!currentUser?.data?.introStep)
+          return (
+            <MenuStack.Screen name="IntroSlider" component={IntroSlider} />
+          );
 
-        <MenuStack.Screen name="Login" component={Login} />
+        if (currentUser?.data?.introStep !== 'Done')
+          return (
+            <MenuStack.Screen
+              name={`${currentUser?.data?.introStep}`}
+              component={StepScreen[currentUser?.data?.introStep]}
+            />
+          );
+        return <MenuStack.Screen name="Home" component={BottomNavigation} />;
+      })()}
+      {/* <MenuStack.Screen name="Home" component={Home} /> */}
 
-      {/* {currentUser?.data?.gmail ? (
-      ) : (
-      )} */}
-      {/* {currentUser?.data?.introStep !== 'Done' && (
-        <MenuStack.Screen
-          name={`${currentUser?.data?.introStep}`}
-          component={StepScreen[currentUser?.data?.introStep]}
-        />
-      )} */}
-      {/* {!currentUser?.data?.introSlider && (
-        <MenuStack.Screen name="IntroSlider" component={IntroSlider} />
-      )} */}
-
-      {/* <MenuStack.Screen name="Instruction" component={Instruction} /> */}
       <MenuStack.Screen name="Home2" component={Home} />
+      <MenuStack.Screen name="FormProfile2" component={FormProfile} />
       <MenuStack.Screen name="Questionnaire" component={Questionnaire} />
       <MenuStack.Screen name="Account" component={Account} />
       <MenuStack.Screen name="Profile" component={Profile} />
-      {/* <MenuStack.Screen name="FormProfile" component={FormProfile} /> */}
       <MenuStack.Screen name="Gallery" component={Gallery} />
       <MenuStack.Screen name="ImageView" component={ImageView} />
       <MenuStack.Screen name="UploadScreen" component={UploadScreen} />

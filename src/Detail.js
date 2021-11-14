@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {useSelector} from 'react-redux';
 import Carousel, {Pagination, ParallaxImage} from 'react-native-snap-carousel';
 import {
   StyleSheet,
@@ -9,17 +10,16 @@ import {
   Dimensions,
 } from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import Feather from 'react-native-vector-icons/Feather';
+import {ScrollView} from 'react-native-gesture-handler';
 
 const _renderItem = ({item, index}, parallaxProps) => {
   return (
     <View style={styles.item}>
       <ParallaxImage
         source={{
-          uri:
-            'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/funny-dog-captions-1563456605.jpg?crop=0.747xw:1.00xh;0.0459xw,0&resize=768:*',
+          uri: item.url,
         }}
         containerStyle={styles.imageContainer}
         style={styles.image}
@@ -32,36 +32,15 @@ const _renderItem = ({item, index}, parallaxProps) => {
 
 const {width: screenWidth} = Dimensions.get('window');
 
-const entries = [
-  {
-    title: 'Item 1',
-    text: 'Text 1',
-  },
-  {
-    title: 'Item 2',
-    text: 'Text 2',
-  },
-  {
-    title: 'Item 3',
-    text: 'Text 3',
-  },
-  {
-    title: 'Item 4',
-    text: 'Text 4',
-  },
-  {
-    title: 'Item 5',
-    text: 'Text 5',
-  },
-];
-
 const Detail = ({navigation}) => {
-  const [activeSlide, setActiveSlide] = useState(entries[0]);
+  const [activeSlide, setActiveSlide] = useState(userData?.data?.images[0]);
+  const userData = useSelector(state => state.auth.data);
+
   return (
-    <View>
+    <ScrollView>
       <View>
         <Carousel
-          data={entries}
+          data={userData?.data?.images}
           renderItem={_renderItem}
           onSnapToItem={index => setActiveSlide(index)}
           itemWidth={screenWidth - 40}
@@ -82,16 +61,12 @@ const Detail = ({navigation}) => {
         </TouchableOpacity>
         <TouchableOpacity
           style={{...styles.headerBtn, right: 30}}
-          onPress={() =>
-            navigation.push('FormProfile', {
-              fromPage: 'Detail',
-            })
-          }>
+          onPress={() => navigation.push('FormProfile2')}>
           {/* <AntDesign name="heart" color="#FF8C76" size={24} /> */}
           <Feather name="edit-2" color="#FF8C76" size={24} />
         </TouchableOpacity>
         <Pagination
-          dotsLength={entries.length}
+          dotsLength={userData?.data?.images.length}
           activeDotIndex={activeSlide}
           containerStyle={styles.containerDotStyle}
           dotStyle={styles.activeDotStyle}
@@ -99,7 +74,7 @@ const Detail = ({navigation}) => {
         />
       </View>
       <View style={{paddingHorizontal: 20, marginTop: 10}}>
-        <Text style={styles.name}>Mewo Persiion Cat</Text>
+        <Text style={styles.name}>{userData.data.petName}</Text>
         <View
           style={{
             flexDirection: 'row',
@@ -115,7 +90,7 @@ const Detail = ({navigation}) => {
               fontWeight: '700',
               fontFamily: 'FredokaOne-Regular',
             }}>
-            DaNang, VietNam
+            {userData.data.address}
           </Text>
         </View>
         <View
@@ -126,29 +101,29 @@ const Detail = ({navigation}) => {
           }}>
           <View style={styles.boxInfo}>
             <Text style={styles.key}>Sex</Text>
-            <Text style={styles.value}>Male</Text>
+            <Text style={styles.value}>{userData.data.petGender}</Text>
           </View>
           <View style={styles.boxInfo}>
             <Text style={styles.key}>Age</Text>
-            <Text style={styles.value}>5 Months</Text>
+            <Text style={styles.value}>{userData.data.age} Months</Text>
           </View>
           <View style={styles.boxInfo}>
             <Text style={styles.key}>Weight</Text>
-            <Text style={styles.value}>2kg</Text>
+            <Text style={styles.value}>
+              {userData.data.weight || 'No Data'}
+            </Text>
           </View>
         </View>
         <Text
           style={{
             fontSize: 14,
             lineHeight: 20,
+            marginBottom: 20,
           }}>
-          If you're having a ruff time thinking of caption ideas, stop hounding
-          yourself! We already did the work for you. From punny phrases to
-          touching quotes, here are the best Instagram captions for dogs that
-          are sure to have your followers howlin'.
+          {userData.data.description || 'No Data'}
         </Text>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

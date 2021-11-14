@@ -93,15 +93,9 @@ const Login = ({navigation}) => {
     navigation.push('Signup');
   };
   useEffect(() => {
-    if (currentUser?.data?.gmail) {
-      if (currentUser?.data?.introSlider) {
-        navigation.push('Home');
-      } else if (!currentUser?.data?.introSlider) {
-        navigation.push('IntroSlider');
-      }
-    }
+    dispatch(logout());
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentUser]);
+  }, []);
 
   return (
     <View style={styles.container}>

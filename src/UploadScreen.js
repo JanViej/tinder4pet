@@ -24,6 +24,7 @@ const UploadScreen = ({propImage, setIsUpload = () => {}, setModalVisible}) => {
   const [transferred, setTransferred] = useState(0);
   const dispatch = useDispatch();
   const currentData = useSelector(state => state.auth.data);
+  console.log('propImage asd', propImage);
 
   const selectImage = () => {
     const options = {
@@ -66,13 +67,14 @@ const UploadScreen = ({propImage, setIsUpload = () => {}, setModalVisible}) => {
     try {
       const res = await task;
       task.snapshot.ref.getDownloadURL().then(downloadURL => {
+        console.log('asdasd up hihi');
         dispatch(
           writeDataToAccount({
             ...(propImage === 'avatar' && {
               avatar: downloadURL,
             }),
             images: [
-              ...currentData?.data?.images,
+              ...(currentData?.data?.images || []),
               {
                 url: downloadURL,
               },

@@ -4,19 +4,18 @@ import {
   Text,
   View,
   TouchableOpacity,
-  Platform,
   Dimensions,
   TextInput,
-  Button,
   Modal,
   Image,
 } from 'react-native';
+import {writeDataToAccount} from './redux/account/actions';
+
 import {Formik} from 'formik';
 import ListImage from './components/ListImage';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {ScrollView} from 'react-native-gesture-handler';
 import {useSelector, useDispatch} from 'react-redux';
-import {getAccount} from './redux/auth/actions';
 import UploadScreen from './UploadScreen';
 
 const {width: windowWidth} = Dimensions.get('window');
@@ -26,11 +25,9 @@ const FormProfile = ({navigation, route}) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const dispatch = useDispatch();
-  // const {fromPage} = route.params;
   const userData = useSelector(state => state.auth.data);
   console.log('userData asd', userData);
   const [initialValues, setInitialValues] = useState({});
-  // console.log('fromPage asd', fromPage, initialValues);
 
   const handleClickChoose = id => () => {
     const index = listOption.indexOf(id);
@@ -54,7 +51,7 @@ const FormProfile = ({navigation, route}) => {
         weight: '',
         sex: userData?.data?.petGender,
         age: userData?.data?.age,
-        description: '',
+        description: userData?.data?.description || '',
         images: userData?.data?.images,
       });
     }
@@ -69,13 +66,35 @@ const FormProfile = ({navigation, route}) => {
       <Formik
         initialValues={initialValues}
         enableReinitialize={true}
-        onSubmit={values => console.log(values)}>
+        onSubmit={values => {
+          dispatch(
+            writeDataToAccount({
+              petName: values.name,
+              petGender: values.sex,
+              address: values.address,
+              age: values.age,
+              weight: values.weight,
+              description: values.description,
+              introStep: 'Done',
+            }),
+          );
+        }}>
         {({handleChange, handleBlur, handleSubmit, values}) => (
           <View style={{flex: 1}}>
             <View style={styles.header}>
               <TouchableOpacity
                 style={{flexDirection: 'row', alignItems: 'center'}}
-                onPress={() => navigation.goBack()}>
+                onPress={() => {
+                  if (userData.data.introStep === 'FormProfile') {
+                    dispatch(
+                      writeDataToAccount({
+                        introStep: 'Instruction',
+                      }),
+                    );
+                  } else {
+                    navigation.goBack();
+                  }
+                }}>
                 <AntDesign name="left" color="#000" size={20} />
                 <Text style={{fontSize: 16, marginLeft: 5}}>Back</Text>
               </TouchableOpacity>
@@ -222,6 +241,7 @@ const styles = StyleSheet.create({
     // backgroundColor: 'red',
     width: windowWidth,
     flex: 1,
+    paddingBottom: 20,
   },
   name: {
     fontFamily: 'FredokaOne-Regular',

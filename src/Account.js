@@ -4,17 +4,21 @@ import {
   Text,
   View,
   TouchableOpacity,
-  Platform,
   Dimensions,
   Image,
 } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useDispatch, useSelector} from 'react-redux';
+import {logout} from './redux/auth/actions';
 
 const {width: windowWidth} = Dimensions.get('window');
 
 const Account = ({navigation}) => {
+  const dispatch = useDispatch();
+  const userData = useSelector(state => state.auth.data);
+  console.log('userData asd', userData);
   const listMenu = [
     {
       id: 5,
@@ -63,7 +67,9 @@ const Account = ({navigation}) => {
       title: 'Logout',
       icon: <Feather name="log-out" color="#fff" size={22} />,
       icBackground: '#9E220A',
-      onClick: () => {},
+      onClick: () => {
+        dispatch(logout());
+      },
     },
   ];
   return (
@@ -76,8 +82,7 @@ const Account = ({navigation}) => {
         }}>
         <Image
           source={{
-            uri:
-              'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/funny-dog-captions-1563456605.jpg?crop=0.747xw:1.00xh;0.0459xw,0&resize=768:*',
+            uri: userData.data.avatar,
           }}
           style={styles.image}
         />
@@ -86,10 +91,10 @@ const Account = ({navigation}) => {
             fontFamily: 'FredokaOne-Regular',
             fontSize: 22,
           }}>
-          Mewo
+          {userData.data.petName}
         </Text>
         <Text style={{fontWeight: '700', color: '#C2BDBD', fontSize: 18}}>
-          3 months | DaNang
+          {userData.data.age} months | {userData.data.address}
         </Text>
       </View>
 

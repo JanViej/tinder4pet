@@ -1,24 +1,14 @@
 import React from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  Dimensions,
-  Image,
-} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useDispatch, useSelector} from 'react-redux';
 import {logout} from './redux/auth/actions';
 
-const {width: windowWidth} = Dimensions.get('window');
-
 const Account = ({navigation}) => {
   const dispatch = useDispatch();
   const userData = useSelector(state => state.auth.data);
-  console.log('userData asd', userData);
   const listMenu = [
     {
       id: 5,

@@ -39,7 +39,9 @@ const Account = ({navigation}) => {
       title: 'Edit Profile',
       icon: <AntDesign name="solution1" color="#fff" size={22} />,
       icBackground: '#6A9CFD',
-      onClick: () => {},
+      onClick: () => {
+        navigation.push('FormProfile2');
+      },
     },
 
     {

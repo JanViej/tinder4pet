@@ -26,7 +26,6 @@ const FormProfile = ({navigation, route}) => {
 
   const dispatch = useDispatch();
   const userData = useSelector(state => state.auth.data);
-  console.log('userData asd', userData);
   const [initialValues, setInitialValues] = useState({});
 
   const handleClickChoose = id => () => {

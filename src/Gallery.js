@@ -1,76 +1,20 @@
 import React, {useState} from 'react';
 import {ScrollView} from 'react-native';
-import {Text, View, TouchableOpacity} from 'react-native';
+import {Text, View, TouchableOpacity, Modal} from 'react-native';
 import ListImage from './components/ListImage';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-
-const images = [
-  {
-    id: 1,
-    name: 'hi',
-    url:
-      'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/funny-dog-captions-1563456605.jpg?crop=0.747xw:1.00xh;0.0459xw,0&resize=768:*',
-  },
-  {
-    id: 2,
-    name: 'hi',
-    url:
-      'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/funny-dog-captions-1563456605.jpg?crop=0.747xw:1.00xh;0.0459xw,0&resize=768:*',
-  },
-  {
-    id: 3,
-    name: 'hi',
-    url:
-      'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/funny-dog-captions-1563456605.jpg?crop=0.747xw:1.00xh;0.0459xw,0&resize=768:*',
-  },
-  {
-    id: 4,
-    name: 'hi',
-    url:
-      'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/funny-dog-captions-1563456605.jpg?crop=0.747xw:1.00xh;0.0459xw,0&resize=768:*',
-  },
-  {
-    id: 5,
-    name: 'hi',
-    url:
-      'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/funny-dog-captions-1563456605.jpg?crop=0.747xw:1.00xh;0.0459xw,0&resize=768:*',
-  },
-  {
-    id: 6,
-    name: 'hi',
-    url:
-      'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/funny-dog-captions-1563456605.jpg?crop=0.747xw:1.00xh;0.0459xw,0&resize=768:*',
-  },
-  {
-    id: 7,
-    name: 'hi',
-    url:
-      'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/funny-dog-captions-1563456605.jpg?crop=0.747xw:1.00xh;0.0459xw,0&resize=768:*',
-  },
-  {
-    id: 8,
-    name: 'hi',
-    url:
-      'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/funny-dog-captions-1563456605.jpg?crop=0.747xw:1.00xh;0.0459xw,0&resize=768:*',
-  },
-  {
-    id: 9,
-    name: 'hi',
-    url:
-      'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/funny-dog-captions-1563456605.jpg?crop=0.747xw:1.00xh;0.0459xw,0&resize=768:*',
-  },
-  {
-    id: 10,
-    name: 'hi',
-    url:
-      'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/funny-dog-captions-1563456605.jpg?crop=0.747xw:1.00xh;0.0459xw,0&resize=768:*',
-  },
-];
+import {useSelector} from 'react-redux';
+import UploadScreen from './UploadScreen';
 
 const Gallery = ({navigation}) => {
   const [listOption, setListOption] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const userData = useSelector(state => state.auth.data);
 
-  console.log('listOption', listOption);
+  const handleClickAdd = () => {
+    setModalVisible(true);
+  };
+
   const handleClickChoose = id => () => {
     const index = listOption.indexOf(id);
     if (index > -1) {
@@ -111,12 +55,23 @@ const Gallery = ({navigation}) => {
       </View>
       <ScrollView>
         <ListImage
-          images={images}
+          images={userData?.data?.images || []}
           listOption={listOption}
           handleClickChoose={handleClickChoose}
           handleClickView={handleClickView}
+          handleClickAdd={handleClickAdd}
         />
       </ScrollView>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}>
+        <UploadScreen propImage="images" setModalVisible={setModalVisible} />
+      </Modal>
     </View>
   );
 };

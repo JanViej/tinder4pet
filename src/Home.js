@@ -20,6 +20,7 @@ import {actions as userActions} from './redux/user/slice';
 import {useDispatch, useSelector} from 'react-redux';
 import {getAllUser, reactLike, reactDislike} from './redux/home/actions';
 import {getCats, getDogs} from './redux/home/selectors';
+import moment from 'moment';
 
 const StatusCard = ({text}) => {
   return (
@@ -98,11 +99,21 @@ const Home = ({navigation}) => {
   }, []);
 
   const handleYup = card => {
-    dispatch(reactLike(card?.id));
+    dispatch(
+      reactLike({
+        id: card?.id,
+        createdAt: moment().toISOString(),
+      }),
+    );
     return true; // return false if you wish to cancel the action
   };
   const handleNope = card => {
-    dispatch(reactDislike(card?.id));
+    dispatch(
+      reactDislike({
+        id: card?.id,
+        createdAt: moment().toISOString(),
+      }),
+    );
     return true;
   };
   const handleMaybe = card => {

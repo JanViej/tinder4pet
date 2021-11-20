@@ -1,6 +1,6 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import firestore from '@react-native-firebase/firestore';
-
+import {uniqBy, compact} from 'lodash';
 export const getAllUser = createAsyncThunk(
   'home/getAllUser',
   async (payload, thunkAPI) => {
@@ -32,18 +32,50 @@ export const reactLike = createAsyncThunk(
     const userData = thunkAPI.getState().auth.data;
 
     try {
+      let likeData = {};
+      await firestore()
+        .collection('account')
+        .doc(`${payload.id}`)
+        .get()
+        .then(querySnapshot => {
+          likeData = {
+            ...querySnapshot?._data,
+          };
+        });
       await firestore()
         .collection('account')
         .doc(`${userData.id}`)
         .update({
-          like: firestore.FieldValue.arrayUnion(payload),
+          like: compact(
+            uniqBy(
+              [
+                ...(userData.data.like || []),
+                {
+                  id: payload.id,
+                  createdAt: payload.createdAt,
+                },
+              ],
+              'id',
+            ),
+          ),
         });
 
       await firestore()
         .collection('account')
-        .doc(`${payload}`)
+        .doc(`${payload.id}`)
         .update({
-          liker: firestore.FieldValue.arrayUnion(userData.id),
+          liker: compact(
+            uniqBy(
+              [
+                ...(likeData?.liker || []),
+                {
+                  id: userData.id,
+                  createdAt: payload.createdAt,
+                },
+              ],
+              'id',
+            ),
+          ),
         });
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
@@ -57,18 +89,53 @@ export const reactDislike = createAsyncThunk(
     const userData = thunkAPI.getState().auth.data;
 
     try {
+      let dislikeData = {};
       await firestore()
         .collection('account')
-        .doc(`${userData.id}`)
-        .update({
-          dislike: firestore.FieldValue.arrayUnion(payload),
+        .doc(`${payload.id}`)
+        .get()
+        .then(querySnapshot => {
+          dislikeData = {
+            ...querySnapshot?._data,
+          };
         });
 
       await firestore()
         .collection('account')
-        .doc(`${payload}`)
+        .doc(`${userData.id}`)
         .update({
-          disliker: firestore.FieldValue.arrayUnion(userData.id),
+          dislike: compact(
+            uniqBy(
+              // eslint-disable-next-line no-sparse-arrays
+              [
+                ...(userData.data.dislike || []),
+                ,
+                {
+                  id: payload.id,
+                  createdAt: payload.createdAt,
+                },
+              ],
+              'id',
+            ),
+          ),
+        });
+
+      await firestore()
+        .collection('account')
+        .doc(`${payload.id}`)
+        .update({
+          disliker: compact(
+            uniqBy(
+              [
+                ...(dislikeData?.disliker || []),
+                {
+                  id: userData.id,
+                  createdAt: payload.createdAt,
+                },
+              ],
+              'id',
+            ),
+          ),
         });
     } catch (error) {
       return thunkAPI.rejectWithValue(error);

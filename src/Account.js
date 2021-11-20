@@ -74,7 +74,7 @@ const Account = ({navigation}) => {
         }}>
         <Image
           source={{
-            uri: userData.data.avatar,
+            uri: userData?.data?.avatar,
           }}
           style={styles.image}
         />
@@ -83,10 +83,10 @@ const Account = ({navigation}) => {
             fontFamily: 'FredokaOne-Regular',
             fontSize: 22,
           }}>
-          {userData.data.petName}
+          {userData?.data?.petName}
         </Text>
         <Text style={{fontWeight: '700', color: '#C2BDBD', fontSize: 18}}>
-          {userData.data.age} months | {userData.data.address}
+          {userData?.data?.age} months | {userData?.data?.address}
         </Text>
       </View>
 

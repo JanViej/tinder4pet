@@ -7,6 +7,7 @@ import event from './event/slice';
 import cart from './cart/slice';
 import auth from './auth/slice';
 import account from './auth/slice';
+import home from './home/slice'
 
 const rootReducer = combineReducers({
   drink,
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
   cart,
   auth,
   account,
+  home,
 });
 
 export default rootReducer;

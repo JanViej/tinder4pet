@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   Text,
@@ -19,7 +19,11 @@ import paw from './assets/image/paw.png';
 // import auth from '@react-native-firebase/auth';
 import {login, logout} from './redux/auth/actions';
 import {Formik} from 'formik';
-
+import Modal from 'react-native-modal';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import {Button} from 'react-native-elements';
+import {actions} from './redux/auth/slice';
+import {writeDataToAccount} from './redux/account/actions';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -80,14 +84,37 @@ const styles = StyleSheet.create({
     fontSize: 26,
     color: '#6A9CFD',
   },
+  modalWrapper: {
+    backgroundColor: '#fff',
+    padding: 10,
+    margin: 10,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  text: {
+    flex: 9,
+    paddingLeft: 5,
+  },
+  btnCloseContainer: {
+    backgroundColor: '#fff',
+    flex: 1,
+  },
+  buttonCloseStyle: {
+    backgroundColor: '#fff',
+    padding: 0,
+    margin: 0,
+  },
 });
 
 const Login = ({navigation}) => {
   const dispatch = useDispatch();
   const currentUser = useSelector(state => state.auth.data);
   const loading = useSelector(state => state.auth.loading);
+  const isNewUser = useSelector(state => state.auth.isNew);
+  const [modalVisible, setModalVisible] = useState(false);
   const handleClickForgot = () => {
-    dispatch(logout());
+    // dispatch(logout());
   };
   const handleClickSignUp = () => {
     navigation.push('Signup');
@@ -97,8 +124,30 @@ const Login = ({navigation}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (isNewUser) {
+      setModalVisible(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <View style={styles.container}>
+      <Modal style={styles.modal} isVisible={modalVisible}>
+        <View style={styles.modalWrapper}>
+          <AntDesign name="checkcircle" color="#5fa4b7" size={18} />
+          <Text style={styles.text}>Create account successfully!!!</Text>
+          <Button
+            onPress={() => {
+              setModalVisible(false);
+              dispatch(actions.setIsNew());
+            }}
+            title="x"
+            titleStyle={{fontSize: 20, color: '#5fa4b7'}}
+            containerStyle={styles.btnCloseContainer}
+            buttonStyle={styles.buttonCloseStyle}
+          />
+        </View>
+      </Modal>
       <ImageBackground source={background} style={styles.image}>
         <View style={{width: '100%', alignItems: 'center', marginTop: 100}}>
           <Image source={logofull} style={styles.logo} />
@@ -120,6 +169,12 @@ const Login = ({navigation}) => {
             password: '123456',
           }}
           onSubmit={values => {
+            console.log('asd asd hi');
+            dispatch(
+              writeDataToAccount({
+                introStep: 'Questionnaire',
+              }),
+            );
             dispatch(login(values));
           }}>
           {({handleChange, handleBlur, handleSubmit, values}) => (

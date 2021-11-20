@@ -12,17 +12,18 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import cat from './assets/image/cat.jpg';
 import selection from './assets/image/selection.png';
 import {logout} from './redux/auth/actions';
 import shadow from './assets/image/shadow.png';
 import {useRef} from 'react';
 import {actions as userActions} from './redux/user/slice';
 import {useDispatch, useSelector} from 'react-redux';
+import {getAllUser, reactLike, reactDislike} from './redux/home/actions';
+import {getCats, getDogs} from './redux/home/selectors';
 
 const StatusCard = ({text}) => {
   return (
-    <View>
+    <View style={{flex: 1}}>
       <Text style={styles.cardsText}>{text}</Text>
     </View>
   );
@@ -32,31 +33,37 @@ const categories = [
   {
     id: 1,
     name: 'Dog',
+    value: 'dog',
   },
   {
     id: 2,
     name: 'Cat',
+    value: 'cat',
   },
   {
     id: 3,
-    name: 'Bird',
-  },
-  {
-    id: 4,
-    name: 'Other',
+    name: 'All',
+    value: 'all',
   },
 ];
 
 const Home = ({navigation}) => {
-  const [cards, setCards] = useState();
+  // const [cards, setCards] = useState();
   const swipeCardRef = useRef();
   const dispatch = useDispatch();
-  const currentCategory = useSelector(state => state.user.currentCategory);
+  // const currentCategory = useSelector(state => state.user.currentCategory);
+  const all = useSelector(state => state.home.allUsersData);
+  const userData = useSelector(state => state.auth.data);
+  const dog = useSelector(getDogs);
+  const cat = useSelector(getCats);
+  const [filterData, setFilterData] = useState(all);
+  const [currentCategory, setCurrentCategory] = useState(categories[2]);
+
   const Card = ({data}) => {
     return (
       <View style={[styles.card, {backgroundColor: data.backgroundColor}]}>
         <TouchableOpacity onPress={handelClickDetail}>
-          <Image source={cat} style={styles.image} />
+          <Image source={{uri: data?.avatar}} style={styles.image} />
           <Image source={shadow} style={{position: 'absolute', bottom: 90}} />
           <Text
             style={{
@@ -67,7 +74,7 @@ const Home = ({navigation}) => {
               fontSize: 20,
               fontWeight: '700',
             }}>
-            Mewo,
+            {data?.petName},
           </Text>
         </TouchableOpacity>
         <View style={styles.bottomReact}>
@@ -86,28 +93,20 @@ const Home = ({navigation}) => {
     );
   };
 
-  // replace with real remote data fetching
   useEffect(() => {
-    setTimeout(() => {
-      setCards([
-        {text: 'Tomato', backgroundColor: 'red'},
-        {text: 'Aubergine', backgroundColor: 'purple'},
-        {text: 'Courgette', backgroundColor: 'green'},
-        {text: 'Blueberry', backgroundColor: 'blue'},
-        {text: 'Umm...', backgroundColor: 'cyan'},
-        {text: 'orange', backgroundColor: 'orange'},
-      ]);
-    }, 3000);
+    dispatch(getAllUser());
   }, []);
 
   const handleYup = card => {
+    dispatch(reactLike(card?.id));
     return true; // return false if you wish to cancel the action
   };
   const handleNope = card => {
+    dispatch(reactDislike(card?.id));
     return true;
   };
   const handleMaybe = card => {
-    return true;
+    return false;
   };
 
   const handelClickDetail = () => {
@@ -121,7 +120,17 @@ const Home = ({navigation}) => {
   const handleClickBell = () => {};
 
   const handleSelectCategory = category => () => {
-    dispatch(userActions.setCurrentCategory(category));
+    if (category.value === 'dog') {
+      setFilterData(dog);
+      setCurrentCategory(categories[0]);
+    } else if (category.value === 'cat') {
+      setFilterData(cat);
+      setCurrentCategory(categories[1]);
+    } else {
+      setFilterData(all);
+      setCurrentCategory(categories[2]);
+    }
+    // dispatch(userActions.setCurrentCategory(category));
   };
 
   return (
@@ -132,7 +141,7 @@ const Home = ({navigation}) => {
           <Fontisto name="map-marker" color="#ffac9c" size={24} />
           <Text
             style={{flex: 5, fontSize: 24, fontWeight: '700', marginLeft: 10}}>
-            Da Nang
+            {userData?.data?.address}
           </Text>
           <View
             style={{
@@ -196,10 +205,10 @@ const Home = ({navigation}) => {
         ))}
       </View>
 
-      {cards ? (
+      {filterData ? (
         <SwipeCards
           ref={swipeCardRef}
-          cards={cards}
+          cards={filterData}
           renderCard={cardData => <Card data={cardData} />}
           keyExtractor={cardData => String(cardData.text)}
           renderNoMoreCards={() => <StatusCard text="No more cards..." />}

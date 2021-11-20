@@ -90,6 +90,8 @@ const BottomNavigation = () => {
   );
 };
 const StepScreen = {
+  Login,
+  Questionnaire,
   IntroSlider,
   Instruction,
   FormProfile,
@@ -120,10 +122,11 @@ const MenuStackScreen = () => {
         return <MenuStack.Screen name="Home" component={BottomNavigation} />;
       })()}
       {/* <MenuStack.Screen name="Home" component={Home} /> */}
+      <MenuStack.Screen name="Login2" component={Login} />
 
       <MenuStack.Screen name="Home2" component={Home} />
       <MenuStack.Screen name="FormProfile2" component={FormProfile} />
-      <MenuStack.Screen name="Questionnaire" component={Questionnaire} />
+      {/* <MenuStack.Screen name="Questionnaire" component={Questionnaire} /> */}
       <MenuStack.Screen name="Account" component={Account} />
       <MenuStack.Screen name="Profile" component={Profile} />
       <MenuStack.Screen name="Gallery" component={Gallery} />

@@ -9,6 +9,7 @@ export const initialState = {
   isActive: false,
   password: '',
   currentCategory: {},
+  isNew: false,
 };
 
 export const {reducer, actions} = createSlice({
@@ -24,10 +25,14 @@ export const {reducer, actions} = createSlice({
         },
       };
     },
+    setIsNew: state => {
+      state.isNew = false;
+    },
   },
   extraReducers: {
     [register.fulfilled]: (state, {payload}) => {
       state.loading = false;
+      state.isNew = true;
     },
     [register.pending]: (state, {payload}) => {
       state.loading = true;

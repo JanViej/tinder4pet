@@ -31,11 +31,13 @@ export const register = createAsyncThunk(
       );
       console.log('response', response);
       if (response) {
+        await thunkAPI.dispatch(logout());
         await firestore().collection('account').add({
           gmail: payload?.username,
+          role: 'user',
+          introStep: 'Login',
         });
-        await thunkAPI.dispatch(logout());
-        payload?.navigation.push('Login');
+        // payload?.navigation.push('Login2');
       }
       return response;
     } catch (error) {

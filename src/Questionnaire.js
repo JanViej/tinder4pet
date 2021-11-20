@@ -71,7 +71,7 @@ const chatBotContent = [
         },
       ],
     },
-    type: 'favorite',
+    type: 'type',
   },
   {
     _id: 4,
@@ -221,14 +221,14 @@ const Questionnaire = ({navigation}) => {
   const [key, setKey] = useState('introSlider');
   const [answer, setAnswer] = useState();
 
-  useEffect(() => {
-    dispatch(
-      actions.setUserData({
-        introSlider: true,
-      }),
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // useEffect(() => {
+  //   dispatch(
+  //     actions.setUserData({
+  //       introSlider: true,
+  //     }),
+  //   );
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   const handleSend = (newMessage = []) => {
     setMessages(GiftedChat.append(messages, newMessage));
@@ -374,7 +374,11 @@ const Questionnaire = ({navigation}) => {
 
     if (quickReply[0].value === 'yeah') {
       dispatch(writeDataToAccount(answer));
-      navigation.push('Instruction');
+      dispatch(
+        writeDataToAccount({
+          introStep: 'IntroSlider',
+        }),
+      );
     } else if (quickReply[0].value === 'skip') {
       handleSend([chatBotContent[chatBotContent.length - 1], msg]);
     } else {

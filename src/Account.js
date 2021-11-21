@@ -23,6 +23,10 @@ const Account = ({navigation}) => {
       icBackground: '#F5576A',
       onClick: () => {
         navigation.push('Detail');
+        navigation.navigate('Detail', {
+          itemId: userData.id,
+          screen: 'Account',
+        });
       },
     },
     {

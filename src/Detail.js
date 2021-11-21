@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {useSelector} from 'react-redux';
+import React, {useState, useEffect} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
 import Carousel, {Pagination, ParallaxImage} from 'react-native-snap-carousel';
 import {
   StyleSheet,
@@ -8,11 +8,19 @@ import {
   TouchableOpacity,
   Platform,
   Dimensions,
+  Image,
 } from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import Feather from 'react-native-vector-icons/Feather';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import {ScrollView} from 'react-native-gesture-handler';
+import {getUserById} from './redux/home/actions';
+import {getAllUser, reactLike, removeLove} from './redux/home/actions';
+import moment from 'moment';
+import Modal from 'react-native-modal';
+import loveIcon from './assets/image/love.png';
+import {compact} from 'lodash';
 
 const _renderItem = ({item, index}, parallaxProps) => {
   return (
@@ -32,15 +40,113 @@ const _renderItem = ({item, index}, parallaxProps) => {
 
 const {width: screenWidth} = Dimensions.get('window');
 
-const Detail = ({navigation}) => {
+const Detail = ({navigation, route}) => {
   const [activeSlide, setActiveSlide] = useState(userData?.data?.images[0]);
+  const dispatch = useDispatch();
   const userData = useSelector(state => state.auth.data);
+  const {itemId, screen} = route.params;
+  const [isVisible, setIsVisible] = useState(false);
+
+  const [dataDetail, setDataDetail] = useState({});
+  const partnerDetail = useSelector(state => state.home.partnerDetail);
+
+  const [love, setLove] = useState();
+
+  useEffect(() => {
+    if (screen !== 'Account' && itemId) {
+      dispatch(getUserById(itemId));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [screen, itemId]);
+
+  useEffect(() => {
+    if (screen !== 'Account' && partnerDetail && userData) {
+      setDataDetail(partnerDetail);
+      setLove(
+        compact(partnerDetail?.liker?.filter(e => e.id === userData?.id))
+          .length > 0
+          ? true
+          : false,
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [screen, partnerDetail]);
+
+  // const handleClickLove = id => {
+  //   setIsVisible(true);
+  //   const timeout = setTimeout(() => {
+  //     setIsVisible(false);
+  //     clearTimeout(timeout);
+  //   }, 1500);
+  //   dispatch(
+  //     reactLike({
+  //       id: id,
+  //       createdAt: moment().toISOString(),
+  //     }),
+  //   ).then(() => {
+  //     dispatch(getAllUser());
+  //   });
+  // };
+
+  const handleClickEdit = () => {
+    navigation.push('FormProfile2');
+  };
+
+  const toggleLove = (id, item) => {
+    if (love) {
+      setLove(false);
+      console.log('asd asd remove');
+      dispatch(
+        removeLove({
+          id: id,
+          dataDetail: item,
+        }),
+      );
+    } else {
+      console.log('asd asd love');
+      setLove(true);
+      setIsVisible(true);
+      const timeout = setTimeout(() => {
+        setIsVisible(false);
+        clearTimeout(timeout);
+      }, 1500);
+      dispatch(
+        reactLike({
+          id: id,
+          createdAt: moment().toISOString(),
+        }),
+      ).then(() => {
+        dispatch(getAllUser());
+      });
+    }
+  };
 
   return (
     <ScrollView>
+      <Modal
+        style={styles.modal}
+        isVisible={isVisible}
+        backdropColor="#fff"
+        backdropOpacity={0.6}
+        animationIn="zoomInDown"
+        animationOut="zoomOutUp"
+        animationInTiming={600}
+        animationOutTiming={600}
+        backdropTransitionInTiming={600}
+        backdropTransitionOutTiming={600}
+        onBackdropPress={() => setIsVisible(false)}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Image source={loveIcon} style={styles.icon} />
+        </View>
+      </Modal>
       <View>
         <Carousel
-          data={userData?.data?.images}
+          data={dataDetail?.images}
           renderItem={_renderItem}
           onSnapToItem={index => setActiveSlide(index)}
           itemWidth={screenWidth - 40}
@@ -61,12 +167,27 @@ const Detail = ({navigation}) => {
         </TouchableOpacity>
         <TouchableOpacity
           style={{...styles.headerBtn, right: 30}}
-          onPress={() => navigation.push('FormProfile2')}>
-          {/* <AntDesign name="heart" color="#FF8C76" size={24} /> */}
-          <Feather name="edit-2" color="#FF8C76" size={24} />
+          onPress={() => {
+            if (screen !== 'Account') {
+              console.log('hihih asd', dataDetail);
+              toggleLove(dataDetail?.id, dataDetail);
+            } else {
+              handleClickEdit();
+            }
+          }}>
+          {screen !== 'Account' && love ? (
+            <AntDesign name="heart" color="#FF8C76" size={24} />
+          ) : screen !== 'Account' && !love ? (
+            <AntDesign name="heart" color="#A5A5A5" size={24} />
+          ) : (
+            <Feather name="edit-2" color="#FF8C76" size={24} />
+          )}
+          {/* {screen !== 'Home' && (
+            <Feather name="edit-2" color="#FF8C76" size={24} />
+          )} */}
         </TouchableOpacity>
         <Pagination
-          dotsLength={userData?.data?.images.length}
+          dotsLength={dataDetail?.images?.length}
           activeDotIndex={activeSlide}
           containerStyle={styles.containerDotStyle}
           dotStyle={styles.activeDotStyle}
@@ -74,7 +195,7 @@ const Detail = ({navigation}) => {
         />
       </View>
       <View style={{paddingHorizontal: 20, marginTop: 10}}>
-        <Text style={styles.name}>{userData.data.petName}</Text>
+        <Text style={styles.name}>{dataDetail.petName}</Text>
         <View
           style={{
             flexDirection: 'row',
@@ -90,7 +211,7 @@ const Detail = ({navigation}) => {
               fontWeight: '700',
               fontFamily: 'FredokaOne-Regular',
             }}>
-            {userData.data.address}
+            {dataDetail.address}
           </Text>
         </View>
         <View
@@ -101,17 +222,15 @@ const Detail = ({navigation}) => {
           }}>
           <View style={styles.boxInfo}>
             <Text style={styles.key}>Sex</Text>
-            <Text style={styles.value}>{userData.data.petGender}</Text>
+            <Text style={styles.value}>{dataDetail.petGender}</Text>
           </View>
           <View style={styles.boxInfo}>
             <Text style={styles.key}>Age</Text>
-            <Text style={styles.value}>{userData.data.age} Months</Text>
+            <Text style={styles.value}>{dataDetail.age} Months</Text>
           </View>
           <View style={styles.boxInfo}>
             <Text style={styles.key}>Weight</Text>
-            <Text style={styles.value}>
-              {userData.data.weight || 'No Data'}
-            </Text>
+            <Text style={styles.value}>{dataDetail.weight || 'No Data'}</Text>
           </View>
         </View>
         <Text
@@ -120,7 +239,7 @@ const Detail = ({navigation}) => {
             lineHeight: 20,
             marginBottom: 20,
           }}>
-          {userData.data.description || 'No Data'}
+          {dataDetail.description || 'No Data'}
         </Text>
       </View>
     </ScrollView>
@@ -200,5 +319,17 @@ const styles = StyleSheet.create({
     height: 50,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  icon: {
+    width: 100,
+    height: 100,
+    borderRadius: 15,
+    marginRight: 10,
+  },
+  modal: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
   },
 });

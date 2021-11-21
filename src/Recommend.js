@@ -6,28 +6,88 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  RefreshControl,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import Feather from 'react-native-vector-icons/Feather';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useSelector, useDispatch} from 'react-redux';
 import {getAllUser, reactLike, reactDislike} from './redux/home/actions';
 import {getLikers} from './redux/recommend/selectors';
 import moment from 'moment';
-const Recommend = () => {
+import balloon from './assets/image/balloons.png';
+import Modal from 'react-native-modal';
+import {useEffect} from 'react';
+import {compact} from 'lodash';
+
+const Recommend = ({navigation}) => {
   const dispatch = useDispatch();
   const liker = useSelector(getLikers);
-  console.log('liker asd', liker);
+  const [isVisible, setIsVisible] = useState(false);
+
+  const [refreshing, setRefreshing] = useState(false);
+  const userData = useSelector(state => state.auth.data);
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    dispatch(getAllUser()).then(() => {
+      setRefreshing(false);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleClickLove = id => () => {
+    setIsVisible(true);
     dispatch(
       reactLike({
         id: id,
         createdAt: moment().toISOString(),
       }),
-    );
+    ).then(() => {
+      dispatch(getAllUser());
+    });
   };
+
+  const handleClickDetail = id => () => {
+    navigation.navigate('Detail', {
+      itemId: id,
+      screen: 'Recommend',
+    });
+  };
+
   return (
     <View style={{backgroundColor: '#FFF5F3', flex: 1}}>
+      <Modal
+        style={styles.modal}
+        isVisible={isVisible}
+        backdropColor="#ffac9c"
+        backdropOpacity={0.6}
+        animationIn="zoomInDown"
+        animationOut="zoomOutUp"
+        animationInTiming={600}
+        animationOutTiming={600}
+        backdropTransitionInTiming={600}
+        backdropTransitionOutTiming={600}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Image source={balloon} style={styles.image} />
+          <Text style={{marginTop: 30, fontSize: 20}}>
+            Your pets are matched,
+          </Text>
+          <TouchableOpacity>
+            <Text style={{marginTop: 8}}>Press here to start talking now</Text>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity onPress={() => setIsVisible(false)}>
+          <Text style={{marginBottom: 20, textDecorationLine: 'underline'}}>
+            Skip
+          </Text>
+        </TouchableOpacity>
+      </Modal>
       {liker?.length > 0 ? (
         <>
           <Text
@@ -38,7 +98,11 @@ const Recommend = () => {
             }}>
             Make friend with me
           </Text>
-          <ScrollView style={styles.container}>
+          <ScrollView
+            style={styles.container}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }>
             {liker?.map((item, index) => (
               <TouchableOpacity
                 style={{
@@ -50,7 +114,8 @@ const Recommend = () => {
                   marginHorizontal: 20,
                   marginBottom: 20,
                   alignItems: 'center',
-                }}>
+                }}
+                onPress={handleClickDetail(item.id)}>
                 <Image
                   source={{
                     uri: item.avatar,
@@ -78,13 +143,27 @@ const Recommend = () => {
                         height: 40,
                         backgroundColor: '#fff',
                         borderWidth: 1,
-                        borderColor: '#C2BDBD',
+                        borderColor: '#ffac9c',
                         borderRadius: 100,
                         justifyContent: 'center',
                         alignItems: 'center',
                       }}
-                      onPress={handleClickLove(item.id)}>
-                      <AntDesign name="heart" color="#E8E8E8" size={18} />
+                      onPress={
+                        compact(item?.liker?.filter(e => e.id === userData?.id))
+                          .length > 0
+                          ? console.log('chat asd')
+                          : handleClickLove(item.id)
+                      }>
+                      {compact(item?.liker?.filter(e => e.id === userData?.id))
+                        .length > 0 ? (
+                        <MaterialCommunityIcons
+                          name="message"
+                          color="#ffac9c"
+                          size={18}
+                        />
+                      ) : (
+                        <AntDesign name="heart" color="#E8E8E8" size={18} />
+                      )}
                     </TouchableOpacity>
                   </View>
                   <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
@@ -157,5 +236,11 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 15,
     marginRight: 10,
+  },
+  modal: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
   },
 });

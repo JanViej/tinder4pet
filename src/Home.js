@@ -60,10 +60,21 @@ const Home = ({navigation}) => {
   const [filterData, setFilterData] = useState(all);
   const [currentCategory, setCurrentCategory] = useState(categories[2]);
 
+  useEffect(() => {
+    if (all) {
+      setFilterData(all);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [all]);
+
+  useEffect(() => {
+    dispatch(getAllUser());
+  }, []);
+
   const Card = ({data}) => {
     return (
       <View style={[styles.card, {backgroundColor: data.backgroundColor}]}>
-        <TouchableOpacity onPress={handelClickDetail}>
+        <TouchableOpacity onPress={handelClickDetail(data.id)}>
           <Image source={{uri: data?.avatar}} style={styles.image} />
           <Image source={shadow} style={{position: 'absolute', bottom: 90}} />
           <Text
@@ -94,10 +105,6 @@ const Home = ({navigation}) => {
     );
   };
 
-  useEffect(() => {
-    dispatch(getAllUser());
-  }, []);
-
   const handleYup = card => {
     dispatch(
       reactLike({
@@ -120,8 +127,11 @@ const Home = ({navigation}) => {
     return false;
   };
 
-  const handelClickDetail = () => {
-    navigation.push('Gallery');
+  const handelClickDetail = id => () => {
+    navigation.navigate('Detail', {
+      itemId: id,
+      screen: 'Home',
+    });
   };
 
   const handleClickAddress = () => {

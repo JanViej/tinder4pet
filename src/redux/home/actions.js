@@ -142,3 +142,56 @@ export const reactDislike = createAsyncThunk(
     }
   },
 );
+
+export const removeLove = createAsyncThunk(
+  'home/removeLove',
+  async (payload, thunkAPI) => {
+    try {
+      const userData = thunkAPI.getState().auth.data;
+      const likeData = [...userData.data.like];
+      const objLike = likeData.filter(item => item.id === payload.id)[0];
+      const indexLike = likeData.indexOf(objLike);
+      if (indexLike > -1) {
+        likeData.splice(indexLike, 1);
+      }
+
+      const likerData = [...payload.dataDetail.liker];
+      const objLiker = likerData.filter(item => item.id === userData.id)[0];
+      const indexLiker = likerData.indexOf(objLiker);
+      if (indexLiker > -1) {
+        likerData.splice(indexLiker, 1);
+      }
+
+      firestore().collection('account').doc(`${payload.id}`).update({
+        liker: likerData,
+      });
+
+      firestore().collection('account').doc(`${userData.id}`).update({
+        like: likeData,
+      });
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  },
+);
+
+export const getUserById = createAsyncThunk(
+  'home/getUserById',
+  async (payload, thunkAPI) => {
+    try {
+      let parner = {};
+      await firestore()
+        .collection('account')
+        .doc(`${payload}`)
+        .get()
+        .then(querySnapshot => {
+          parner = {
+            ...querySnapshot?._data,
+          };
+        });
+      return parner;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  },
+);

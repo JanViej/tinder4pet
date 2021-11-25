@@ -63,7 +63,6 @@ const Profile = ({navigation}) => {
       } else if (response?.customButton) {
         console.log('User tapped custom button: ', response.customButton);
       } else {
-        console.log('hihi asd');
         const source = {uri: response?.assets?.[0]?.uri};
         setImage(source);
       }

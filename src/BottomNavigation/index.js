@@ -34,6 +34,8 @@ import FormProfile from '../FormProfile';
 import Questionnaire from '../Questionnaire';
 import Instruction from '../Instruction';
 
+import Chat from '../Chat'
+
 const Tab = createMaterialBottomTabNavigator();
 
 const BottomNavigation = () => {
@@ -100,7 +102,6 @@ const MenuStack = createStackNavigator();
 
 const MenuStackScreen = () => {
   const currentUser = useSelector(state => state.auth.data);
-  console.log('currentUser asd', currentUser);
   //  steps = ['INTRO_SLIDER', 'INSTRUCTION', 'FORM_PROFILE', 'DONE']S
   return (
     <MenuStack.Navigator headerMode={false}>
@@ -121,7 +122,7 @@ const MenuStackScreen = () => {
           );
         return <MenuStack.Screen name="Home" component={BottomNavigation} />;
       })()}
-      {/* <MenuStack.Screen name="Home" component={Home} /> */}
+      <MenuStack.Screen name="Chat" component={Chat} />
       <MenuStack.Screen name="Login2" component={Login} />
 
       <MenuStack.Screen name="Home2" component={Home} />

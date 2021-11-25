@@ -169,7 +169,6 @@ const Login = ({navigation}) => {
             password: '123456',
           }}
           onSubmit={values => {
-            console.log('asd asd hi');
             dispatch(
               writeDataToAccount({
                 introStep: 'Questionnaire',

@@ -95,7 +95,6 @@ const Detail = ({navigation, route}) => {
   const toggleLove = (id, item) => {
     if (love) {
       setLove(false);
-      console.log('asd asd remove');
       dispatch(
         removeLove({
           id: id,
@@ -103,7 +102,6 @@ const Detail = ({navigation, route}) => {
         }),
       );
     } else {
-      console.log('asd asd love');
       setLove(true);
       setIsVisible(true);
       const timeout = setTimeout(() => {
@@ -169,7 +167,6 @@ const Detail = ({navigation, route}) => {
           style={{...styles.headerBtn, right: 30}}
           onPress={() => {
             if (screen !== 'Account') {
-              console.log('hihih asd', dataDetail);
               toggleLove(dataDetail?.id, dataDetail);
             } else {
               handleClickEdit();

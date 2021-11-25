@@ -20,6 +20,7 @@ import balloon from './assets/image/balloons.png';
 import Modal from 'react-native-modal';
 import {useEffect} from 'react';
 import {compact} from 'lodash';
+import {setMatch} from './redux/recommend/actions';
 
 const Recommend = ({navigation}) => {
   const dispatch = useDispatch();
@@ -36,7 +37,7 @@ const Recommend = ({navigation}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleClickLove = id => () => {
+  const handleClickLove = (id, item) => () => {
     setIsVisible(true);
     dispatch(
       reactLike({
@@ -46,6 +47,15 @@ const Recommend = ({navigation}) => {
     ).then(() => {
       dispatch(getAllUser());
     });
+    dispatch(
+      setMatch({
+        id: id,
+        avatar: item.avatar,
+        name: item.petName,
+        currentText: 'Say Hi to new friend !!!',
+        status: 'undone',
+      }),
+    );
   };
 
   const handleClickDetail = id => () => {
@@ -151,8 +161,8 @@ const Recommend = ({navigation}) => {
                       onPress={
                         compact(item?.liker?.filter(e => e.id === userData?.id))
                           .length > 0
-                          ? console.log('chat asd')
-                          : handleClickLove(item.id)
+                          ? handleClickLove(item.id, item)
+                          : handleClickLove(item.id, item)
                       }>
                       {compact(item?.liker?.filter(e => e.id === userData?.id))
                         .length > 0 ? (

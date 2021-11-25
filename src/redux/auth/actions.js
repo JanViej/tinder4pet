@@ -2,6 +2,7 @@ import {createAsyncThunk} from '@reduxjs/toolkit';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {Alert} from 'react-native';
+import {writeDataToAccount} from '../account/actions.js';
 
 export const login = createAsyncThunk(
   'user/login',
@@ -74,7 +75,11 @@ export const getAccount = createAsyncThunk(
             data: querySnapshot?._docs?.[0]._data,
           };
         });
-      console.log(res);
+      thunkAPI.dispatch(
+        writeDataToAccount({
+          id: res.id,
+        }),
+      );
       return res;
     } catch (error) {
       return thunkAPI.rejectWithValue();

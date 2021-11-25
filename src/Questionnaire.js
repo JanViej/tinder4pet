@@ -236,7 +236,6 @@ const Questionnaire = ({navigation}) => {
 
     if (newMessage?.[0]?.type !== 'end') {
       chatBotContent.shift();
-      console.log('asd chatbot');
     }
     setAnswer({
       ...answer,

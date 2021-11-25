@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -7,37 +7,32 @@ import {
   View,
   Image,
   Dimensions,
+  RefreshControl,
 } from 'react-native';
+import {useSelector} from 'react-redux';
+import Feather from 'react-native-vector-icons/Feather';
+import {getMatch} from './redux/room/actions';
+import {useDispatch} from 'react-redux';
 
 const {width: windowWidth} = Dimensions.get('window');
-const dataList = [
-  {
-    id: 1,
-    name: 'Mewo',
-    avatar:
-      'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/funny-dog-captions-1563456605.jpg?crop=0.747xw:1.00xh;0.0459xw,0&resize=768:*',
-    currentText: 'hihhi',
-    status: 'done',
-  },
-  {
-    id: 2,
-    name: 'Mewo',
-    avatar:
-      'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/funny-dog-captions-1563456605.jpg?crop=0.747xw:1.00xh;0.0459xw,0&resize=768:*',
-    currentText: 'hihhi',
-    status: 'undone',
-  },
-  {
-    id: 3,
-    name: 'Mewo',
-    avatar:
-      'https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/funny-dog-captions-1563456605.jpg?crop=0.747xw:1.00xh;0.0459xw,0&resize=768:*',
-    currentText: 'hihhi',
-    status: 'undone',
-  },
-];
 
-const Room = () => {
+const Room = ({navigation}) => {
+  const dispatch = useDispatch();
+  const userData = useSelector(state => state.auth.data);
+  const matchData = useSelector(state => state.room.matchData);
+  useEffect(() => {
+    dispatch(getMatch(userData?.id));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    dispatch(getMatch(userData?.id)).then(() => {
+      setRefreshing(false);
+    });
+  };
+
   return (
     <View style={{backgroundColor: '#fff', flex: 1}}>
       <View style={{padding: 20}}>
@@ -50,43 +45,73 @@ const Room = () => {
           People Waiting
         </Text>
       </View>
-      <ScrollView>
-        {dataList?.map(item => (
-          <TouchableOpacity key={item.id}>
-            <View
-              style={{
-                flexDirection: 'row',
-                paddingVertical: 12,
-                borderTopWidth: 0.5,
-                borderColor: '#FEE5E1',
-                backgroundColor: '#fff',
-                alignItems: 'center',
-              }}>
-              <Image
-                source={{
-                  uri: item.avatar,
-                }}
-                style={styles.image}
-              />
-              <View>
-                <Text style={{fontSize: 18, fontFamily: 'FredokaOne-Regular'}}>
-                  {item.name}
-                </Text>
-                <Text
-                  numberOfLines={1}
-                  style={{
-                    width: windowWidth - 150,
-                    color: '#C2BDBD',
-                    fontWeight: '700',
-                    ...(item.status === 'undone' && {color: '#000'}),
-                  }}>
-                  {item.currentText}
-                </Text>
+      {matchData?.length > 0 ? (
+        <ScrollView
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }>
+          {matchData?.map(item => (
+            <TouchableOpacity
+              key={item.id}
+              onPress={() =>
+                navigation.navigate('Chat', {
+                  partnerData: item,
+                })
+              }>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  paddingVertical: 12,
+                  borderTopWidth: 0.5,
+                  borderColor: '#FEE5E1',
+                  backgroundColor: '#fff',
+                  alignItems: 'center',
+                }}>
+                <Image
+                  source={{
+                    uri: item.avatar,
+                  }}
+                  style={styles.image}
+                />
+                <View>
+                  <Text
+                    style={{fontSize: 18, fontFamily: 'FredokaOne-Regular'}}>
+                    {item.name}
+                  </Text>
+                  <Text
+                    numberOfLines={1}
+                    style={{
+                      width: windowWidth - 150,
+                      color: '#C2BDBD',
+                      fontWeight: '700',
+                      ...(item.status === 'undone' && {color: '#000'}),
+                    }}>
+                    {item.currentText}
+                  </Text>
+                </View>
               </View>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      ) : (
+        <View>
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: '700',
+              textAlign: 'center',
+              marginTop: 100,
+            }}>
+            Opps, Let make some friend now!
+          </Text>
+          <Feather
+            name="user-plus"
+            color="#ffac9c"
+            size={100}
+            style={{textAlign: 'center', marginTop: 50}}
+          />
+        </View>
+      )}
     </View>
   );
 };

@@ -37,7 +37,20 @@ const Recommend = ({navigation}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleClickLove = (id, item) => () => {
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      setRefreshing(true);
+      dispatch(getAllUser()).then(() => {
+        setRefreshing(false);
+      });
+    });
+    return () => {
+      unsubscribe();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navigation]);
+
+  const handleClickLove = (id, item) => {
     setIsVisible(true);
     dispatch(
       reactLike({
@@ -47,13 +60,31 @@ const Recommend = ({navigation}) => {
     ).then(() => {
       dispatch(getAllUser());
     });
+    const matchId = moment().unix();
     dispatch(
       setMatch({
+        data: {
+          id: userData?.id,
+          avatar: userData?.data?.avatar,
+          name: userData?.data?.petName,
+          currentText: 'Say Hi to new friend !!!',
+          status: 'undone',
+          matchId: matchId,
+        },
         id: id,
-        avatar: item.avatar,
-        name: item.petName,
-        currentText: 'Say Hi to new friend !!!',
-        status: 'undone',
+      }),
+    );
+    dispatch(
+      setMatch({
+        data: {
+          id: id,
+          avatar: item.avatar,
+          name: item.petName,
+          currentText: 'Say Hi to new friend !!!',
+          status: 'undone',
+          matchId: matchId,
+        },
+        id: userData.id,
       }),
     );
   };
@@ -115,6 +146,7 @@ const Recommend = ({navigation}) => {
             }>
             {liker?.map((item, index) => (
               <TouchableOpacity
+                key={`liker-${index}`}
                 style={{
                   flexDirection: 'row',
                   borderRadius: 15,
@@ -158,12 +190,23 @@ const Recommend = ({navigation}) => {
                         justifyContent: 'center',
                         alignItems: 'center',
                       }}
-                      onPress={
-                        compact(item?.liker?.filter(e => e.id === userData?.id))
-                          .length > 0
-                          ? handleClickLove(item.id, item)
-                          : handleClickLove(item.id, item)
-                      }>
+                      onPress={() => {
+                        console.log(
+                          'aaaa',
+                          compact(
+                            item?.liker?.filter(e => e.id === userData?.id),
+                          ).length > 0,
+                        );
+                        if (
+                          compact(
+                            item?.liker?.filter(e => e.id === userData?.id),
+                          ).length > 0
+                        ) {
+                          navigation.navigate('Room');
+                        } else {
+                          handleClickLove(item.id, item);
+                        }
+                      }}>
                       {compact(item?.liker?.filter(e => e.id === userData?.id))
                         .length > 0 ? (
                         <MaterialCommunityIcons

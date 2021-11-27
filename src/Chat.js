@@ -1,5 +1,12 @@
 import React, {useEffect, useCallback, useState, useLayoutEffect} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  BackHandler,
+} from 'react-native';
 import {Avatar} from 'react-native-elements';
 // import {auth} from '../firebase';
 import {
@@ -16,14 +23,29 @@ import firestore from '@react-native-firebase/firestore';
 import {useSelector, useDispatch} from 'react-redux';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import {getPartnerData} from './redux/room/actions';
+import {getPartnerData, getMatch} from './redux/room/actions';
+import {setMatch} from './redux/recommend/actions';
 
 const Chat = ({navigation, route}) => {
   const [messages, setMessages] = useState([]);
   const currentUser = useSelector(state => state.auth.data);
   const partnerUser = useSelector(state => state.room.partnerData);
   const {partnerData} = route.params;
+
   const dispatch = useDispatch();
+
+  const backAction = () => {
+    dispatch(getMatch(currentUser?.id));
+    navigation.goBack();
+    return true;
+  };
+
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', backAction);
+
+    return () =>
+      BackHandler.removeEventListener('hardwareBackPress', backAction);
+  }, []);
 
   useLayoutEffect(() => {
     const unsubscribe = firestore()
@@ -47,21 +69,6 @@ const Chat = ({navigation, route}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // useEffect(() => {
-  //   setMessages([
-  //     {
-  //       _id: 1,
-  //       text: 'Hello developer',
-  //       createdAt: new Date(),
-  //       user: {
-  //         _id: 2,
-  //         name: 'React Native',
-  //         avatar: 'https://placeimg.com/140/140/any',
-  //       },
-  //     },
-  //   ]);
-  // }, []);
-
   useEffect(() => {
     dispatch(getPartnerData(partnerData.id));
   }, []);
@@ -78,6 +85,28 @@ const Chat = ({navigation, route}) => {
       user,
       matchId: partnerData.matchId,
     });
+
+    dispatch(
+      setMatch({
+        data: {
+          currentText: `you: ${text}`,
+          status: 'done',
+          matchId: partnerData.matchId,
+        },
+        id: currentUser.id,
+      }),
+    );
+
+    dispatch(
+      setMatch({
+        data: {
+          currentText: `${currentUser.data.petName}: ${text}`,
+          status: 'undone',
+          matchId: partnerData.matchId,
+        },
+        id: partnerData.id,
+      }),
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -161,7 +190,11 @@ const Chat = ({navigation, route}) => {
           elevation: 5,
         }}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity
+            onPress={() => {
+              dispatch(getMatch(currentUser?.id));
+              navigation.goBack();
+            }}>
             <AntDesign name="arrowleft" color="#FF8C76" size={28} />
           </TouchableOpacity>
           <Image

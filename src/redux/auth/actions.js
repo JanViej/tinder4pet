@@ -37,6 +37,7 @@ export const register = createAsyncThunk(
           gmail: payload?.username,
           role: 'user',
           introStep: 'Login',
+          isActive: true,
         });
         // payload?.navigation.push('Login2');
       }

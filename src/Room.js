@@ -8,11 +8,14 @@ import {
   Image,
   Dimensions,
   RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import Feather from 'react-native-vector-icons/Feather';
 import {getMatch} from './redux/room/actions';
 import {useDispatch} from 'react-redux';
+import {setMatch} from './redux/recommend/actions';
+import firestore from '@react-native-firebase/firestore';
 
 const {width: windowWidth} = Dimensions.get('window');
 
@@ -20,6 +23,33 @@ const Room = ({navigation}) => {
   const dispatch = useDispatch();
   const userData = useSelector(state => state.auth.data);
   const matchData = useSelector(state => state.room.matchData);
+  const loading = useSelector(state => state.room.loading);
+  const [match, setMatchs] = useState();
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      setRefreshing(true);
+      dispatch(getMatch(userData?.id)).then(() => {
+        setRefreshing(false);
+      });
+    });
+    return () => {
+      unsubscribe();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navigation]);
+
+  useEffect(() => {
+    const unsubscribe = firestore()
+      .collection('account')
+      .doc(userData?.id)
+      .onSnapshot(snapshot => {
+        setMatchs(snapshot?._data?.match || {});
+      });
+
+    return unsubscribe;
+  }, []);
+
   useEffect(() => {
     dispatch(getMatch(userData?.id));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -45,7 +75,20 @@ const Room = ({navigation}) => {
           People Waiting
         </Text>
       </View>
-      {matchData?.length > 0 ? (
+      {loading ? (
+        <View style={{flex: 1, backgroundColor: '#fff'}}>
+          <ActivityIndicator
+            animating={true}
+            size="large"
+            color="#1F5D74"
+            style={{
+              position: 'absolute',
+              left: '45%',
+              top: '45%',
+            }}
+          />
+        </View>
+      ) : matchData?.length > 0 ? (
         <ScrollView
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -53,11 +96,20 @@ const Room = ({navigation}) => {
           {matchData?.map(item => (
             <TouchableOpacity
               key={item.id}
-              onPress={() =>
+              onPress={() => {
                 navigation.navigate('Chat', {
                   partnerData: item,
-                })
-              }>
+                });
+                dispatch(
+                  setMatch({
+                    data: {
+                      status: 'done',
+                      matchId: item?.matchId,
+                    },
+                    id: userData.id,
+                  }),
+                );
+              }}>
               <View
                 style={{
                   flexDirection: 'row',
@@ -83,8 +135,10 @@ const Room = ({navigation}) => {
                     style={{
                       width: windowWidth - 150,
                       color: '#C2BDBD',
-                      fontWeight: '700',
-                      ...(item.status === 'undone' && {color: '#000'}),
+                      ...(item.status === 'undone' && {
+                        color: '#000',
+                        fontWeight: '700',
+                      }),
                     }}>
                     {item.currentText}
                   </Text>

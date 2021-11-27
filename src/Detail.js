@@ -68,6 +68,8 @@ const Detail = ({navigation, route}) => {
           ? true
           : false,
       );
+    } else {
+      setDataDetail(userData.data);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [screen, partnerDetail]);
@@ -144,7 +146,7 @@ const Detail = ({navigation, route}) => {
       </Modal>
       <View>
         <Carousel
-          data={dataDetail?.images}
+          data={dataDetail?.images || []}
           renderItem={_renderItem}
           onSnapToItem={index => setActiveSlide(index)}
           itemWidth={screenWidth - 40}

@@ -94,8 +94,9 @@ const Account = ({navigation}) => {
         </Text>
       </View>
 
-      {listMenu?.map(item => (
+      {listMenu?.map((item, index) => (
         <TouchableOpacity
+          key={`listmenu-account-${index}`}
           onPress={item.onClick}
           style={{
             flexDirection: 'row',

@@ -24,6 +24,8 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {Button} from 'react-native-elements';
 import {actions} from './redux/auth/slice';
 import {writeDataToAccount} from './redux/account/actions';
+import Notification from './components/Notification';
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -113,6 +115,8 @@ const Login = ({navigation}) => {
   const loading = useSelector(state => state.auth.loading);
   const isNewUser = useSelector(state => state.auth.isNew);
   const [modalVisible, setModalVisible] = useState(false);
+  const responseLogin = useSelector(state => state.auth.responseLogin);
+  const [isVisible, setIsVisible] = useState(true);
   const handleClickForgot = () => {
     // dispatch(logout());
   };
@@ -132,7 +136,23 @@ const Login = ({navigation}) => {
   }, []);
   return (
     <View style={styles.container}>
-      <Modal style={styles.modal} isVisible={modalVisible}>
+      {responseLogin === 1 && (
+        <Notification
+          title="Login Fail"
+          desc="This Account isnt exist. You can create a new one."
+          isVisible={isVisible}
+          setIsVisible={setIsVisible}
+        />
+      )}
+      {responseLogin === 2 && (
+        <Notification
+          title="Login Fail"
+          desc="Your entered password is incorrect"
+          isVisible={isVisible}
+          setIsVisible={setIsVisible}
+        />
+      )}
+      {/* <Modal style={styles.modal} isVisible={modalVisible}>
         <View style={styles.modalWrapper}>
           <AntDesign name="checkcircle" color="#5fa4b7" size={18} />
           <Text style={styles.text}>Create account successfully!!!</Text>
@@ -147,7 +167,7 @@ const Login = ({navigation}) => {
             buttonStyle={styles.buttonCloseStyle}
           />
         </View>
-      </Modal>
+      </Modal> */}
       <ImageBackground source={background} style={styles.image}>
         <View style={{width: '100%', alignItems: 'center', marginTop: 100}}>
           <Image source={logofull} style={styles.logo} />
@@ -169,11 +189,6 @@ const Login = ({navigation}) => {
             password: '123456',
           }}
           onSubmit={values => {
-            dispatch(
-              writeDataToAccount({
-                introStep: 'Questionnaire',
-              }),
-            );
             dispatch(login(values));
           }}>
           {({handleChange, handleBlur, handleSubmit, values}) => (

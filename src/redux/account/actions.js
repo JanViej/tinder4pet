@@ -17,7 +17,6 @@ export const writeDataToAccount = createAsyncThunk(
 
       return response;
     } catch (error) {
-      // Alert.alert('Account is exist');
       return thunkAPI.rejectWithValue(error);
     }
   },

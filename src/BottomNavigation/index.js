@@ -106,13 +106,16 @@ const MenuStackScreen = () => {
   return (
     <MenuStack.Navigator headerMode={false}>
       {(() => {
-        if (!currentUser?.data?.gmail)
+        if(currentUser?.data?.currentScreen === 'Signup') {
+          return <MenuStack.Screen name="Signup2" component={Signup} />;
+        }
+        else 
+        {if (!currentUser?.data?.gmail)
           return <MenuStack.Screen name="Login" component={Login} />;
         if (!currentUser?.data?.introStep)
           return (
             <MenuStack.Screen name="IntroSlider" component={IntroSlider} />
           );
-
         if (currentUser?.data?.introStep !== 'Done')
           return (
             <MenuStack.Screen
@@ -120,7 +123,7 @@ const MenuStackScreen = () => {
               component={StepScreen[currentUser?.data?.introStep]}
             />
           );
-        return <MenuStack.Screen name="Home" component={BottomNavigation} />;
+        return <MenuStack.Screen name="Home" component={BottomNavigation} />;}
       })()}
       <MenuStack.Screen name="Chat" component={Chat} />
       <MenuStack.Screen name="Login2" component={Login} />

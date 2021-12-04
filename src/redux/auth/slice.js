@@ -10,6 +10,7 @@ export const initialState = {
   password: '',
   currentCategory: {},
   isNew: false,
+  responseLogin: null,
 };
 
 export const {reducer, actions} = createSlice({
@@ -28,11 +29,15 @@ export const {reducer, actions} = createSlice({
     setIsNew: state => {
       state.isNew = false;
     },
+    setModalErrorLogin: (state, {payload}) => {
+      state.responseLogin = payload;
+      state.loading = false;
+    },
   },
   extraReducers: {
     [register.fulfilled]: (state, {payload}) => {
       state.loading = false;
-      state.isNew = true;
+      // state.isNew = true;
     },
     [register.pending]: (state, {payload}) => {
       state.loading = true;

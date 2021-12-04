@@ -3,20 +3,30 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {Alert} from 'react-native';
 import {writeDataToAccount} from '../account/actions.js';
+import {actions} from './slice.js';
+import {actions as authAction} from '../auth/slice';
 
 export const login = createAsyncThunk(
   'user/login',
   async (payload, thunkAPI) => {
     try {
-      const response = await auth().signInWithEmailAndPassword(
-        payload?.username,
-        payload?.password,
-      );
-      console.log('response', response);
-      thunkAPI.dispatch(getAccount(payload?.username));
-      return response;
+      const response = await auth()
+        .signInWithEmailAndPassword(payload?.username, payload?.password)
+        .catch(error => {
+          if (error.message.includes('no user')) {
+            return 1;
+          } else if (error.message.includes('password is invalid')) {
+            return 2;
+          }
+        });
+
+      if (response !== 1 && response !== 2) {
+        thunkAPI.dispatch(getAccount(payload?.username));
+        return response;
+      } else {
+        thunkAPI.dispatch(actions.setModalErrorLogin(response));
+      }
     } catch (error) {
-      Alert.alert('Account is Invalid');
       return thunkAPI.rejectWithValue(error);
     }
   },
@@ -26,24 +36,38 @@ export const register = createAsyncThunk(
   'user/register',
   async (payload, thunkAPI) => {
     try {
-      const response = await auth().createUserWithEmailAndPassword(
-        payload?.username,
-        payload?.password,
-      );
-      console.log('response', response);
+      const response = await auth()
+        .createUserWithEmailAndPassword(payload?.username, payload?.password)
+        .catch(error => {
+          if (error.message.includes('email-already-in-use')) {
+            thunkAPI.dispatch(
+              authAction.setUserData({
+                currentScreen: 'Signup',
+              }),
+            );
+            thunkAPI.dispatch(actions.setModalErrorLogin(3));
+            return null;
+          }
+        });
       if (response) {
-        await thunkAPI.dispatch(logout());
         await firestore().collection('account').add({
           gmail: payload?.username,
           role: 'user',
-          introStep: 'Login',
+          introStep: 'Questionnaire',
           isActive: true,
         });
-        // payload?.navigation.push('Login2');
+        thunkAPI.dispatch(
+          authAction.setUserData({
+            gmail: payload?.username,
+            role: 'user',
+            introStep: 'Questionnaire',
+            isActive: true,
+          }),
+        );
+        return response;
       }
-      return response;
+      return thunkAPI.rejectWithValue();
     } catch (error) {
-      Alert.alert('Account is exist');
       return thunkAPI.rejectWithValue(error);
     }
   },

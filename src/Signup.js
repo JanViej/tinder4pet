@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   Text,
@@ -20,6 +20,8 @@ import {register} from './redux/auth/actions';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
 import {ScrollView} from 'react-native-gesture-handler';
+import {actions} from './redux/auth/slice';
+import Notification from './components/Notification';
 
 const styles = StyleSheet.create({
   container: {
@@ -86,7 +88,12 @@ const styles = StyleSheet.create({
 const SignUp = ({navigation}) => {
   const loading = useSelector(state => state.auth.loading);
   const dispatch = useDispatch();
+  const responseLogin = useSelector(state => state.auth.responseLogin);
+  const [isVisible, setIsVisible] = useState(true);
+
   const handleClickSignUp = () => {
+    dispatch(actions.setUserData({}));
+
     navigation.push('Login');
   };
 
@@ -97,6 +104,14 @@ const SignUp = ({navigation}) => {
 
   return (
     <ScrollView style={styles.container}>
+      {responseLogin === 3 && (
+        <Notification
+          title="Register Fail"
+          desc="This Account is already in used. Enter a new one or login now!"
+          isVisible={isVisible}
+          setIsVisible={setIsVisible}
+        />
+      )}
       <ImageBackground source={background} style={styles.image}>
         <View style={{width: '100%', alignItems: 'center', marginTop: 90}}>
           <Image source={logofull} style={styles.logo} />

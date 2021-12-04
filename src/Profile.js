@@ -9,7 +9,6 @@ import {
   TextInput,
   Image,
   ScrollView,
-  Alert,
   ActivityIndicator,
 } from 'react-native';
 import moment from 'moment';
@@ -24,6 +23,7 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {useSelector, useDispatch} from 'react-redux';
 import {Formik} from 'formik';
 import {writeDataToAccount} from './redux/account/actions';
+import Notification from './components/Notification';
 
 const {width: windowWidth} = Dimensions.get('window');
 
@@ -32,6 +32,7 @@ const Profile = ({navigation}) => {
   const userData = useSelector(state => state.auth.data);
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
+  const [modal, setShowModal] = useState(false);
   const [image, setImage] = useState(userData?.data?.avatar);
   const [uploading, setUploading] = useState(false);
   const [initialValues, setInitialValues] = useState({});
@@ -114,7 +115,7 @@ const Profile = ({navigation}) => {
         address: userData?.data?.address,
         sex: userData?.data?.petGender,
         dob: date,
-        breed: userData?.data.breed,
+        breed: userData?.data?.breed,
         phoneNumber: userData?.data?.phoneNumber,
         ownerName: userData?.data?.ownerName,
       });
@@ -123,217 +124,227 @@ const Profile = ({navigation}) => {
   }, [userData]);
 
   return (
-    <Formik
-      initialValues={initialValues}
-      enableReinitialize={true}
-      onSubmit={values => {
-        setUploading(true);
-        dispatch(
-          writeDataToAccount({
-            petName: values?.name,
-            breed: values?.breed,
-            dob: date,
-            address: values?.address,
-            petGender: gender ? 'male' : 'female',
-            phoneNumber: values?.phoneNumber,
-            ownerName: values?.ownerName,
-          }),
-        );
+    <>
+      <Notification
+        title="Success"
+        desc="Edit successfully"
+        isVisible={modal}
+        setIsVisible={setShowModal}
+      />
+      <Formik
+        initialValues={initialValues}
+        enableReinitialize={true}
+        onSubmit={values => {
+          setUploading(true);
+          dispatch(
+            writeDataToAccount({
+              petName: values?.name,
+              breed: values?.breed,
+              ...(date && {
+                dob: date,
+              }),
+              address: values?.address,
+              petGender: gender ? 'male' : 'female',
+              phoneNumber: values?.phoneNumber,
+              ownerName: values?.ownerName,
+            }),
+          );
 
-        uploadImage();
-        setUploading(false);
-        Alert.alert('Edit successfully');
-      }}>
-      {({handleChange, handleBlur, handleSubmit, values}) => (
-        <View style={{backgroundColor: '#fff', flex: 1}}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              backgroundColor: '#fff',
-              paddingVertical: 20,
-              paddingHorizontal: 20,
-              // elevation: 5,
-            }}>
-            <TouchableOpacity
-              style={{flexDirection: 'row', alignItems: 'center'}}
-              onPress={() => navigation.goBack()}>
-              <AntDesign name="left" color="#000" size={20} />
-              <Text style={{fontSize: 16, marginLeft: 5}}>Back</Text>
-            </TouchableOpacity>
-            <Text style={{fontSize: 16, fontWeight: '700', marginRight: 10}}>
-              Profile
-            </Text>
-            <TouchableOpacity onPress={handleSubmit}>
-              <Text style={{fontSize: 16}}>Done</Text>
-            </TouchableOpacity>
-          </View>
-          <ScrollView>
+          uploadImage();
+          setUploading(false);
+          setShowModal(true);
+        }}>
+        {({handleChange, handleBlur, handleSubmit, values}) => (
+          <View style={{backgroundColor: '#fff', flex: 1}}>
             <View
               style={{
-                // marginBottom: 40,
-                marginTop: 40,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
                 alignItems: 'center',
+                backgroundColor: '#fff',
+                paddingVertical: 20,
+                paddingHorizontal: 20,
+                // elevation: 5,
               }}>
-              <Image
-                source={{
-                  uri: image?.uri || image,
-                }}
-                style={styles.image}
-              />
-              <Text>Change Profile Picture</Text>
-              {uploading && (
-                <ActivityIndicator
-                  animating={true}
-                  size="large"
-                  color="#ffac9c"
-                  style={{
-                    position: 'absolute',
-                    left: '45%',
-                    top: '100%',
-                  }}
-                />
-              )}
-
               <TouchableOpacity
-                style={{
-                  position: 'absolute',
-                  bottom: 25,
-                  right: windowWidth / 2 - 50,
-                  backgroundColor: '#fff',
-                  borderRadius: 100,
-                  padding: 5,
-                  elevation: 5,
-                }}
-                onPress={selectImage}>
-                <Feather name="edit-2" color="#000" size={16} />
+                style={{flexDirection: 'row', alignItems: 'center'}}
+                onPress={() => navigation.goBack()}>
+                <AntDesign name="left" color="#000" size={20} />
+                <Text style={{fontSize: 16, marginLeft: 5}}>Back</Text>
+              </TouchableOpacity>
+              <Text style={{fontSize: 16, fontWeight: '700', marginRight: 10}}>
+                Profile
+              </Text>
+              <TouchableOpacity onPress={handleSubmit}>
+                <Text style={{fontSize: 16}}>Done</Text>
               </TouchableOpacity>
             </View>
-            <View style={styles.inputContainer}>
-              <View style={styles.inputWrap}>
-                <Text>Pet name</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Enter your pet name"
-                  placeholderTextColor="#FEE5E1"
-                  onChangeText={handleChange('name')}
-                  value={values.name}
-                  onBlur={handleBlur('phoneNumber')}
-                />
-              </View>
-              <View style={styles.inputWrap}>
-                <Text>Breed</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Enter breed"
-                  placeholderTextColor="#FEE5E1"
-                  onChangeText={handleChange('breed')}
-                  value={values.breed}
-                  onBlur={handleBlur('breed')}
-                />
-              </View>
+            <ScrollView>
               <View
                 style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
+                  // marginBottom: 40,
+                  marginTop: 40,
+                  alignItems: 'center',
                 }}>
-                <TouchableOpacity
-                  onPress={showDatepicker}
-                  style={{
-                    ...styles.inputWrap,
-                    justifyContent: 'space-between',
-                    height: 50,
-                    width: '50%',
-                  }}>
-                  <Text>DOB</Text>
-                  <Text style={{marginHorizontal: 20, fontWeight: '700'}}>
-                    {date ? moment(date).format('DD/MM/YYYY') : 'Select DOB'}
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => {
-                    setGender(!gender);
+                <Image
+                  source={{
+                    uri: image?.uri || image,
                   }}
+                  style={styles.image}
+                />
+                <Text>Change Profile Picture</Text>
+                {uploading && (
+                  <ActivityIndicator
+                    animating={true}
+                    size="large"
+                    color="#ffac9c"
+                    style={{
+                      position: 'absolute',
+                      left: '45%',
+                      top: '100%',
+                    }}
+                  />
+                )}
+
+                <TouchableOpacity
                   style={{
-                    ...styles.inputWrap,
-                    justifyContent: 'space-between',
-                    height: 50,
-                    width: '45%',
-                  }}>
-                  <Text>Gender</Text>
-                  <Foundation
-                    name="male-symbol"
-                    color={`${!gender ? '#000' : '#6A9CFD'}`}
-                    {...(!gender
-                      ? {
-                          size: 16,
-                        }
-                      : {
-                          size: 24,
-                        })}
-                  />
-                  <Foundation
-                    name="female-symbol"
-                    color={`${gender ? '#000' : '#ffac9c'}`}
-                    {...(gender
-                      ? {
-                          size: 16,
-                        }
-                      : {
-                          size: 24,
-                        })}
-                  />
+                    position: 'absolute',
+                    bottom: 25,
+                    right: windowWidth / 2 - 50,
+                    backgroundColor: '#fff',
+                    borderRadius: 100,
+                    padding: 5,
+                    elevation: 5,
+                  }}
+                  onPress={selectImage}>
+                  <Feather name="edit-2" color="#000" size={16} />
                 </TouchableOpacity>
               </View>
-              <View style={styles.inputWrap}>
-                <Text>Address</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Enter Address"
-                  placeholderTextColor="#FEE5E1"
-                  onChangeText={handleChange('address')}
-                  value={values.address}
-                  onBlur={handleBlur('address')}
-                />
+              <View style={styles.inputContainer}>
+                <View style={styles.inputWrap}>
+                  <Text>Pet name</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Enter your pet name"
+                    placeholderTextColor="#FEE5E1"
+                    onChangeText={handleChange('name')}
+                    value={values.name}
+                    onBlur={handleBlur('phoneNumber')}
+                  />
+                </View>
+                <View style={styles.inputWrap}>
+                  <Text>Breed</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Enter breed"
+                    placeholderTextColor="#FEE5E1"
+                    onChangeText={handleChange('breed')}
+                    value={values.breed}
+                    onBlur={handleBlur('breed')}
+                  />
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}>
+                  <TouchableOpacity
+                    onPress={showDatepicker}
+                    style={{
+                      ...styles.inputWrap,
+                      justifyContent: 'space-between',
+                      height: 50,
+                      width: '50%',
+                    }}>
+                    <Text>DOB</Text>
+                    <Text style={{marginHorizontal: 20, fontWeight: '700'}}>
+                      {date ? moment(date).format('DD/MM/YYYY') : 'Select DOB'}
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setGender(!gender);
+                    }}
+                    style={{
+                      ...styles.inputWrap,
+                      justifyContent: 'space-between',
+                      height: 50,
+                      width: '45%',
+                    }}>
+                    <Text>Gender</Text>
+                    <Foundation
+                      name="male-symbol"
+                      color={`${!gender ? '#000' : '#6A9CFD'}`}
+                      {...(!gender
+                        ? {
+                            size: 16,
+                          }
+                        : {
+                            size: 24,
+                          })}
+                    />
+                    <Foundation
+                      name="female-symbol"
+                      color={`${gender ? '#000' : '#ffac9c'}`}
+                      {...(gender
+                        ? {
+                            size: 16,
+                          }
+                        : {
+                            size: 24,
+                          })}
+                    />
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.inputWrap}>
+                  <Text>Address</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Enter Address"
+                    placeholderTextColor="#FEE5E1"
+                    onChangeText={handleChange('address')}
+                    value={values.address}
+                    onBlur={handleBlur('address')}
+                  />
+                </View>
+                <View style={styles.inputWrap}>
+                  <Text>Owner Name</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Enter your name"
+                    placeholderTextColor="#FEE5E1"
+                    onChangeText={handleChange('ownerName')}
+                    value={values.ownerName}
+                    onBlur={handleBlur('ownerName')}
+                  />
+                </View>
+                <View style={styles.inputWrap}>
+                  <Text>Phone Number</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Enter phone number"
+                    placeholderTextColor="#FEE5E1"
+                    onChangeText={handleChange('phoneNumber')}
+                    value={values.phoneNumber}
+                    onBlur={handleBlur('phoneNumber')}
+                  />
+                </View>
+                {show && (
+                  <DateTimePicker
+                    testID="dateTimePicker"
+                    value={date || new Date()}
+                    mode={mode}
+                    is24Hour={true}
+                    // display="default"
+                    onChange={onChange}
+                  />
+                )}
               </View>
-              <View style={styles.inputWrap}>
-                <Text>Owner Name</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Enter your name"
-                  placeholderTextColor="#FEE5E1"
-                  onChangeText={handleChange('ownerName')}
-                  value={values.ownerName}
-                  onBlur={handleBlur('ownerName')}
-                />
-              </View>
-              <View style={styles.inputWrap}>
-                <Text>Phone Number</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Enter phone number"
-                  placeholderTextColor="#FEE5E1"
-                  onChangeText={handleChange('phoneNumber')}
-                  value={values.phoneNumber}
-                  onBlur={handleBlur('phoneNumber')}
-                />
-              </View>
-              {show && (
-                <DateTimePicker
-                  testID="dateTimePicker"
-                  value={date || new Date()}
-                  mode={mode}
-                  is24Hour={true}
-                  // display="default"
-                  onChange={onChange}
-                />
-              )}
-            </View>
-          </ScrollView>
-        </View>
-      )}
-    </Formik>
+            </ScrollView>
+          </View>
+        )}
+      </Formik>
+    </>
   );
 };
 

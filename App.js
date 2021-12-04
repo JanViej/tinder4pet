@@ -16,10 +16,6 @@ import store from './src/redux/store';
 import BottomNavigation from './src/BottomNavigation';
 import {getAccount} from './src/redux/auth/actions';
 import {useDispatch, useSelector} from 'react-redux';
-import Home from './src/Home';
-import Login from './src/Login';
-import PhoneSignIn from './src/PhoneSignIn';
-import IntroSlider from './src/IntroSlider';
 
 const App: () => Node = () => {
   const [initializing, setInitializing] = useState(true);

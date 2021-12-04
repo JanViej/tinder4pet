@@ -231,7 +231,15 @@ const Questionnaire = ({navigation}) => {
   // }, []);
 
   const handleSend = (newMessage = []) => {
-    setMessages(GiftedChat.append(messages, newMessage));
+    setMessages(
+      GiftedChat.append(messages, [
+        newMessage[0],
+        {
+          ...newMessage[1],
+          text: newMessage?.[1]?.text?.title,
+        },
+      ]),
+    );
     setKey(newMessage?.[0]?.type);
 
     if (newMessage?.[0]?.type !== 'end') {
@@ -239,7 +247,7 @@ const Questionnaire = ({navigation}) => {
     }
     setAnswer({
       ...answer,
-      [key]: newMessage?.[1]?.text,
+      [key]: newMessage?.[1]?.text?.value || newMessage?.[1]?.text,
     });
   };
   const renderMessageText = props => (
@@ -361,7 +369,7 @@ const Questionnaire = ({navigation}) => {
   );
 
   const onQuickReply = async quickReply => {
-    let message = quickReply?.[0]?.title;
+    let message = quickReply?.[0];
     let msg = {
       _id: new Date(),
       text: message,
@@ -380,6 +388,11 @@ const Questionnaire = ({navigation}) => {
       );
     } else if (quickReply[0].value === 'skip') {
       handleSend([chatBotContent[chatBotContent.length - 1], msg]);
+      dispatch(
+        writeDataToAccount({
+          introStep: 'IntroSlider',
+        }),
+      );
     } else {
       handleSend([chatBotContent[0], msg]);
     }

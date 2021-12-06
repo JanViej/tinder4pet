@@ -21,6 +21,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {getAllUser, reactLike, reactDislike} from './redux/home/actions';
 import {getCats, getDogs} from './redux/home/selectors';
 import moment from 'moment';
+import Call from './Call';
 
 const StatusCard = ({text}) => {
   return (
@@ -135,7 +136,8 @@ const Home = ({navigation}) => {
   };
 
   const handleClickAddress = () => {
-    dispatch(logout());
+    // dispatch(logout());
+    navigation.push('Call');
   };
 
   const handleClickBell = () => {};

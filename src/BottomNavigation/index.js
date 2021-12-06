@@ -34,7 +34,8 @@ import FormProfile from '../FormProfile';
 import Questionnaire from '../Questionnaire';
 import Instruction from '../Instruction';
 
-import Chat from '../Chat'
+import Chat from '../Chat';
+import Call from '../Call'
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -147,6 +148,7 @@ const MenuStackScreen = () => {
       <MenuStack.Screen name="PhoneSignIn" component={PhoneSignIn} />
       <MenuStack.Screen name="Signup" component={Signup} />
       <MenuStack.Screen name="HistoryDetails" component={HistoryDetails} />
+      <MenuStack.Screen name="Call" component={Call} />
     </MenuStack.Navigator>
   );
 };

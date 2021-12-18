@@ -76,7 +76,7 @@ const Chat = ({navigation, route}) => {
   }, []);
 
   useEffect(() => {
-    dispatch(getPartnerData(partnerData.id));
+    dispatch(getPartnerData(partnerData?.id));
   }, []);
 
   useEffect(() => {
@@ -99,7 +99,7 @@ const Chat = ({navigation, route}) => {
       createdAt,
       text,
       user,
-      matchId: partnerData.matchId,
+      matchId: partnerData?.matchId,
     });
 
     dispatch(
@@ -107,7 +107,7 @@ const Chat = ({navigation, route}) => {
         data: {
           currentText: `you: ${text}`,
           status: 'done',
-          matchId: partnerData.matchId,
+          matchId: partnerData?.matchId,
         },
         id: currentUser.id,
       }),
@@ -118,9 +118,9 @@ const Chat = ({navigation, route}) => {
         data: {
           currentText: `${currentUser.data.petName}: ${text}`,
           status: 'undone',
-          matchId: partnerData.matchId,
+          matchId: partnerData?.matchId,
         },
-        id: partnerData.id,
+        id: partnerData?.id,
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps

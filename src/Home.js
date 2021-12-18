@@ -21,6 +21,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {getAllUser, reactLike, reactDislike} from './redux/home/actions';
 import {getCats, getDogs} from './redux/home/selectors';
 import moment from 'moment';
+import PrivateWrapper from './PrivateWrapper';
 
 const StatusCard = ({text}) => {
   return (
@@ -73,35 +74,37 @@ const Home = ({navigation}) => {
 
   const Card = ({data}) => {
     return (
-      <View style={[styles.card, {backgroundColor: data.backgroundColor}]}>
-        <TouchableOpacity onPress={handelClickDetail(data.id)}>
-          <Image source={{uri: data?.avatar}} style={styles.image} />
-          <Image source={shadow} style={{position: 'absolute', bottom: 90}} />
-          <Text
-            style={{
-              position: 'absolute',
-              bottom: 100,
-              color: '#fff',
-              left: 10,
-              fontSize: 20,
-              fontWeight: '700',
-            }}>
-            {data?.petName},
-          </Text>
-        </TouchableOpacity>
-        <View style={styles.bottomReact}>
-          <TouchableOpacity
-            style={styles.iconClose}
-            onPress={swipeCardRef.current?.swipeNope}>
-            <Ionicons name="close" color="#FFB8D0" size={28} />
+      <PrivateWrapper navigationHandler={navigation}>
+        <View style={[styles.card, {backgroundColor: data.backgroundColor}]}>
+          <TouchableOpacity onPress={handelClickDetail(data.id)}>
+            <Image source={{uri: data?.avatar}} style={styles.image} />
+            <Image source={shadow} style={{position: 'absolute', bottom: 90}} />
+            <Text
+              style={{
+                position: 'absolute',
+                bottom: 100,
+                color: '#fff',
+                left: 10,
+                fontSize: 20,
+                fontWeight: '700',
+              }}>
+              {data?.petName},
+            </Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.iconLove}
-            onPress={swipeCardRef.current?.swipeYup}>
-            <AntDesign name="heart" color="#fff" size={28} />
-          </TouchableOpacity>
+          <View style={styles.bottomReact}>
+            <TouchableOpacity
+              style={styles.iconClose}
+              onPress={swipeCardRef.current?.swipeNope}>
+              <Ionicons name="close" color="#FFB8D0" size={28} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.iconLove}
+              onPress={swipeCardRef.current?.swipeYup}>
+              <AntDesign name="heart" color="#fff" size={28} />
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      </PrivateWrapper>
     );
   };
 

@@ -25,14 +25,20 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import {getPartnerData, getMatch} from './redux/room/actions';
 import {setMatch} from './redux/recommend/actions';
+import PrivateWrapper from './PrivateWrapper';
 
 const Chat = ({navigation, route}) => {
   const [messages, setMessages] = useState([]);
   const currentUser = useSelector(state => state.auth.data);
   const partnerUser = useSelector(state => state.room.partnerData);
-  const {partnerData} = route.params;
-
+  const {partnerData} = route?.params;
   const dispatch = useDispatch();
+
+  const [user, setVoximplantPartner] = useState();
+
+  console.log('asd chat');
+
+  console.log('asd chat user', user);
 
   const backAction = () => {
     dispatch(getMatch(currentUser?.id));
@@ -72,6 +78,16 @@ const Chat = ({navigation, route}) => {
   useEffect(() => {
     dispatch(getPartnerData(partnerData.id));
   }, []);
+
+  useEffect(() => {
+    if (partnerUser?.id) {
+      setVoximplantPartner({
+        user_id: partnerUser.voximplantUserId,
+        user_name: partnerUser.voximplantUsername,
+        user_display_name: partnerUser.voximplantUsername,
+      });
+    }
+  }, [partnerUser]);
 
   const onSend = useCallback((messages = []) => {
     setMessages(previousMessages =>
@@ -179,60 +195,64 @@ const Chat = ({navigation, route}) => {
   );
 
   return (
-    <View style={{flex: 1}}>
-      <View
-        style={{
-          padding: 10,
-          backgroundColor: '#fff',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          elevation: 5,
-        }}>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <TouchableOpacity
-            onPress={() => {
-              dispatch(getMatch(currentUser?.id));
-              navigation.goBack();
-            }}>
-            <AntDesign name="arrowleft" color="#FF8C76" size={28} />
-          </TouchableOpacity>
-          <Image
-            source={{
-              uri: partnerUser?.avatar,
-            }}
-            style={styles.image}
-          />
-          <Text style={{fontSize: 18, fontFamily: 'FredokaOne-Regular'}}>
-            {partnerUser?.petName}
-          </Text>
+    <PrivateWrapper navigationHandler={navigation}>
+      <View style={{flex: 1}}>
+        <View
+          style={{
+            padding: 10,
+            backgroundColor: '#fff',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            elevation: 5,
+          }}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <TouchableOpacity
+              onPress={() => {
+                dispatch(getMatch(currentUser?.id));
+                navigation.goBack();
+              }}>
+              <AntDesign name="arrowleft" color="#FF8C76" size={28} />
+            </TouchableOpacity>
+            <Image
+              source={{
+                uri: partnerUser?.avatar,
+              }}
+              style={styles.image}
+            />
+            <Text style={{fontSize: 18, fontFamily: 'FredokaOne-Regular'}}>
+              {partnerUser?.petName}
+            </Text>
+          </View>
+          <View style={{flexDirection: 'row'}}>
+            <TouchableOpacity style={styles.headerBtn}>
+              <Feather name="phone-call" color="#FF8C76" size={24} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.headerBtn}
+              onPress={() => navigation.navigate('CallingScreen', {user})}>
+              <SimpleLineIcons name="camera" color="#FF8C76" size={24} />
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={{flexDirection: 'row'}}>
-          <TouchableOpacity style={styles.headerBtn}>
-            <Feather name="phone-call" color="#FF8C76" size={24} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.headerBtn}>
-            <SimpleLineIcons name="camera" color="#FF8C76" size={24} />
-          </TouchableOpacity>
-        </View>
+        <GiftedChat
+          messages={messages}
+          showAvatarForEveryMessage={true}
+          onSend={messages => onSend(messages)}
+          user={{
+            _id: currentUser?.data?.gmail,
+            name: currentUser?.data?.petName,
+            avatar: currentUser?.data?.avatar,
+          }}
+          renderAvatarOnTop
+          renderMessageText={renderMessageText}
+          renderBubble={renderBubble}
+          renderComposer={renderComposer}
+          renderInputToolbar={renderInputToolbar}
+          renderSend={renderSend}
+        />
       </View>
-      <GiftedChat
-        messages={messages}
-        showAvatarForEveryMessage={true}
-        onSend={messages => onSend(messages)}
-        user={{
-          _id: currentUser?.data?.gmail,
-          name: currentUser?.data?.petName,
-          avatar: currentUser?.data?.avatar,
-        }}
-        renderAvatarOnTop
-        renderMessageText={renderMessageText}
-        renderBubble={renderBubble}
-        renderComposer={renderComposer}
-        renderInputToolbar={renderInputToolbar}
-        renderSend={renderSend}
-      />
-    </View>
+    </PrivateWrapper>
   );
 };
 const styles = StyleSheet.create({

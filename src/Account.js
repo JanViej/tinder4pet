@@ -5,6 +5,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useDispatch, useSelector} from 'react-redux';
 import {logout} from './redux/auth/actions';
+import PrivateWrapper from './PrivateWrapper';
 
 const Account = ({navigation}) => {
   const dispatch = useDispatch();
@@ -69,63 +70,65 @@ const Account = ({navigation}) => {
     },
   ];
   return (
-    <View style={{flex: 1, backgroundColor: '#fff', padding: 20}}>
-      <View
-        style={{
-          alignItems: 'center',
-          marginBottom: 40,
-          marginTop: 80,
-        }}>
-        <Image
-          source={{
-            uri: userData?.data?.avatar,
-          }}
-          style={styles.image}
-        />
-        <Text
+    <PrivateWrapper navigationHandler={navigation}>
+      <View style={{flex: 1, backgroundColor: '#fff', padding: 20}}>
+        <View
           style={{
-            fontFamily: 'FredokaOne-Regular',
-            fontSize: 22,
-          }}>
-          {userData?.data?.petName}
-        </Text>
-        <Text style={{fontWeight: '700', color: '#C2BDBD', fontSize: 18}}>
-          {userData?.data?.age} months | {userData?.data?.address}
-        </Text>
-      </View>
-
-      {listMenu?.map((item, index) => (
-        <TouchableOpacity
-          key={`listmenu-account-${index}`}
-          onPress={item.onClick}
-          style={{
-            flexDirection: 'row',
             alignItems: 'center',
-            marginBottom: 10,
-            justifyContent: 'space-between',
-            borderBottomWidth: 1,
-            paddingBottom: 10,
-            borderBottomColor: '#CDCBCB',
+            marginBottom: 40,
+            marginTop: 80,
           }}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <View
-              style={{
-                backgroundColor: item.icBackground,
-                borderRadius: 100,
-                padding: 10,
-                marginRight: 15,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              {item.icon}
-            </View>
-            <Text style={{fontSize: 16, color: '#706F6F'}}>{item.title}</Text>
-          </View>
+          <Image
+            source={{
+              uri: userData?.data?.avatar,
+            }}
+            style={styles.image}
+          />
+          <Text
+            style={{
+              fontFamily: 'FredokaOne-Regular',
+              fontSize: 22,
+            }}>
+            {userData?.data?.petName}
+          </Text>
+          <Text style={{fontWeight: '700', color: '#C2BDBD', fontSize: 18}}>
+            {userData?.data?.age} months | {userData?.data?.address}
+          </Text>
+        </View>
 
-          <AntDesign name="right" color="#706F6F" size={18} />
-        </TouchableOpacity>
-      ))}
-    </View>
+        {listMenu?.map((item, index) => (
+          <TouchableOpacity
+            key={`listmenu-account-${index}`}
+            onPress={item.onClick}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginBottom: 10,
+              justifyContent: 'space-between',
+              borderBottomWidth: 1,
+              paddingBottom: 10,
+              borderBottomColor: '#CDCBCB',
+            }}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <View
+                style={{
+                  backgroundColor: item.icBackground,
+                  borderRadius: 100,
+                  padding: 10,
+                  marginRight: 15,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                {item.icon}
+              </View>
+              <Text style={{fontSize: 16, color: '#706F6F'}}>{item.title}</Text>
+            </View>
+
+            <AntDesign name="right" color="#706F6F" size={18} />
+          </TouchableOpacity>
+        ))}
+      </View>
+    </PrivateWrapper>
   );
 };
 

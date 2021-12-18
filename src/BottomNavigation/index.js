@@ -18,7 +18,7 @@ import Map from '../Map';
 import HistoryDetails from '../HistoryDetails';
 import IntroSlider from '../IntroSlider';
 import IntroSlider2 from '../IntroSlider';
-
+import CallingScreen from '../components/CallingScreen';
 import PhoneSignIn from '../PhoneSignIn';
 import Home from '../Home';
 import Detail from '../Detail';
@@ -33,8 +33,8 @@ import Profile from '../Profile';
 import FormProfile from '../FormProfile';
 import Questionnaire from '../Questionnaire';
 import Instruction from '../Instruction';
-
-import Chat from '../Chat'
+import IncomingCallScreen from '../components/IncomingCallScreen'
+import Chat from '../Chat';
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -147,6 +147,8 @@ const MenuStackScreen = () => {
       <MenuStack.Screen name="PhoneSignIn" component={PhoneSignIn} />
       <MenuStack.Screen name="Signup" component={Signup} />
       <MenuStack.Screen name="HistoryDetails" component={HistoryDetails} />
+      <MenuStack.Screen name="CallingScreen" component={CallingScreen} />
+      <MenuStack.Screen name="IncomingCallScreen" component={IncomingCallScreen} />
     </MenuStack.Navigator>
   );
 };

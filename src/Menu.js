@@ -147,9 +147,9 @@ const Menu = ({navigation}) => {
   };
 
   const onClickItem = id => {
-    navigation.navigate('Details', {
-      id,
-    });
+    // navigation.navigate('Details', {
+    //   id,
+    // });
   };
 
   const onClickCart = () => {

@@ -17,6 +17,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {ScrollView} from 'react-native-gesture-handler';
 import {useSelector, useDispatch} from 'react-redux';
 import UploadScreen from './UploadScreen';
+import PrivateWrapper from './PrivateWrapper';
 
 const {width: windowWidth} = Dimensions.get('window');
 
@@ -61,174 +62,177 @@ const FormProfile = ({navigation, route}) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Formik
-        initialValues={initialValues}
-        enableReinitialize={true}
-        onSubmit={values => {
-          dispatch(
-            writeDataToAccount({
-              petName: values.name,
-              petGender: values.sex,
-              address: values.address,
-              age: values.age,
-              weight: values.weight,
-              description: values.description,
-              introStep: 'Done',
-            }),
-          );
-        }}>
-        {({handleChange, handleBlur, handleSubmit, values}) => (
-          <View style={{flex: 1}}>
-            <View style={styles.header}>
-              <TouchableOpacity
-                style={{flexDirection: 'row', alignItems: 'center'}}
-                onPress={() => {
-                  if (userData.data.introStep === 'FormProfile') {
-                    dispatch(
-                      writeDataToAccount({
-                        introStep: 'Instruction',
-                      }),
-                    );
-                  } else {
-                    navigation.goBack();
-                  }
-                }}>
-                <AntDesign name="left" color="#000" size={20} />
-                <Text style={{fontSize: 16, marginLeft: 5}}>Back</Text>
-              </TouchableOpacity>
-              <Text style={{fontSize: 16, fontWeight: '700', marginRight: 10}}>
-                My Background
-              </Text>
-              <TouchableOpacity onPress={handleSubmit}>
-                <Text style={{fontSize: 16}}>Save</Text>
-              </TouchableOpacity>
-            </View>
-            <ScrollView>
-              <Text style={styles.title}>My Info</Text>
-              <TextInput
-                onChangeText={handleChange('name')}
-                onBlur={handleBlur('name')}
-                value={values.name}
-                underlineColorAndroid="transparent"
-                style={{
-                  ...styles.input,
-                  fontFamily: 'FredokaOne-Regular',
-                  fontSize: 20,
-                  marginHorizontal: 20,
-                  paddingHorizontal: 10,
-                  marginBottom: 10,
-                }}
-                placeholder="Pet Name"
-                placeholderTextColor="#2f33374f"
-              />
-              <View
-                style={{
-                  flexDirection: 'row',
-                  paddingHorizontal: 20,
-                  alignItems: 'center',
-                }}>
-                <Image
-                  source={{
-                    uri: userData.data.avatar,
+    <PrivateWrapper navigationHandler={navigation}>
+      <View style={styles.container}>
+        <Formik
+          initialValues={initialValues}
+          enableReinitialize={true}
+          onSubmit={values => {
+            dispatch(
+              writeDataToAccount({
+                petName: values.name,
+                petGender: values.sex,
+                address: values.address,
+                age: values.age,
+                weight: values.weight,
+                description: values.description,
+                introStep: 'Done',
+              }),
+            );
+          }}>
+          {({handleChange, handleBlur, handleSubmit, values}) => (
+            <View style={{flex: 1}}>
+              <View style={styles.header}>
+                <TouchableOpacity
+                  style={{flexDirection: 'row', alignItems: 'center'}}
+                  onPress={() => {
+                    if (userData.data.introStep === 'FormProfile') {
+                      dispatch(
+                        writeDataToAccount({
+                          introStep: 'Instruction',
+                        }),
+                      );
+                    } else {
+                      navigation.goBack();
+                    }
+                  }}>
+                  <AntDesign name="left" color="#000" size={20} />
+                  <Text style={{fontSize: 16, marginLeft: 5}}>Back</Text>
+                </TouchableOpacity>
+                <Text
+                  style={{fontSize: 16, fontWeight: '700', marginRight: 10}}>
+                  My Background
+                </Text>
+                <TouchableOpacity onPress={handleSubmit}>
+                  <Text style={{fontSize: 16}}>Save</Text>
+                </TouchableOpacity>
+              </View>
+              <ScrollView>
+                <Text style={styles.title}>My Info</Text>
+                <TextInput
+                  onChangeText={handleChange('name')}
+                  onBlur={handleBlur('name')}
+                  value={values.name}
+                  underlineColorAndroid="transparent"
+                  style={{
+                    ...styles.input,
+                    fontFamily: 'FredokaOne-Regular',
+                    fontSize: 20,
+                    marginHorizontal: 20,
+                    paddingHorizontal: 10,
+                    marginBottom: 10,
                   }}
-                  style={styles.image}
+                  placeholder="Pet Name"
+                  placeholderTextColor="#2f33374f"
                 />
-                <View style={{flex: 1}}>
-                  <TextInput
-                    onChangeText={handleChange('address')}
-                    onBlur={handleBlur('address')}
-                    value={values.address}
-                    style={{
-                      ...styles.input,
-                      textAlign: 'center',
-                      marginBottom: 10,
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    paddingHorizontal: 20,
+                    alignItems: 'center',
+                  }}>
+                  <Image
+                    source={{
+                      uri: userData.data.avatar,
                     }}
-                    placeholder="Address"
-                    placeholderTextColor="#2f33374f"
+                    style={styles.image}
                   />
-                  <TextInput
-                    onChangeText={handleChange('age')}
-                    onBlur={handleBlur('age')}
-                    value={values.age}
-                    style={{
-                      ...styles.input,
-                      textAlign: 'center',
-                      marginBottom: 10,
-                    }}
-                    placeholder="Age"
-                    placeholderTextColor="#2f33374f"
-                  />
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                    }}>
+                  <View style={{flex: 1}}>
                     <TextInput
-                      onChangeText={handleChange('sex')}
-                      onBlur={handleBlur('sex')}
-                      value={values.sex}
+                      onChangeText={handleChange('address')}
+                      onBlur={handleBlur('address')}
+                      value={values.address}
                       style={{
                         ...styles.input,
                         textAlign: 'center',
-                        width: '48%',
+                        marginBottom: 10,
                       }}
-                      placeholder="Pet Gender"
+                      placeholder="Address"
                       placeholderTextColor="#2f33374f"
                     />
                     <TextInput
-                      onChangeText={handleChange('weight')}
-                      onBlur={handleBlur('weight')}
-                      value={values.weight}
+                      onChangeText={handleChange('age')}
+                      onBlur={handleBlur('age')}
+                      value={values.age}
                       style={{
                         ...styles.input,
                         textAlign: 'center',
-                        width: '48%',
+                        marginBottom: 10,
                       }}
-                      placeholder="Weight"
+                      placeholder="Age"
                       placeholderTextColor="#2f33374f"
                     />
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                      }}>
+                      <TextInput
+                        onChangeText={handleChange('sex')}
+                        onBlur={handleBlur('sex')}
+                        value={values.sex}
+                        style={{
+                          ...styles.input,
+                          textAlign: 'center',
+                          width: '48%',
+                        }}
+                        placeholder="Pet Gender"
+                        placeholderTextColor="#2f33374f"
+                      />
+                      <TextInput
+                        onChangeText={handleChange('weight')}
+                        onBlur={handleBlur('weight')}
+                        value={values.weight}
+                        style={{
+                          ...styles.input,
+                          textAlign: 'center',
+                          width: '48%',
+                        }}
+                        placeholder="Weight"
+                        placeholderTextColor="#2f33374f"
+                      />
+                    </View>
                   </View>
                 </View>
-              </View>
-              <Text style={styles.title}>Description</Text>
-              <TextInput
-                multiline={true}
-                numberOfLines={4}
-                ellipsizeMode="tail"
-                onChangeText={handleChange('description')}
-                onBlur={handleBlur('description')}
-                value={values.description}
-                style={{
-                  ...styles.input,
-                  marginHorizontal: 20,
-                  paddingHorizontal: 10,
-                }}
-                placeholder="Let write something about your pet here"
-                placeholderTextColor="#2f33374f"
-              />
-              <Text style={styles.title}>Photos</Text>
-              <ListImage
-                images={values.images}
-                listOption={listOption}
-                handleClickChoose={handleClickChoose}
-                handleClickView={handleClickView}
-                handleClickAdd={handleClickAdd}
-              />
-            </ScrollView>
-          </View>
-        )}
-      </Formik>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}>
-        <UploadScreen propImage="images" setModalVisible={setModalVisible} />
-      </Modal>
-    </View>
+                <Text style={styles.title}>Description</Text>
+                <TextInput
+                  multiline={true}
+                  numberOfLines={4}
+                  ellipsizeMode="tail"
+                  onChangeText={handleChange('description')}
+                  onBlur={handleBlur('description')}
+                  value={values.description}
+                  style={{
+                    ...styles.input,
+                    marginHorizontal: 20,
+                    paddingHorizontal: 10,
+                  }}
+                  placeholder="Let write something about your pet here"
+                  placeholderTextColor="#2f33374f"
+                />
+                <Text style={styles.title}>Photos</Text>
+                <ListImage
+                  images={values.images}
+                  listOption={listOption}
+                  handleClickChoose={handleClickChoose}
+                  handleClickView={handleClickView}
+                  handleClickAdd={handleClickAdd}
+                />
+              </ScrollView>
+            </View>
+          )}
+        </Formik>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}>
+          <UploadScreen propImage="images" setModalVisible={setModalVisible} />
+        </Modal>
+      </View>
+    </PrivateWrapper>
   );
 };
 

@@ -24,6 +24,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import {Formik} from 'formik';
 import {writeDataToAccount} from './redux/account/actions';
 import Notification from './components/Notification';
+import PrivateWrapper from './PrivateWrapper';
 
 const {width: windowWidth} = Dimensions.get('window');
 
@@ -124,7 +125,7 @@ const Profile = ({navigation}) => {
   }, [userData]);
 
   return (
-    <>
+    <PrivateWrapper navigationHandler={navigation}>
       <Notification
         title="Success"
         desc="Edit successfully"
@@ -344,7 +345,7 @@ const Profile = ({navigation}) => {
           </View>
         )}
       </Formik>
-    </>
+    </PrivateWrapper>
   );
 };
 

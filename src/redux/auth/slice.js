@@ -11,6 +11,7 @@ export const initialState = {
   currentCategory: {},
   isNew: false,
   responseLogin: null,
+  voximplantInfo: {},
 };
 
 export const {reducer, actions} = createSlice({
@@ -48,6 +49,11 @@ export const {reducer, actions} = createSlice({
     [getAccount.fulfilled]: (state, {payload}) => {
       state.data = payload;
       state.loading = false;
+      state.voximplantInfo = {
+        user_id: payload.data.voximplantUserId,
+        user_name: payload.data.voximplantUsername,
+        user_display_name: payload.data.voximplantUsername,
+      };
     },
     [getAccount.pending]: (state, {payload}) => {
       state.loading = true;

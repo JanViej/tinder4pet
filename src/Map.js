@@ -36,7 +36,7 @@ const Map = ({navigation}) => {
 
   const handleClickCancel = () => {
     dispatch(getMe());
-    navigation.navigate('Account', {screen: 'Account'});
+    // navigation.navigate('Account', {screen: 'Account'});
   };
 
   const handleClickSave = () => {
@@ -50,7 +50,7 @@ const Map = ({navigation}) => {
         },
       }),
     );
-    navigation.navigate('Account', {screen: 'Account'});
+    // navigation.navigate('Account', {screen: 'Account'});
   };
   return (
     <View style={styles.container}>

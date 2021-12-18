@@ -3,7 +3,7 @@ import axios from 'axios';
 const TIME_OUT = 15000;
 
 const apiRequest = axios.create({
-  baseURL: 'https://salty-dawn-54578.herokuapp.com',
+  baseURL: 'https://api.voximplant.com/platform_api/',
   timeout: TIME_OUT,
 });
 

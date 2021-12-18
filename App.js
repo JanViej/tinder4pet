@@ -14,7 +14,7 @@ import {Provider} from 'react-redux';
 import {NavigationContainer} from '@react-navigation/native';
 import store from './src/redux/store';
 import BottomNavigation from './src/BottomNavigation';
-import {getAccount} from './src/redux/auth/actions';
+import {getAccount, voximplantLogin} from './src/redux/auth/actions';
 import {useDispatch, useSelector} from 'react-redux';
 
 const App: () => Node = () => {
@@ -43,7 +43,13 @@ const App: () => Node = () => {
       dispatch(getAccount(user?._user?.email));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  }, [JSON.stringify(user)]);
+
+  useEffect(() => {
+    if (currentUser?.data) {
+      dispatch(voximplantLogin(currentUser?.data?.voximplantUsername));
+    }
+  }, [JSON.stringify(currentUser)]);
 
   if (initializing) {
     return null;

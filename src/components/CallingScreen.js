@@ -91,9 +91,12 @@ const CallingScreen = ({route, navigation}) => {
         showError(callEvent.reason);
       });
       call.current.on(Voximplant.CallEvents.ProgressToneStart, callEvent => {
+        console.log('asd 4');
+
         setCallStatus('Calling...');
       });
       call.current.on(Voximplant.CallEvents.Connected, callEvent => {
+        console.log('asd 13');
         setCallStatus('Connected');
       });
       call.current.on(Voximplant.CallEvents.Disconnected, callEvent => {

@@ -183,7 +183,7 @@ const MessageContent = () => {
         renderBubble={renderBubble}
         renderComposer={renderComposer}
         renderInputToolbar={renderInputToolbar}
-        // renderActions={renderActions}
+        renderActions={renderActions}
         renderSend={renderSend}
       />
     </View>

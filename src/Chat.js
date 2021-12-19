@@ -6,9 +6,8 @@ import {
   TouchableOpacity,
   Image,
   BackHandler,
+  Modal,
 } from 'react-native';
-import {Avatar} from 'react-native-elements';
-// import {auth} from '../firebase';
 import {
   GiftedChat,
   MessageText,
@@ -26,20 +25,20 @@ import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import {getPartnerData, getMatch} from './redux/room/actions';
 import {setMatch} from './redux/recommend/actions';
 import PrivateWrapper from './PrivateWrapper';
+import UploadScreen from './UploadScreen';
 
 const Chat = ({navigation, route}) => {
   const [messages, setMessages] = useState([]);
   const currentUser = useSelector(state => state.auth.data);
-  const partnerUser = useSelector(state => state.room.partnerData);
+  const partnerUser = useSelector(state => state.room?.partnerData);
   const {partnerData} = route?.params;
+
+  console.log('asd partnerData', partnerData);
   const dispatch = useDispatch();
-
+  const [visible, setModalVisible] = useState(false);
   const [user, setVoximplantPartner] = useState();
-
-  console.log('asd chat');
-
-  console.log('asd chat user', user);
-
+  const [customText, setCustomText] = useState('');
+  const [currentImg, setCurrentImg] = useState('');
   const backAction = () => {
     dispatch(getMatch(currentUser?.id));
     navigation.goBack();
@@ -67,6 +66,7 @@ const Chat = ({navigation, route}) => {
                 createdAt: doc?.data()?.createdAt?.toDate(),
                 text: doc?.data()?.text,
                 user: doc?.data()?.user,
+                image: doc?.data()?.image,
               };
             }),
         );
@@ -93,19 +93,26 @@ const Chat = ({navigation, route}) => {
     setMessages(previousMessages =>
       GiftedChat.append(previousMessages, messages),
     );
-    const {_id, createdAt, text, user} = messages[0];
-    firestore().collection('message').add({
+    const {_id, createdAt, text, user, image} = messages[0];
+    const messageObj = {
       _id,
       createdAt,
-      text,
+      ...(text && {
+        text: text,
+      }),
       user,
+      ...(image && {
+        image: image,
+      }),
       matchId: partnerData?.matchId,
-    });
+    };
+
+    firestore().collection('message').add(messageObj);
 
     dispatch(
       setMatch({
         data: {
-          currentText: `you: ${text}`,
+          currentText: text ? `you: ${text}` : 'You send an image',
           status: 'done',
           matchId: partnerData?.matchId,
         },
@@ -116,7 +123,9 @@ const Chat = ({navigation, route}) => {
     dispatch(
       setMatch({
         data: {
-          currentText: `${currentUser.data.petName}: ${text}`,
+          currentText: text
+            ? `${currentUser.data.petName}: ${text}`
+            : `${currentUser.data.petName} send an image`,
           status: 'undone',
           matchId: partnerData?.matchId,
         },
@@ -179,23 +188,120 @@ const Chat = ({navigation, route}) => {
     />
   );
 
-  const renderSend = props => (
-    <Send
+  const renderSend = props => {
+    return (
+      <Send
+        {...props}
+        {...(!props.text &&
+          currentImg !== '' && {
+            sendButtonProps: {
+              onPress: () => {
+                onSend([
+                  {
+                    createdAt: new Date(),
+                    image: currentImg,
+                    user: {
+                      _id: currentUser?.data?.gmail,
+                      name: currentUser?.data?.petName,
+                      avatar: currentUser?.data?.avatar,
+                    },
+                    _id: new Date().getTime(),
+                  },
+                ]);
+                setCurrentImg('');
+                setCustomText('');
+              },
+            },
+          })}
+        {...(props.text && {
+          sendButtonProps: {
+            onPress: () => {
+              onSend([
+                {
+                  createdAt: new Date(),
+                  text: props.text,
+                  ...(currentImg && {
+                    image: currentImg,
+                  }),
+                  user: {
+                    _id: currentUser?.data?.gmail,
+                    name: currentUser?.data?.petName,
+                    avatar: currentUser?.data?.avatar,
+                  },
+                  _id: new Date().getTime(),
+                },
+              ]);
+              setCurrentImg('');
+              setCustomText('');
+            },
+          },
+        })}
+        containerStyle={{
+          width: 44,
+          height: 44,
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginHorizontal: 4,
+        }}>
+        <Feather name="send" color="#FF8C76" size={28} />
+      </Send>
+    );
+  };
+
+  const handleRemove = () => {
+    setCurrentImg('');
+  };
+
+  const renderActions = props => (
+    <Actions
       {...props}
-      disabled={!props.text}
       containerStyle={{
         width: 44,
         height: 44,
         alignItems: 'center',
         justifyContent: 'center',
-        marginHorizontal: 4,
-      }}>
-      <Feather name="send" color="#FF8C76" size={28} />
-    </Send>
+        marginLeft: 4,
+        marginRight: 4,
+        marginBottom: 0,
+        zIndex: 0,
+      }}
+      icon={() => <AntDesign name="camerao" color="#FF8C76" size={28} />}
+      options={{
+        'Choose From Library': () => {
+          setModalVisible(true);
+        },
+        Cancel: () => {
+          console.log('Cancel');
+        },
+      }}
+      optionTintColor="#222B45"
+    />
   );
 
+  const handleVideoCall = () => {
+    navigation.navigate('CallingScreen', {user});
+  };
+
+  const getUrlImg = url => {
+    setCurrentImg(url);
+  };
+
+  const renderFooter = props => <View style={{marginTop: 110}} />;
   return (
     <PrivateWrapper navigationHandler={navigation}>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={visible}
+        onRequestClose={() => {
+          setModalVisible(!visible);
+        }}>
+        <UploadScreen
+          propImage="chatImg"
+          setModalVisible={setModalVisible}
+          onGetUrl={getUrlImg}
+        />
+      </Modal>
       <View style={{flex: 1}}>
         <View
           style={{
@@ -230,15 +336,18 @@ const Chat = ({navigation, route}) => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.headerBtn}
-              onPress={() => navigation.navigate('CallingScreen', {user})}>
+              onPress={handleVideoCall}>
               <SimpleLineIcons name="camera" color="#FF8C76" size={24} />
             </TouchableOpacity>
           </View>
         </View>
+
         <GiftedChat
           messages={messages}
           showAvatarForEveryMessage={true}
-          onSend={messages => onSend(messages)}
+          onSend={messages => {
+            onSend(messages);
+          }}
           user={{
             _id: currentUser?.data?.gmail,
             name: currentUser?.data?.petName,
@@ -250,7 +359,45 @@ const Chat = ({navigation, route}) => {
           renderComposer={renderComposer}
           renderInputToolbar={renderInputToolbar}
           renderSend={renderSend}
+          {...(!currentImg && {
+            renderActions: renderActions,
+          })}
+          alwaysShowSend
+          {...(currentImg && {
+            renderFooter: renderFooter,
+          })}
+          text={customText}
+          onInputTextChanged={text => setCustomText(text)}
         />
+        {currentImg !== '' && (
+          <View>
+            <TouchableOpacity
+              onPress={handleRemove}
+              style={{
+                position: 'absolute',
+                bottom: 160,
+                left: 105,
+                zIndex: 5,
+                opacity: 10,
+              }}>
+              <AntDesign name="closecircleo" color="#000" size={20} />
+            </TouchableOpacity>
+            <Image
+              style={{
+                width: 100,
+                height: 100,
+                position: 'absolute',
+                bottom: 65,
+                left: 10,
+                opacity: 10,
+                borderRadius: 10,
+              }}
+              source={{
+                uri: currentImg,
+              }}
+            />
+          </View>
+        )}
       </View>
     </PrivateWrapper>
   );

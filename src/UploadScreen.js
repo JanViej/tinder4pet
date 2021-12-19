@@ -18,7 +18,12 @@ import * as Progress from 'react-native-progress';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {useSelector} from 'react-redux';
 
-const UploadScreen = ({propImage, setIsUpload = () => {}, setModalVisible}) => {
+const UploadScreen = ({
+  propImage,
+  setIsUpload = () => {},
+  setModalVisible,
+  onGetUrl = () => {},
+}) => {
   const [image, setImage] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
@@ -66,19 +71,23 @@ const UploadScreen = ({propImage, setIsUpload = () => {}, setModalVisible}) => {
     try {
       const res = await task;
       task.snapshot.ref.getDownloadURL().then(downloadURL => {
-        dispatch(
-          writeDataToAccount({
-            ...(propImage === 'avatar' && {
-              avatar: downloadURL,
+        if (propImage !== 'chatImg') {
+          dispatch(
+            writeDataToAccount({
+              ...(propImage === 'avatar' && {
+                avatar: downloadURL,
+              }),
+              images: [
+                ...(currentData?.data?.images || []),
+                {
+                  url: downloadURL,
+                },
+              ],
             }),
-            images: [
-              ...(currentData?.data?.images || []),
-              {
-                url: downloadURL,
-              },
-            ],
-          }),
-        );
+          );
+        } else {
+          onGetUrl(downloadURL);
+        }
       });
       if (res?.state === 'success') {
         Alert.alert(

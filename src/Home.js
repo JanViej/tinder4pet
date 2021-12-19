@@ -141,7 +141,10 @@ const Home = ({navigation}) => {
     dispatch(logout());
   };
 
-  const handleClickBell = () => {};
+  const handleClickBell = () => {
+    console.log('asd Message');
+    navigation.navigate('Message');
+  };
 
   const handleSelectCategory = category => () => {
     if (category.value === 'dog') {

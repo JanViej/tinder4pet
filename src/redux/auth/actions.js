@@ -119,10 +119,13 @@ export const logout = createAsyncThunk(
   'user/logout',
   async (payload, thunkAPI) => {
     try {
+      const voximplant = Voximplant.getInstance();
+      await voximplant.disconnect();
       await auth()
         .signOut()
         .then(() => console.log('User signed out!'));
     } catch (error) {
+      // console.log('asd er', error);
       return thunkAPI.rejectWithValue();
     }
   },

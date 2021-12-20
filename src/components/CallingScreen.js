@@ -101,7 +101,7 @@ const CallingScreen = ({route, navigation}) => {
       });
       call.current.on(Voximplant.CallEvents.Disconnected, callEvent => {
         console.log('asd 1');
-        navigation.navigate('Chat');
+        navigation.goBack();
       });
       call.current.on(
         Voximplant.CallEvents.LocalVideoStreamAdded,
@@ -130,7 +130,7 @@ const CallingScreen = ({route, navigation}) => {
       Alert.alert('Call failed', `Reason: ${reason}`, [
         {
           text: 'Ok',
-          onPress: navigation.navigate('Chat'),
+          onPress: navigation.goBack(),
         },
       ]);
     };

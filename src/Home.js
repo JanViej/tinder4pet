@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Picker,
 } from 'react-native';
 import SwipeCards from 'react-native-swipe-cards-deck';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -22,6 +23,7 @@ import {getAllUser, reactLike, reactDislike} from './redux/home/actions';
 import {getCats, getDogs} from './redux/home/selectors';
 import moment from 'moment';
 import PrivateWrapper from './PrivateWrapper';
+import {cities} from './configs/cities';
 
 const StatusCard = ({text}) => {
   return (
@@ -60,7 +62,7 @@ const Home = ({navigation}) => {
   const cat = useSelector(getCats);
   const [filterData, setFilterData] = useState(all);
   const [currentCategory, setCurrentCategory] = useState(categories[2]);
-
+  const [selectedValue, setSelectedValue] = useState(userData?.data?.address);
   useEffect(() => {
     if (all) {
       setFilterData(all);
@@ -138,7 +140,8 @@ const Home = ({navigation}) => {
   };
 
   const handleClickAddress = () => {
-    dispatch(logout());
+    // dispatch(logout());
+    navigation.navigate('Map');
   };
 
   const handleClickBell = () => {
@@ -186,6 +189,27 @@ const Home = ({navigation}) => {
             </TouchableOpacity>
           </View>
         </View>
+        {/* <View style={styles.addressRow}>
+          <Picker
+            selectedValue={selectedValue}
+            style={{height: 100, width: 200, fontSize: 30}}
+            itemStyle={{
+              backgroundColor: 'red',
+              color: 'blue',
+              fontSize: 17,
+            }}
+            onValueChange={(itemValue, itemIndex) =>
+              setSelectedValue(itemValue)
+            }>
+            {cities?.map(e => (
+              <Picker.Item
+                style={{fontSize: 30}}
+                label={e.city}
+                value={e.city}
+              />
+            ))}
+          </Picker>
+        </View> */}
       </View>
       <View
         style={{

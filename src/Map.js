@@ -13,6 +13,8 @@ import {
 } from 'react-native';
 import MapView from 'react-native-maps';
 import {useDispatch, useSelector} from 'react-redux';
+navigator.geolocation = require('@react-native-community/geolocation');
+
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import {actions} from './redux/user/slice';
 import {getMe} from './redux/user/actions';
@@ -22,112 +24,54 @@ const openMap = () => {
   // Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${query}`);
 };
 
-navigator.geolocation = require('@react-native-community/geolocation');
-
 const Map = ({navigation}) => {
   const dispatch = useDispatch();
-  const userData = useSelector(state => state.user.data);
-  const [value, setValue] = useState(userData.address);
+  // const userData = useSelector(state => state.user.data);
+  const [value, setValue] = useState('');
   const width = Dimensions.get('window').width;
-  const [lat, setLat] = useState(userData?.position?.lat);
-  const [lng, setLng] = useState(userData?.position?.lng || 0);
+  // const [lat, setLat] = useState(userData?.position?.lat);
+  // const [lng, setLng] = useState(userData?.position?.lng || 0);
 
-  console.log('userData', userData);
-
-  const handleClickCancel = () => {
-    dispatch(getMe());
-    // navigation.navigate('Account', {screen: 'Account'});
-  };
-
-  const handleClickSave = () => {
-    console.log(lat, lng)
-    dispatch(
-      actions.setInfo({
-        address: value,
-        position: {
-          lat: lat,
-          lng: lng,
-        },
-      }),
-    );
-    // navigation.navigate('Account', {screen: 'Account'});
-  };
   return (
     <View style={styles.container}>
-      <MapView
-        style={styles.map}
-        region={{
-          latitude: lat,
-          longitude: lng,
-          latitudeDelta: 0.09922,
-          longitudeDelta: 0.09421,
-        }}>
-        <MapView.Marker
-          coordinate={{
-            latitude: lat,
-            longitude: lng,
-          }}
-          title="My location"
-          onPress={openMap}
-        />
-      </MapView>
       <View
         style={{maxHeight: 200, width: width, zIndex: 1, position: 'absolute'}}>
         <GooglePlacesAutocomplete
-          placeholder="Search"
+          placeholder="Address"
           enablePoweredByContainer={false}
           onPress={(data, details = null) => {
             setValue(data.description);
-            setLat(details.geometry.location.lat);
-            setLng(details.geometry.location.lng);
+            console.log('details', details.geometry.location);
+            console.log('details', data.description);
+            // setLocation(details.geometry.location);
           }}
           query={{
-            key: 'AIzaSyDGZOhb6qWmy1PLYJrLmtBho18Vasw0C_U',
+            key: 'AIzaSyAIXbWGnDn_LAZiLLweDNk6FMD-WWFrdXc',
             language: 'vi',
           }}
           fetchDetails={true}
           textInputProps={{
-            placeholderTextColor: '#000',
+            placeholderTextColor: '#5ca4b8',
             onChangeText: text => {
               setValue(text);
             },
             value: value,
+            borderRadius: 10,
           }}
           styles={{
-            textInputContainer: {
-              padding: 10,
-              // backgroundColor: 'red',
-              zIndex: 0,
-            },
             textInput: {
-              height: 38,
-              color: '#5d5d5d',
+              height: 60,
+              color: '#1F5D74',
               fontSize: 16,
-              elevation: 5,
+              fontSize: 18,
+              fontWeight: '600',
+              backgroundColor: '#e1eff5',
             },
             predefinedPlacesDescription: {
               color: '#1faadb',
             },
           }}
         />
-      </View>
-      <View
-        style={{
-          width: width,
-          height: 'auto',
-          margin: 'auto',
-          zIndex: 3,
-          position: 'absolute',
-          bottom: 20,
-          flexDirection: 'row',
-          justifyContent: 'space-around',
-        }}>
-        <TouchableOpacity style={styles.btn} onPress={handleClickSave}>
-          <Text style={styles.text}>Save</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.btn} onPress={handleClickCancel}>
-          <Text style={styles.text}>Back</Text>
-        </TouchableOpacity>
       </View>
     </View>
   );

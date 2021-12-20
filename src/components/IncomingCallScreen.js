@@ -30,7 +30,7 @@ const IncomingCallScreen = ({route, navigation}) => {
 
   const onDecline = () => {
     call.decline();
-    navigation.navigate('Chat');
+    navigation.goBack();
   };
 
   const onAccept = () => {

@@ -130,7 +130,7 @@ const MenuStackScreen = () => {
 
       <MenuStack.Screen name="Home2" component={Home} />
       <MenuStack.Screen name="FormProfile2" component={FormProfile} />
-      {/* <MenuStack.Screen name="Questionnaire" component={Questionnaire} /> */}
+      <MenuStack.Screen name="Map" component={Map} />
       <MenuStack.Screen name="Account" component={Account} />
       <MenuStack.Screen name="Profile" component={Profile} />
       <MenuStack.Screen name="Gallery" component={Gallery} />

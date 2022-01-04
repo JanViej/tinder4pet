@@ -16,6 +16,8 @@ import {getMatch} from './redux/room/actions';
 import {useDispatch} from 'react-redux';
 import {setMatch} from './redux/recommend/actions';
 import firestore from '@react-native-firebase/firestore';
+import {voximplantLogin} from './redux/auth/actions';
+import {getRooms} from './redux/home/selectors';
 
 const {width: windowWidth} = Dimensions.get('window');
 
@@ -24,7 +26,9 @@ const Room = ({navigation}) => {
   const userData = useSelector(state => state.auth.data);
   const matchData = useSelector(state => state.room.matchData);
   const loading = useSelector(state => state.room.loading);
+  const roomData = useSelector(getRooms);
   const [match, setMatchs] = useState();
+  console.log('asd ', roomData, matchData);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -54,6 +58,15 @@ const Room = ({navigation}) => {
     dispatch(getMatch(userData?.id));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  console.log(
+    'asd userData?.data?.voximplantUsername',
+    userData?.data?.voximplantUsername,
+  );
+  useEffect(() => {
+    dispatch(voximplantLogin());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userData?.data?.voximplantUsername]);
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = () => {

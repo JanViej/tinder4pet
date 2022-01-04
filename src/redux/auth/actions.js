@@ -16,13 +16,14 @@ export const login = createAsyncThunk(
       const response = await auth()
         .signInWithEmailAndPassword(payload?.username, payload?.password)
         .catch(error => {
+          console.log('asdasd firebsae', error);
           if (error.message.includes('no user')) {
             return 1;
           } else if (error.message.includes('password is invalid')) {
             return 2;
           }
         });
-
+      console.log('asdasd login', response);
       if (response !== 1 && response !== 2) {
         thunkAPI.dispatch(getAccount(payload?.username));
         return response;
@@ -30,6 +31,7 @@ export const login = createAsyncThunk(
         thunkAPI.dispatch(actions.setModalErrorLogin(response));
       }
     } catch (error) {
+      console.log('asdasd login error', error);
       return thunkAPI.rejectWithValue(error);
     }
   },

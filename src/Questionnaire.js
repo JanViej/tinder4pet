@@ -219,7 +219,8 @@ const Questionnaire = ({navigation}) => {
   const [messages, setMessages] = useState(messagesContent);
   const dispatch = useDispatch();
   const [key, setKey] = useState('introSlider');
-  const [answer, setAnswer] = useState();
+  const [answer, setAnswer] = useState({});
+  console.log('asd answer', answer);
 
   // useEffect(() => {
   //   dispatch(
@@ -236,7 +237,7 @@ const Questionnaire = ({navigation}) => {
         newMessage[0],
         {
           ...newMessage[1],
-          text: newMessage?.[1]?.text?.title,
+          text: newMessage?.[1]?.text?.title || newMessage?.[1]?.text,
         },
       ]),
     );
@@ -380,19 +381,15 @@ const Questionnaire = ({navigation}) => {
     };
 
     if (quickReply[0].value === 'yeah') {
-      dispatch(writeDataToAccount(answer));
       dispatch(
         writeDataToAccount({
+          ...answer,
+          oldPetName: '000',
           introStep: 'IntroSlider',
         }),
       );
     } else if (quickReply[0].value === 'skip') {
       handleSend([chatBotContent[chatBotContent.length - 1], msg]);
-      dispatch(
-        writeDataToAccount({
-          introStep: 'IntroSlider',
-        }),
-      );
     } else {
       handleSend([chatBotContent[0], msg]);
     }

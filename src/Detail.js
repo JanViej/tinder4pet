@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import Carousel, {Pagination, ParallaxImage} from 'react-native-snap-carousel';
 import {
@@ -22,23 +22,16 @@ import Modal from 'react-native-modal';
 import loveIcon from './assets/image/love.png';
 import {compact} from 'lodash';
 
-const _renderItem = ({item, index}, parallaxProps) => {
-  return (
-    <View style={styles.item}>
-      <ParallaxImage
-        source={{
-          uri: item.url,
-        }}
-        containerStyle={styles.imageContainer}
-        style={styles.image}
-        parallaxFactor={0.4}
-        {...parallaxProps}
-      />
-    </View>
-  );
-};
-
 const {width: screenWidth} = Dimensions.get('window');
+
+const isMatching = (id, userData) => {
+  const matchId = userData?.data?.match?.find(item => item.id === id);
+
+  if (matchId?.id === id) {
+    return true;
+  }
+  return false;
+};
 
 const Detail = ({navigation, route}) => {
   const [activeSlide, setActiveSlide] = useState(userData?.data?.images[0]);
@@ -49,6 +42,7 @@ const Detail = ({navigation, route}) => {
 
   const [dataDetail, setDataDetail] = useState({});
   const partnerDetail = useSelector(state => state.home.partnerDetail);
+  const swipeCardRef = useRef();
 
   const [love, setLove] = useState();
 
@@ -73,6 +67,37 @@ const Detail = ({navigation, route}) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [screen, partnerDetail]);
+
+  const handleClickImage = current => {
+    if (
+      (screen !== 'Account' && isMatching(partnerDetail?.id, userData)) ||
+      screen === 'Account'
+    ) {
+      navigation.navigate('ImageView', {
+        index: current?._activeItem,
+        images: current?.props?.data,
+        screen: screen,
+      });
+    }
+  };
+
+  const _renderItem = ({item, index}, parallaxProps) => {
+    return (
+      <TouchableOpacity
+        style={styles.item}
+        onPress={() => handleClickImage(swipeCardRef.current)}>
+        <ParallaxImage
+          source={{
+            uri: item.url,
+          }}
+          containerStyle={styles.imageContainer}
+          style={styles.image}
+          parallaxFactor={0.4}
+          {...parallaxProps}
+        />
+      </TouchableOpacity>
+    );
+  };
 
   // const handleClickLove = id => {
   //   setIsVisible(true);
@@ -159,6 +184,7 @@ const Detail = ({navigation, route}) => {
           containerCustomStyle={styles.slider}
           contentContainerCustomStyle={styles.sliderContentContainer}
           hasParallaxImages={true}
+          ref={swipeCardRef}
         />
         <TouchableOpacity
           style={{...styles.headerBtn, left: 30}}

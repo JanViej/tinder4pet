@@ -14,8 +14,9 @@ import {Provider} from 'react-redux';
 import {NavigationContainer} from '@react-navigation/native';
 import store from './src/redux/store';
 import BottomNavigation from './src/BottomNavigation';
-import {getAccount, voximplantLogin} from './src/redux/auth/actions';
+import {getAccount} from './src/redux/auth/actions';
 import {useDispatch, useSelector} from 'react-redux';
+import {UserProvider} from './src/contexts/UserContext';
 
 const App: () => Node = () => {
   const [initializing, setInitializing] = useState(true);
@@ -45,11 +46,11 @@ const App: () => Node = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(user)]);
 
-  useEffect(() => {
-    if (currentUser?.data) {
-      dispatch(voximplantLogin(currentUser?.data?.voximplantUsername));
-    }
-  }, [JSON.stringify(currentUser)]);
+  // useEffect(() => {
+  //   if (currentUser?.data) {
+  //     dispatch(voximplantLogin(currentUser?.data?.voximplantUsername));
+  //   }
+  // }, [JSON.stringify(currentUser)]);
 
   if (initializing) {
     return null;
@@ -79,7 +80,9 @@ const App: () => Node = () => {
 
 const AppWrapper = () => (
   <Provider store={store}>
-    <App />
+    <UserProvider>
+      <App />
+    </UserProvider>
   </Provider>
 );
 

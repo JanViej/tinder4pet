@@ -19,7 +19,10 @@ export const getAllUser = createAsyncThunk(
             });
           });
         });
-      return users.filter(item => item?.id !== userData.id);
+      return {
+        allUsersData: users.filter(item => item?.id !== userData.id),
+        users,
+      };
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -30,6 +33,8 @@ export const reactLike = createAsyncThunk(
   'home/like',
   async (payload, thunkAPI) => {
     const userData = thunkAPI.getState().auth.data;
+
+    console.log('asd payload', payload);
 
     try {
       let likeData = {};
@@ -189,6 +194,7 @@ export const getUserById = createAsyncThunk(
             ...querySnapshot?._data,
           };
         });
+      console.log('asd parner', parner);
       return parner;
     } catch (error) {
       return thunkAPI.rejectWithValue(error);

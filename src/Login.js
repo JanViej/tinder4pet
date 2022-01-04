@@ -23,7 +23,6 @@ import Modal from 'react-native-modal';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {Button} from 'react-native-elements';
 import {actions} from './redux/auth/slice';
-import {writeDataToAccount} from './redux/account/actions';
 import Notification from './components/Notification';
 
 const styles = StyleSheet.create({

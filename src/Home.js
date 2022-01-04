@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   ScrollView,
   Picker,
+  FlatList,
+  Modal,
 } from 'react-native';
 import SwipeCards from 'react-native-swipe-cards-deck';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -24,6 +26,8 @@ import {getCats, getDogs} from './redux/home/selectors';
 import moment from 'moment';
 import PrivateWrapper from './PrivateWrapper';
 import {cities} from './configs/cities';
+import DropDownPicker from 'react-native-dropdown-picker';
+import {useMatching} from './hooks/useMatching';
 
 const StatusCard = ({text}) => {
   return (
@@ -63,6 +67,12 @@ const Home = ({navigation}) => {
   const [filterData, setFilterData] = useState(all);
   const [currentCategory, setCurrentCategory] = useState(categories[2]);
   const [selectedValue, setSelectedValue] = useState(userData?.data?.address);
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(null);
+  const [items, setItems] = useState(userData?.data?.address);
+  const [visible, setModalVisible] = useState(false);
+  const {getIsMatch} = useMatching();
+
   useEffect(() => {
     if (all) {
       setFilterData(all);
@@ -96,12 +106,16 @@ const Home = ({navigation}) => {
           <View style={styles.bottomReact}>
             <TouchableOpacity
               style={styles.iconClose}
-              onPress={swipeCardRef.current?.swipeNope}>
+              onPress={() => handleNope(data)}>
               <Ionicons name="close" color="#FFB8D0" size={28} />
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.iconLove}
-              onPress={swipeCardRef.current?.swipeYup}>
+              onPress={e => {
+                // console.log('asd swipe yup');
+                handleYup(swipeCardRef.current);
+                swipeCardRef.current?.swipeYup(e);
+              }}>
               <AntDesign name="heart" color="#fff" size={28} />
             </TouchableOpacity>
           </View>
@@ -113,10 +127,15 @@ const Home = ({navigation}) => {
   const handleYup = card => {
     dispatch(
       reactLike({
-        id: card?.id,
+        id: card?.id || card?.props?.cards?.[0].id,
         createdAt: moment().toISOString(),
       }),
-    );
+    ).then(() => {
+      getIsMatch({
+        partner: card?.props?.cards?.[0] || card,
+      });
+    });
+
     return true; // return false if you wish to cancel the action
   };
   const handleNope = card => {
@@ -141,7 +160,8 @@ const Home = ({navigation}) => {
 
   const handleClickAddress = () => {
     // dispatch(logout());
-    navigation.navigate('Map');
+    // navigation.navigate('Map');
+    setModalVisible(true);
   };
 
   const handleClickBell = () => {
@@ -165,14 +185,47 @@ const Home = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <View style={{width: '100%'}}>
+      <Modal
+        animationType="slide"
+        visible={visible}
+        style={{width: 100}}
+        onRequestClose={() => {
+          setModalVisible(!visible);
+        }}>
+        <View style={{padding: 20}}>
+          <FlatList
+            data={cities}
+            renderItem={({item, index, separators}) => (
+              <TouchableOpacity
+                key={item.key}
+                onPress={() => {
+                  setModalVisible(false);
+                  setItems(item.label);
+                }}>
+                <View
+                  style={{
+                    backgroundColor: 'white',
+                    borderBottomWidth: 1,
+                    borderColor: '#000',
+                    padding: 10,
+                  }}>
+                  <Text style={{fontSize: 16}}>{item.label}</Text>
+                </View>
+              </TouchableOpacity>
+            )}
+          />
+        </View>
+      </Modal>
+
+      <View style={{width: '100%', zIndex: 100}}>
         <Text style={{fontSize: 18, color: '#aba3a2'}}>Location</Text>
         <View style={styles.addressRow}>
           <Fontisto name="map-marker" color="#ffac9c" size={24} />
           <Text
             style={{flex: 5, fontSize: 24, fontWeight: '700', marginLeft: 10}}>
-            {userData?.data?.address}
+            {items}
           </Text>
+
           <View
             style={{
               flexDirection: 'row',
@@ -189,27 +242,6 @@ const Home = ({navigation}) => {
             </TouchableOpacity>
           </View>
         </View>
-        {/* <View style={styles.addressRow}>
-          <Picker
-            selectedValue={selectedValue}
-            style={{height: 100, width: 200, fontSize: 30}}
-            itemStyle={{
-              backgroundColor: 'red',
-              color: 'blue',
-              fontSize: 17,
-            }}
-            onValueChange={(itemValue, itemIndex) =>
-              setSelectedValue(itemValue)
-            }>
-            {cities?.map(e => (
-              <Picker.Item
-                style={{fontSize: 30}}
-                label={e.city}
-                value={e.city}
-              />
-            ))}
-          </Picker>
-        </View> */}
       </View>
       <View
         style={{

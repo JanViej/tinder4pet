@@ -9,10 +9,19 @@ export const initialState = {
 export const {reducer, actions} = createSlice({
   name: 'Home',
   initialState,
-  reducers: {},
+  reducers: {
+    setPartnerData: (state, {payload}) => {
+      console.log('asd setPartnerData', payload);
+      state.partnerDetail = {
+        ...state.partnerDetail,
+        ...payload,
+      };
+    },
+  },
   extraReducers: {
     [getAllUser.fulfilled]: (state, {payload}) => {
-      state.allUsersData = payload;
+      state.allUsersData = payload.allUsersData;
+      state.users = payload.users;
     },
     [getUserById.fulfilled]: (state, {payload}) => {
       state.partnerDetail = payload;

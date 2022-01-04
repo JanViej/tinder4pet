@@ -77,6 +77,7 @@ const FormProfile = ({navigation, route}) => {
                 weight: values.weight,
                 description: values.description,
                 introStep: 'Done',
+                oldPetName: userData?.data?.petName || '000',
               }),
             );
           }}>

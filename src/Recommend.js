@@ -22,12 +22,13 @@ import {useEffect} from 'react';
 import {compact} from 'lodash';
 import {setMatch} from './redux/recommend/actions';
 import PrivateWrapper from './PrivateWrapper';
+import {useMatching} from './hooks/useMatching';
 
 const Recommend = ({navigation}) => {
   const dispatch = useDispatch();
   const liker = useSelector(getLikers);
   const [isVisible, setIsVisible] = useState(false);
-
+  const {getIsMatch} = useMatching();
   const [refreshing, setRefreshing] = useState(false);
   const userData = useSelector(state => state.auth.data);
   const onRefresh = React.useCallback(() => {
@@ -60,38 +61,40 @@ const Recommend = ({navigation}) => {
       }),
     ).then(() => {
       dispatch(getAllUser());
+      getIsMatch({
+        partner: item,
+      });
     });
-    const matchId = moment().unix();
-    dispatch(
-      setMatch({
-        data: {
-          id: userData?.id,
-          avatar: userData?.data?.avatar,
-          name: userData?.data?.petName,
-          currentText: 'Say Hi to new friend !!!',
-          status: 'undone',
-          matchId: matchId,
-        },
-        id: id,
-      }),
-    );
-    dispatch(
-      setMatch({
-        data: {
-          id: id,
-          avatar: item.avatar,
-          name: item.petName,
-          currentText: 'Say Hi to new friend !!!',
-          status: 'undone',
-          matchId: matchId,
-        },
-        id: userData.id,
-      }),
-    );
+    // const matchId = moment().unix();
+    // dispatch(
+    //   setMatch({
+    //     data: {
+    //       id: userData?.id,
+    //       avatar: userData?.data?.avatar,
+    //       name: userData?.data?.petName,
+    //       currentText: 'Say Hi to new friend !!!',
+    //       status: 'undone',
+    //       matchId: matchId,
+    //     },
+    //     id: id,
+    //   }),
+    // );
+    // dispatch(
+    //   setMatch({
+    //     data: {
+    //       id: id,
+    //       avatar: item.avatar,
+    //       name: item.petName,
+    //       currentText: 'Say Hi to new friend !!!',
+    //       status: 'undone',
+    //       matchId: matchId,
+    //     },
+    //     id: userData.id,
+    //   }),
+    // );
   };
 
   const handleClickDetail = id => () => {
-    console.log('asd 3');
     navigation.navigate('Detail', {
       itemId: id,
       screen: 'Recommend',
@@ -100,7 +103,11 @@ const Recommend = ({navigation}) => {
 
   return (
     <PrivateWrapper navigationHandler={navigation}>
-      <View style={{backgroundColor: '#FFF5F3', flex: 1}}>
+      <ScrollView
+        style={{backgroundColor: '#FFF5F3', flex: 1}}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
         <Modal
           style={styles.modal}
           isVisible={isVisible}
@@ -144,11 +151,7 @@ const Recommend = ({navigation}) => {
               }}>
               Make friend with me
             </Text>
-            <ScrollView
-              style={styles.container}
-              refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-              }>
+            <View>
               {liker?.map((item, index) => (
                 <TouchableOpacity
                   key={`liker-${index}`}
@@ -197,7 +200,7 @@ const Recommend = ({navigation}) => {
                         }}
                         onPress={() => {
                           console.log(
-                            'aaaa',
+                            'asd aaaa',
                             compact(
                               item?.liker?.filter(e => e.id === userData?.id),
                             ).length > 0,
@@ -256,7 +259,7 @@ const Recommend = ({navigation}) => {
                   </View>
                 </TouchableOpacity>
               ))}
-            </ScrollView>
+            </View>
           </>
         ) : (
           <View>
@@ -277,7 +280,7 @@ const Recommend = ({navigation}) => {
             />
           </View>
         )}
-      </View>
+      </ScrollView>
     </PrivateWrapper>
   );
 };

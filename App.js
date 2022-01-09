@@ -17,6 +17,7 @@ import BottomNavigation from './src/BottomNavigation';
 import {getAccount} from './src/redux/auth/actions';
 import {useDispatch, useSelector} from 'react-redux';
 import {UserProvider} from './src/contexts/UserContext';
+import PushController from './src/PushController';
 
 const App: () => Node = () => {
   const [initializing, setInitializing] = useState(true);
@@ -74,6 +75,7 @@ const App: () => Node = () => {
       ) : (
         <BottomNavigation />
       )}
+      <PushController />
     </NavigationContainer>
   );
 };

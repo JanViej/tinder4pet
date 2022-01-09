@@ -165,7 +165,6 @@ const Home = ({navigation}) => {
   };
 
   const handleClickBell = () => {
-    console.log('asd Message');
     navigation.navigate('Message');
   };
 

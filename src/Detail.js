@@ -24,10 +24,10 @@ import {compact} from 'lodash';
 
 const {width: screenWidth} = Dimensions.get('window');
 
-const isMatching = (id, userData) => {
-  const matchId = userData?.data?.match?.find(item => item.id === id);
-
-  if (matchId?.id === id) {
+const isMatching = (id, matchData, userData) => {
+  const matchId = matchData?.find(item => item.id === id);
+  const matchId2 = userData?.data?.match?.find(item => item.id === id);
+  if (matchId?.id === id || matchId2?.id === id) {
     return true;
   }
   return false;
@@ -37,6 +37,7 @@ const Detail = ({navigation, route}) => {
   const [activeSlide, setActiveSlide] = useState(userData?.data?.images[0]);
   const dispatch = useDispatch();
   const userData = useSelector(state => state.auth.data);
+  const matchData = useSelector(state => state.room.matchData);
   const {itemId, screen} = route.params;
   const [isVisible, setIsVisible] = useState(false);
 
@@ -70,7 +71,8 @@ const Detail = ({navigation, route}) => {
 
   const handleClickImage = current => {
     if (
-      (screen !== 'Account' && isMatching(partnerDetail?.id, userData)) ||
+      (screen !== 'Account' &&
+        isMatching(partnerDetail?.id, matchData, userData)) ||
       screen === 'Account'
     ) {
       navigation.navigate('ImageView', {

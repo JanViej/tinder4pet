@@ -33,7 +33,6 @@ const Chat = ({navigation, route}) => {
   const partnerUser = useSelector(state => state.room?.partnerData);
   const {partnerData} = route?.params;
 
-  console.log('asd partnerData', partnerData);
   const dispatch = useDispatch();
   const [visible, setModalVisible] = useState(false);
   const [user, setVoximplantPartner] = useState();

@@ -52,7 +52,7 @@ export const {reducer, actions} = createSlice({
       state.voximplantInfo = {
         user_id: payload.data.voximplantUserId,
         user_name: payload.data.voximplantUsername,
-        user_display_name: payload.data.voximplantUsername,
+        user_display_name: payload.data.petName,
       };
     },
     [getAccount.pending]: (state, {payload}) => {

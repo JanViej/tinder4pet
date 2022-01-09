@@ -34,7 +34,6 @@ const ImageView = ({navigation, route}) => {
   const userData = useSelector(state => state.auth.data);
   const partnerDetail = useSelector(state => state.home.partnerDetail);
   const [currentData, setCurrentData] = useState();
-  console.log('asd currentComment', currentData?.images[currentIndex]);
 
   useEffect(() => {
     if (screen !== 'Account') {
@@ -168,6 +167,7 @@ const ImageView = ({navigation, route}) => {
           height: 50,
           borderRadius: 10,
         }}
+        saveToLocalByLongPress={false}
         onChange={i => {
           setCurrentIndex(i);
         }}

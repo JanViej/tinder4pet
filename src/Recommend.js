@@ -199,12 +199,6 @@ const Recommend = ({navigation}) => {
                           alignItems: 'center',
                         }}
                         onPress={() => {
-                          console.log(
-                            'asd aaaa',
-                            compact(
-                              item?.liker?.filter(e => e.id === userData?.id),
-                            ).length > 0,
-                          );
                           if (
                             compact(
                               item?.liker?.filter(e => e.id === userData?.id),

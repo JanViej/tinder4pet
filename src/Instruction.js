@@ -37,7 +37,6 @@ const Instruction = ({navigation}) => {
   const [isUpload, setIsUpload] = useState(false);
   const dispatch = useDispatch();
   const userData = useSelector(state => state.auth.data);
-  console.log('instruction');
 
   const introText = [
     ...(isUpload

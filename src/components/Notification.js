@@ -8,6 +8,9 @@ const Notification = ({
   colorTitle = 'red',
   isVisible,
   setIsVisible,
+  extraComponent,
+  width,
+  height,
 }) => {
   return (
     <Modal
@@ -24,8 +27,8 @@ const Notification = ({
       onBackdropPress={() => setIsVisible(false)}>
       <View
         style={{
-          width: 250,
-          height: 100,
+          width: width || 250,
+          height: height || 100,
           justifyContent: 'center',
           alignItems: 'center',
           backgroundColor: '#fff',
@@ -42,6 +45,7 @@ const Notification = ({
           {title}
         </Text>
         <Text>{desc}</Text>
+        {extraComponent && extraComponent}
       </View>
     </Modal>
   );

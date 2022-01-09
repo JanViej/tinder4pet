@@ -46,18 +46,16 @@ export default function Cart({navigation}) {
   };
 
   const deleteRow = rowKey => {
-    console.log('delete row at', rowKey);
+    // console.log('delete row at', rowKey);
   };
 
   const onRowDidOpen = rowKey => {
-    console.log('This row opened', rowKey);
+    // console.log('This row opened', rowKey);
   };
 
   const handleCloseModal = () => {
     setVisible(false);
   };
-
-  console.log('isSpin', isSpin);
 
   const onClickBuy = () => {
     if (token) {

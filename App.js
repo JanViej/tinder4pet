@@ -5,7 +5,7 @@
  * @format
  * @flow strict-local
  */
-
+import PushNotification from 'react-native-push-notification';
 import auth from '@react-native-firebase/auth';
 import React, {useState, useEffect} from 'react';
 import {View, ActivityIndicator} from 'react-native';
@@ -33,9 +33,17 @@ const App: () => Node = () => {
       setInitializing(false);
     }
   };
+  const createChannels = () => {
+    console.log('asdasd create');
+    PushNotification.createChannel({
+      channelId: 'rn-push-notification-channel-id',
+      channelName: 'Test Channel',
+    });
+  };
 
   useEffect(() => {
     auth().onAuthStateChanged(onAuthStateChanged);
+    createChannels();
     // return subscriber; // unsubscribe on unmount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

@@ -49,7 +49,6 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
     title: remoteMessage?.notification?.title,
     message: remoteMessage?.notification?.body,
     largeIconUrl: remoteMessage?.notification?.android?.imageUrl,
-    smallIcon: 'ic_notification',
   });
 });
 

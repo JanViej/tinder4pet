@@ -1,22 +1,28 @@
-import React, {Component, useEffect, useCallback} from 'react';
-import {Alert} from 'react-native';
+import React, {useEffect, useCallback} from 'react';
 import PushNotification from 'react-native-push-notification';
 import messaging from '@react-native-firebase/messaging';
+import {useDispatch} from 'react-redux';
+import {writeDataToAccount} from './redux/account/actions';
+import logo from './assets/image/logo.png';
 
 const NOTI_GRANT_STATUS = [
   messaging.AuthorizationStatus.AUTHORIZED,
   messaging.AuthorizationStatus.PROVISIONAL,
 ];
 
-const PushController = () => {
+const PushController = ({user}) => {
   const registerDevice = async () => {};
-
+  const dispatch = useDispatch();
   const getToken = useCallback(async () => {
     try {
       await registerDevice();
       const fcmToken = await messaging().getToken();
       if (fcmToken && typeof fcmToken === 'string') {
-        console.log('fcmToken', fcmToken);
+        dispatch(
+          writeDataToAccount({
+            fcmToken: fcmToken,
+          }),
+        );
       }
     } catch (error) {}
   }, []);
@@ -44,7 +50,6 @@ const PushController = () => {
         title: remoteMessage?.notification?.title,
         message: remoteMessage?.notification?.body,
         largeIconUrl: remoteMessage?.notification?.android?.imageUrl,
-        smallIcon: 'ic_notification',
       });
     });
 
@@ -52,8 +57,10 @@ const PushController = () => {
   }, []);
 
   useEffect(() => {
-    checkNotiAppPermission();
-  }, [checkNotiAppPermission]);
+    if (user) {
+      checkNotiAppPermission();
+    }
+  }, [checkNotiAppPermission, user]);
 
   useEffect(() => {
     // Assume a message-notification contains a "type" property in the data payload of the screen to open

@@ -33,6 +33,7 @@ const Chat = ({navigation, route}) => {
   const partnerUser = useSelector(state => state.room?.partnerData);
   const {partnerData} = route?.params;
 
+  console.log('asd partnerUser', partnerUser);
   const dispatch = useDispatch();
   const [visible, setModalVisible] = useState(false);
   const [user, setVoximplantPartner] = useState();
@@ -104,6 +105,7 @@ const Chat = ({navigation, route}) => {
         image: image,
       }),
       matchId: partnerData?.matchId,
+      fcmToken: partnerUser?.fcmToken || '',
     };
 
     firestore().collection('message').add(messageObj);

@@ -121,6 +121,11 @@ export const logout = createAsyncThunk(
   'user/logout',
   async (payload, thunkAPI) => {
     try {
+      await thunkAPI.dispatch(
+        writeDataToAccount({
+          fcmToken: '',
+        }),
+      );
       const voximplant = Voximplant.getInstance();
       await voximplant.disconnect();
       await auth()

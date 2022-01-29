@@ -27,7 +27,7 @@ const App: () => Node = () => {
   const dispatch = useDispatch();
 
   const onAuthStateChanged = user => {
-    console.log('subscriber', user);
+    console.log('asd subscriber', user);
     setUser(user);
     if (initializing) {
       setInitializing(false);
@@ -83,7 +83,7 @@ const App: () => Node = () => {
       ) : (
         <BottomNavigation />
       )}
-      <PushController />
+      {currentUser?.id && <PushController user={user} />}
     </NavigationContainer>
   );
 };

@@ -5,6 +5,7 @@ import {
   createUserApi,
   deleteUserApi,
   updateUserApi,
+  getUserApi,
 } from '../../api/voximplant';
 
 export const createUser = createAsyncThunk(
@@ -37,6 +38,18 @@ export const updateUser = createAsyncThunk(
     try {
       console.log('asd payload', payload);
       const {data} = await apiWrapper({}, updateUserApi, payload);
+      return data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue();
+    }
+  },
+);
+
+export const getUser = createAsyncThunk(
+  'videocall/getUserApi',
+  async (payload, thunkAPI) => {
+    try {
+      const {data} = await apiWrapper({}, getUserApi, payload);
       return data;
     } catch (error) {
       return thunkAPI.rejectWithValue();

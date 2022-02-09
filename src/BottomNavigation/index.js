@@ -36,6 +36,8 @@ import Instruction from '../Instruction';
 import IncomingCallScreen from '../components/IncomingCallScreen'
 import Chat from '../Chat';
 import BlockList from '../BlockList';
+import VetStore from '../VetStore';
+import DetailVetStore from '../DetailVetStore'
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -151,6 +153,8 @@ const MenuStackScreen = () => {
       <MenuStack.Screen name="CallingScreen" component={CallingScreen} />
       <MenuStack.Screen name="IncomingCallScreen" component={IncomingCallScreen} />
       <MenuStack.Screen name="BlockList" component={BlockList} />
+      <MenuStack.Screen name="VetStore" component={VetStore} />
+      <MenuStack.Screen name="DetailVetStore" component={DetailVetStore} />
 
     </MenuStack.Navigator>
   );

@@ -1,7 +1,7 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import firestore from '@react-native-firebase/firestore';
 import {actions} from '../auth/slice';
-import {updateUser} from '../videocall/action.js';
+import {updateUser} from '../videocall/action';
 import {actions as homeAction} from '../home/slice';
 import {uniqBy, compact} from 'lodash';
 

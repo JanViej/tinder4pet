@@ -58,7 +58,15 @@ const Account = ({navigation}) => {
         navigation.push('Gallery');
       },
     },
-
+    {
+      id: 5,
+      title: 'Find Vet and Store',
+      icon: <AntDesign name="search1" color="#fff" size={22} />,
+      icBackground: '#222201',
+      onClick: () => {
+        navigation.push('VetStore');
+      },
+    },
     {
       id: 3,
       title: 'Logout',
@@ -92,7 +100,7 @@ const Account = ({navigation}) => {
             {userData?.data?.petName}
           </Text>
           <Text style={{fontWeight: '700', color: '#C2BDBD', fontSize: 18}}>
-            {userData?.data?.age} months | {userData?.data?.address}
+            {userData?.data?.age} | {userData?.data?.address}
           </Text>
         </View>
 

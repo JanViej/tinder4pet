@@ -14,3 +14,9 @@ export const updateUserApi = data =>
   request.get(
     `SetUserInfo/?account_id=4217711&user_name=${data?.username}&user_display_name=${data?.newUsername}&user_id=${data?.id}&application_id=10400822&api_key=2ba039cd-997c-4add-b185-b17aaec6c932`,
   );
+
+export const getUserApi = data => {
+  request.get(
+    `GetUsers/?account_id=4217711&application_id=10400822&user_id=${data?.id}`,
+  );
+};

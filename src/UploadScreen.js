@@ -92,7 +92,7 @@ const UploadScreen = ({
       if (res?.state === 'success') {
         Alert.alert(
           'Photo uploaded!',
-          'Your photo has been uploaded to Firebase Cloud Storage!',
+          'Your photo has been uploaded successfully',
         );
         setIsUpload(true);
         setModalVisible(false);

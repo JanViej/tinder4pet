@@ -36,7 +36,8 @@ const ImageView = ({navigation, route}) => {
   const [currentData, setCurrentData] = useState();
 
   useEffect(() => {
-    if (screen !== 'Account') {
+    if (screen !== 'VetStore') {
+    } else if (screen !== 'Account') {
       setCurrentData(partnerDetail);
     } else {
       setCurrentData(userData?.data);
@@ -45,10 +46,13 @@ const ImageView = ({navigation, route}) => {
   }, [screen, partnerDetail?.images, userData?.data?.images]);
 
   useEffect(() => {
-    const comment = getComment({
-      comment: currentData?.images[currentIndex].comment,
-    });
-    setCurrentComment(comment || []);
+    if (currentData) {
+      const comment = getComment({
+        comment: currentData?.images?.[currentIndex]?.comment,
+      });
+      setCurrentComment(comment || []);
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentIndex, currentData]);
 
@@ -160,102 +164,111 @@ const ImageView = ({navigation, route}) => {
         index={currentIndex}
         imageUrls={images.map(e => ({url: e.url}))}
         renderHeader={header}
-        renderFooter={footer}
-        footerContainerStyle={{
-          backgroundColor: '#4e4c4c',
-          width: screenWidth,
-          height: 50,
-          borderRadius: 10,
-        }}
+        {...(screen !== 'VetStore' && {
+          renderFooter: footer,
+          footerContainerStyle: {
+            backgroundColor: '#4e4c4c',
+            width: screenWidth,
+            height: 50,
+            borderRadius: 10,
+          },
+        })}
+        // footerContainerStyle={{
+        //   backgroundColor: '#4e4c4c',
+        //   width: screenWidth,
+        //   height: 50,
+        //   borderRadius: 10,
+        // }}
         saveToLocalByLongPress={false}
         onChange={i => {
           setCurrentIndex(i);
         }}
       />
-      <Modal
-        animationType="slide"
-        visible={isVisible}
-        onRequestClose={() => {
-          setIsVisible(!isVisible);
-        }}>
-        <View
-          style={{
-            flexDirection: 'row',
-            opacity: 5,
-            height: 50,
-            alignItems: 'center',
-            paddingLeft: 20,
-            backgroundColor: '#f1949421',
+      {screen !== 'VetStore' && (
+        <Modal
+          animationType="slide"
+          visible={isVisible}
+          onRequestClose={() => {
+            setIsVisible(!isVisible);
           }}>
-          <TouchableOpacity
-            onPress={() => {
-              setIsVisible(!isVisible);
-            }}>
-            <EvilIcons name="arrow-left" color="#000" size={30} />
-          </TouchableOpacity>
-          <Text
-            style={{
-              flex: 1,
-              textAlign: 'center',
-              fontWeight: '700',
-              marginRight: 20,
-            }}>
-            Comment ({currentData?.images[currentIndex].comment?.length || 0})
-          </Text>
-        </View>
-
-        {currentComment?.map((item, i) => (
           <View
             style={{
               flexDirection: 'row',
+              opacity: 5,
+              height: 50,
               alignItems: 'center',
-              borderBottomWidth: 1,
-              borderColor: '#4e4c4c3d',
+              paddingLeft: 20,
+              backgroundColor: '#f1949421',
             }}>
-            <Image
-              source={{
-                uri: item?.avatar,
-              }}
-              style={styles.avatar}
-            />
-            <View style={{flexGrow: 1}}>
-              <Text style={{fontWeight: '700'}}>{item?.petName}</Text>
-              <Text>{item?.comment?.comment}</Text>
-            </View>
-            {item?.comment?.id === userData?.id && (
-              <TouchableOpacity
-                style={{marginRight: 15}}
-                onPress={handleDeleteComment(i)}>
-                <Feather name="delete" color="#000" size={20} />
-              </TouchableOpacity>
-            )}
+            <TouchableOpacity
+              onPress={() => {
+                setIsVisible(!isVisible);
+              }}>
+              <EvilIcons name="arrow-left" color="#000" size={30} />
+            </TouchableOpacity>
+            <Text
+              style={{
+                flex: 1,
+                textAlign: 'center',
+                fontWeight: '700',
+                marginRight: 20,
+              }}>
+              Comment ({currentData?.images[currentIndex].comment?.length || 0})
+            </Text>
           </View>
-        ))}
-        <View
-          style={{
-            width: screenWidth,
-            position: 'absolute',
-            bottom: 0,
-          }}>
-          <TextInput
-            onChangeText={e => setText(e)}
-            value={text}
-            underlineColorAndroid="transparent"
-            placeholder="Leave your comment here!"
-            placeholderTextColor="#2f33374f"
-            style={styles.input}
-          />
-          <TouchableOpacity
+          {currentComment?.map((item, i) => (
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                borderBottomWidth: 1,
+                borderColor: '#4e4c4c3d',
+              }}>
+              <Image
+                source={{
+                  uri: item?.avatar,
+                }}
+                style={styles.avatar}
+              />
+              <View style={{flexGrow: 1}}>
+                <Text style={{fontWeight: '700'}}>{item?.petName}</Text>
+                <Text>{item?.comment?.comment}</Text>
+              </View>
+              {item?.comment?.id === userData?.id && (
+                <TouchableOpacity
+                  style={{marginRight: 15}}
+                  onPress={handleDeleteComment(i)}>
+                  <Feather name="delete" color="#000" size={20} />
+                </TouchableOpacity>
+              )}
+            </View>
+          ))}
+          <View
             style={{
+              width: screenWidth,
               position: 'absolute',
-              bottom: 20,
-              right: 10,
-            }}
-            onPress={handleSendComment}>
-            <Feather name="send" color="#FF8C76" size={30} />
-          </TouchableOpacity>
-        </View>
-      </Modal>
+              bottom: 0,
+            }}>
+            <TextInput
+              onChangeText={e => setText(e)}
+              value={text}
+              underlineColorAndroid="transparent"
+              placeholder="Leave your comment here!"
+              placeholderTextColor="#2f33374f"
+              style={styles.input}
+            />
+            <TouchableOpacity
+              style={{
+                position: 'absolute',
+                bottom: 20,
+                right: 10,
+              }}
+              onPress={handleSendComment}>
+              <Feather name="send" color="#FF8C76" size={30} />
+            </TouchableOpacity>
+          </View>
+        </Modal>
+      )}
     </>
   );
 };

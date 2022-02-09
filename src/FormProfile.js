@@ -8,8 +8,10 @@ import {
   TextInput,
   Modal,
   Image,
+  FlatList,
 } from 'react-native';
 import {writeDataToAccount} from './redux/account/actions';
+import {cities} from './configs/cities';
 
 import {Formik} from 'formik';
 import ListImage from './components/ListImage';
@@ -24,7 +26,7 @@ const {width: windowWidth} = Dimensions.get('window');
 const FormProfile = ({navigation, route}) => {
   const [listOption, setListOption] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
-
+  const [visible, setVisible] = useState(false);
   const dispatch = useDispatch();
   const userData = useSelector(state => state.auth.data);
   const [initialValues, setInitialValues] = useState({});
@@ -63,6 +65,40 @@ const FormProfile = ({navigation, route}) => {
 
   return (
     <PrivateWrapper navigationHandler={navigation}>
+      <Modal
+        animationType="slide"
+        visible={visible}
+        style={{width: 100}}
+        onRequestClose={() => {
+          setVisible(!visible);
+        }}>
+        <View style={{padding: 20}}>
+          <FlatList
+            data={cities}
+            renderItem={({item, index, separators}) => (
+              <TouchableOpacity
+                key={item.value}
+                onPress={() => {
+                  setVisible(false);
+                  setInitialValues({
+                    ...initialValues,
+                    address: item?.value,
+                  });
+                }}>
+                <View
+                  style={{
+                    backgroundColor: 'white',
+                    borderBottomWidth: 1,
+                    borderColor: '#000',
+                    padding: 10,
+                  }}>
+                  <Text style={{fontSize: 16}}>{item.label}</Text>
+                </View>
+              </TouchableOpacity>
+            )}
+          />
+        </View>
+      </Modal>
       <View style={styles.container}>
         <Formik
           initialValues={initialValues}
@@ -139,18 +175,35 @@ const FormProfile = ({navigation, route}) => {
                     style={styles.image}
                   />
                   <View style={{flex: 1}}>
-                    <TextInput
-                      onChangeText={handleChange('address')}
-                      onBlur={handleBlur('address')}
-                      value={values.address}
-                      style={{
-                        ...styles.input,
-                        textAlign: 'center',
-                        marginBottom: 10,
+                    <TouchableOpacity
+                      onPress={() => {
+                        console.log('asd ihii');
+                        setVisible(true);
                       }}
-                      placeholder="Address"
-                      placeholderTextColor="#2f33374f"
-                    />
+                      style={{
+                        height: 50,
+                        marginBottom: 10,
+                      }}>
+                      <Text
+                        style={{
+                          ...styles.input,
+                          textAlign: 'center',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          lineHeight: 50,
+                          height: 50,
+                        }}>
+                        {values.address}
+                      </Text>
+                      {/* <TextInput
+                        // onChangeText={handleChange('address')}
+                        // onBlur={handleBlur('address')}
+                        value={values.address}
+
+                        placeholder="Address"
+                        placeholderTextColor="#2f33374f"
+                      /> */}
+                    </TouchableOpacity>
                     <TextInput
                       onChangeText={handleChange('age')}
                       onBlur={handleBlur('age')}

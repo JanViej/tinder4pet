@@ -14,6 +14,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 // import {useNavigation, useRoute} from '@react-navigation/core';
 import {Voximplant} from 'react-native-voximplant';
 import {useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
+// import {getUser} from '../redux/videocall/actions';
 
 const permissions = [
   PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
@@ -27,7 +29,7 @@ const CallingScreen = ({route, navigation}) => {
   const [remoteVideoStreamId, setRemoteVideoStreamId] = useState('');
   const userData = useSelector(state => state.auth.data);
 
-  const {user, call: incomingCall, isIncomingCall} = route?.params;
+  const {user, call: incomingCall, isIncomingCall, partnerUser} = route?.params;
 
   const voximplant = Voximplant.getInstance();
 
@@ -39,6 +41,12 @@ const CallingScreen = ({route, navigation}) => {
   const goBack = () => {
     navigation.goBack();
   };
+
+  // useEffect(() => {
+  //   dispatch(getUser({
+  //     id:user?.
+  //   }))
+  // },[])
 
   useEffect(() => {
     const getPermissions = async () => {
@@ -159,7 +167,7 @@ const CallingScreen = ({route, navigation}) => {
     <View style={styles.page}>
       <ImageBackground
         source={{
-          uri: userData?.data?.avatar,
+          uri: partnerUser?.avatar,
         }}
         style={styles.image}>
         <TouchableOpacity onPress={goBack} style={styles.backButton}>
@@ -176,7 +184,7 @@ const CallingScreen = ({route, navigation}) => {
         />
 
         <View style={styles.cameraPreview}>
-          <Text style={styles.name}>{user?.user_display_name}</Text>
+          <Text style={styles.name}>{partnerUser?.petName}</Text>
           <Text style={styles.phoneNumber}>{callStatus}</Text>
         </View>
 

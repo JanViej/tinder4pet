@@ -1,5 +1,5 @@
-import React, {useState, useEffect, useRef} from 'react';
-import {useSelector, useDispatch} from 'react-redux';
+import React, {useState, useRef} from 'react';
+import {useSelector} from 'react-redux';
 import Carousel, {Pagination, ParallaxImage} from 'react-native-snap-carousel';
 import {
   StyleSheet,
@@ -9,78 +9,54 @@ import {
   Platform,
   Dimensions,
   Image,
+  Linking,
 } from 'react-native';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Fontisto from 'react-native-vector-icons/Fontisto';
-import Feather from 'react-native-vector-icons/Feather';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import {ScrollView} from 'react-native-gesture-handler';
-import {getUserById} from './redux/home/actions';
-import {getAllUser, reactLike, removeLove} from './redux/home/actions';
-import moment from 'moment';
 import Modal from 'react-native-modal';
 import loveIcon from './assets/image/love.png';
-import {compact} from 'lodash';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const {width: screenWidth} = Dimensions.get('window');
 
-const isMatching = (id, matchData, userData) => {
-  const matchId = matchData?.find(item => item.id === id);
-  const matchId2 = userData?.data?.match?.find(item => item.id === id);
-  if (matchId?.id === id || matchId2?.id === id) {
-    return true;
-  }
-  return false;
-};
-
-const Detail = ({navigation, route}) => {
+const DetailVetStore = ({navigation, route}) => {
   const [activeSlide, setActiveSlide] = useState(userData?.data?.images[0]);
-  const dispatch = useDispatch();
   const userData = useSelector(state => state.auth.data);
-  const matchData = useSelector(state => state.room.matchData);
-  const {itemId, screen} = route.params;
+  const {vet, store} = route.params;
   const [isVisible, setIsVisible] = useState(false);
 
-  const [dataDetail, setDataDetail] = useState({});
-  const partnerDetail = useSelector(state => state.home.partnerDetail);
+  console.log('asd vet', vet);
   const swipeCardRef = useRef();
 
-  const [love, setLove] = useState();
+  // useEffect(() => {
+  //   if (screen !== 'Account' && itemId) {
+  //     dispatch(getUserById(itemId));
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [screen, itemId]);
 
-  useEffect(() => {
-    if (screen !== 'Account' && itemId) {
-      dispatch(getUserById(itemId));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [screen, itemId]);
-
-  useEffect(() => {
-    if (screen !== 'Account' && partnerDetail && userData) {
-      setDataDetail(partnerDetail);
-      setLove(
-        compact(partnerDetail?.liker?.filter(e => e.id === userData?.id))
-          .length > 0
-          ? true
-          : false,
-      );
-    } else {
-      setDataDetail(userData.data);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [screen, partnerDetail]);
+  // useEffect(() => {
+  //   if (screen !== 'Account' && partnerDetail && userData) {
+  //     setDataDetail(partnerDetail);
+  //     setLove(
+  //       compact(partnerDetail?.liker?.filter(e => e.id === userData?.id))
+  //         .length > 0
+  //         ? true
+  //         : false,
+  //     );
+  //   } else {
+  //     setDataDetail(userData.data);
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [screen, partnerDetail]);
 
   const handleClickImage = current => {
-    if (
-      (screen !== 'Account' &&
-        isMatching(partnerDetail?.id, matchData, userData)) ||
-      screen === 'Account'
-    ) {
-      navigation.navigate('ImageView', {
-        index: current?._activeItem,
-        images: current?.props?.data,
-        screen: screen,
-      });
-    }
+    navigation.navigate('ImageView', {
+      index: current?._activeItem,
+      images: current?.props?.data,
+      screen: 'VetStore',
+    });
   };
 
   const _renderItem = ({item, index}, parallaxProps) => {
@@ -99,53 +75,6 @@ const Detail = ({navigation, route}) => {
         />
       </TouchableOpacity>
     );
-  };
-
-  // const handleClickLove = id => {
-  //   setIsVisible(true);
-  //   const timeout = setTimeout(() => {
-  //     setIsVisible(false);
-  //     clearTimeout(timeout);
-  //   }, 1500);
-  //   dispatch(
-  //     reactLike({
-  //       id: id,
-  //       createdAt: moment().toISOString(),
-  //     }),
-  //   ).then(() => {
-  //     dispatch(getAllUser());
-  //   });
-  // };
-
-  const handleClickEdit = () => {
-    navigation.push('FormProfile2');
-  };
-
-  const toggleLove = (id, item) => {
-    if (love) {
-      setLove(false);
-      dispatch(
-        removeLove({
-          id: id,
-          dataDetail: item,
-        }),
-      );
-    } else {
-      setLove(true);
-      setIsVisible(true);
-      const timeout = setTimeout(() => {
-        setIsVisible(false);
-        clearTimeout(timeout);
-      }, 1500);
-      dispatch(
-        reactLike({
-          id: id,
-          createdAt: moment().toISOString(),
-        }),
-      ).then(() => {
-        dispatch(getAllUser());
-      });
-    }
   };
 
   return (
@@ -173,7 +102,7 @@ const Detail = ({navigation, route}) => {
       </Modal>
       <View>
         <Carousel
-          data={dataDetail?.images || []}
+          data={vet?.images || []}
           renderItem={_renderItem}
           onSnapToItem={index => setActiveSlide(index)}
           itemWidth={screenWidth - 40}
@@ -196,25 +125,12 @@ const Detail = ({navigation, route}) => {
         <TouchableOpacity
           style={{...styles.headerBtn, right: 30}}
           onPress={() => {
-            if (screen !== 'Account') {
-              toggleLove(dataDetail?.id, dataDetail);
-            } else {
-              handleClickEdit();
-            }
+            Linking.openURL(`tel:${vet?.phone}`);
           }}>
-          {screen !== 'Account' && love ? (
-            <AntDesign name="heart" color="#FF8C76" size={24} />
-          ) : screen !== 'Account' && !love ? (
-            <AntDesign name="heart" color="#A5A5A5" size={24} />
-          ) : (
-            <Feather name="edit-2" color="#FF8C76" size={24} />
-          )}
-          {/* {screen !== 'Home' && (
-            <Feather name="edit-2" color="#FF8C76" size={24} />
-          )} */}
+          <Ionicons name="call" color="#ffac9c" size={24} />
         </TouchableOpacity>
         <Pagination
-          dotsLength={dataDetail?.images?.length}
+          dotsLength={vet?.images?.length}
           activeDotIndex={activeSlide}
           containerStyle={styles.containerDotStyle}
           dotStyle={styles.activeDotStyle}
@@ -222,7 +138,7 @@ const Detail = ({navigation, route}) => {
         />
       </View>
       <View style={{paddingHorizontal: 20, marginTop: 10}}>
-        <Text style={styles.name}>{dataDetail.petName}</Text>
+        <Text style={styles.name}>{vet.name}</Text>
         <View
           style={{
             flexDirection: 'row',
@@ -238,10 +154,10 @@ const Detail = ({navigation, route}) => {
               fontWeight: '700',
               fontFamily: 'FredokaOne-Regular',
             }}>
-            {dataDetail.address}
+            {vet.address}
           </Text>
         </View>
-        <View
+        {/* <View
           style={{
             flexDirection: 'row',
             marginVertical: 10,
@@ -249,7 +165,7 @@ const Detail = ({navigation, route}) => {
           }}>
           <View style={styles.boxInfo}>
             <Text style={styles.key}>Sex</Text>
-            <Text style={styles.value}>{dataDetail.petGender}</Text>
+            <Text style={styles.value}>{vet.petGender}</Text>
           </View>
           <View style={styles.boxInfo}>
             <Text style={styles.key}>Age</Text>
@@ -259,21 +175,21 @@ const Detail = ({navigation, route}) => {
             <Text style={styles.key}>Weight</Text>
             <Text style={styles.value}>{dataDetail.weight || 'No Data'}</Text>
           </View>
-        </View>
+        </View> */}
         <Text
           style={{
             fontSize: 14,
             lineHeight: 20,
             marginBottom: 20,
           }}>
-          {dataDetail.description || 'No Data'}
+          {vet.description || 'No Data'}
         </Text>
       </View>
     </ScrollView>
   );
 };
 
-export default Detail;
+export default DetailVetStore;
 
 const styles = StyleSheet.create({
   name: {

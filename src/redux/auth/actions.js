@@ -5,7 +5,7 @@ import {Alert} from 'react-native';
 import {writeDataToAccount} from '../account/actions.js';
 import {actions} from './slice.js';
 import {actions as authAction} from '../auth/slice';
-import {createUser} from '../videocall/action.js';
+import {createUser} from '../videocall/action';
 import {Voximplant} from 'react-native-voximplant';
 import {APP_NAME, ACC_NAME} from '../../configs/Constants';
 
@@ -87,6 +87,8 @@ export const register = createAsyncThunk(
           }
         });
       if (response) {
+        thunkAPI.dispatch(actions.setModalErrorLogin(0));
+
         const voximplantId = await thunkAPI.dispatch(
           createUser({
             username: response?.user?._user?.uid,

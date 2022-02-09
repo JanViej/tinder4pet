@@ -8,12 +8,25 @@ import {
   Avatar,
   Send,
 } from 'react-native-gifted-chat';
-import {StyleSheet, Text, View, Image} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Dimensions,
+  TouchableOpacity,
+  Modal,
+  FlatList,
+} from 'react-native';
+import {cities} from './configs/cities';
+
 import Feather from 'react-native-vector-icons/Feather';
 import logofull from './assets/image/logofull.png';
 import {actions} from './redux/auth/slice';
 import {useDispatch} from 'react-redux';
 import {writeDataToAccount} from './redux/account/actions';
+
+const {width: screenWidth} = Dimensions.get('window');
 
 const messagesContent = [
   {
@@ -220,7 +233,7 @@ const Questionnaire = ({navigation}) => {
   const dispatch = useDispatch();
   const [key, setKey] = useState('introSlider');
   const [answer, setAnswer] = useState({});
-  console.log('asd answer', answer);
+  const [visible, setModalVisible] = useState(false);
 
   // useEffect(() => {
   //   dispatch(
@@ -312,15 +325,37 @@ const Questionnaire = ({navigation}) => {
     />
   );
 
-  const renderInputToolbar = props => (
-    <InputToolbar
-      {...props}
-      containerStyle={{
-        padding: 5,
-      }}
-      primaryStyle={{alignItems: 'center'}}
-    />
-  );
+  const renderInputToolbar = props => {
+    if (props?.messages?.[0]?._id === 9) {
+      return (
+        <InputToolbar
+          {...props}
+          containerStyle={{
+            padding: 5,
+          }}
+          primaryStyle={{alignItems: 'center'}}
+          renderActions={() => (
+            <TouchableOpacity
+              onPress={() => {
+                setModalVisible(true);
+              }}
+              style={{width: screenWidth}}>
+              <Text>Select a City</Text>
+            </TouchableOpacity>
+          )}
+        />
+      );
+    }
+    return (
+      <InputToolbar
+        {...props}
+        containerStyle={{
+          padding: 5,
+        }}
+        primaryStyle={{alignItems: 'center'}}
+      />
+    );
+  };
 
   // const renderActions = props => (
   //   <Actions
@@ -397,6 +432,45 @@ const Questionnaire = ({navigation}) => {
 
   return (
     <View style={{flex: 1}}>
+      <Modal
+        animationType="slide"
+        visible={visible}
+        style={{width: 100}}
+        onRequestClose={() => {
+          setModalVisible(!visible);
+        }}>
+        <View style={{padding: 20}}>
+          <FlatList
+            data={cities}
+            renderItem={({item, index, separators}) => (
+              <TouchableOpacity
+                key={item.value}
+                onPress={() => {
+                  let msg = {
+                    _id: new Date(),
+                    text: item.value,
+                    createdAt: new Date(),
+                    user: {
+                      _id: 1,
+                    },
+                  };
+                  setModalVisible(false);
+                  handleSend([chatBotContent[0], msg]);
+                }}>
+                <View
+                  style={{
+                    backgroundColor: 'white',
+                    borderBottomWidth: 1,
+                    borderColor: '#000',
+                    padding: 10,
+                  }}>
+                  <Text style={{fontSize: 16}}>{item.label}</Text>
+                </View>
+              </TouchableOpacity>
+            )}
+          />
+        </View>
+      </Modal>
       <View
         style={{
           flexDirection: 'row',

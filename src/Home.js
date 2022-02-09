@@ -16,19 +16,16 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import selection from './assets/image/selection.png';
-import {logout} from './redux/auth/actions';
 import shadow from './assets/image/shadow.png';
 import {useRef} from 'react';
 import {actions as userActions} from './redux/user/slice';
 import {useDispatch, useSelector} from 'react-redux';
 import {getAllUser, reactLike, reactDislike} from './redux/home/actions';
-import {getCats, getDogs} from './redux/home/selectors';
 import moment from 'moment';
 import PrivateWrapper from './PrivateWrapper';
 import {cities} from './configs/cities';
-import DropDownPicker from 'react-native-dropdown-picker';
 import {useMatching} from './hooks/useMatching';
-
+import {useFilterAddress} from './hooks/useFilterAdress';
 const StatusCard = ({text}) => {
   return (
     <View style={{flex: 1}}>
@@ -61,17 +58,14 @@ const Home = ({navigation}) => {
   const dispatch = useDispatch();
   // const currentCategory = useSelector(state => state.user.currentCategory);
   const all = useSelector(state => state.home.allUsersData);
-  const userData = useSelector(state => state.auth.data);
-  const dog = useSelector(getDogs);
-  const cat = useSelector(getCats);
+  // const userData = useSelector(state => state.auth.data);
   const [filterData, setFilterData] = useState(all);
   const [currentCategory, setCurrentCategory] = useState(categories[2]);
-  const [selectedValue, setSelectedValue] = useState(userData?.data?.address);
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
-  const [items, setItems] = useState(userData?.data?.address);
+  const [items, setItems] = useState('All');
   const [visible, setModalVisible] = useState(false);
   const {getIsMatch} = useMatching();
+  const {getAllUserAddress} = useFilterAddress();
+  console.log('asd filterData', filterData);
 
   useEffect(() => {
     if (all) {
@@ -82,6 +76,7 @@ const Home = ({navigation}) => {
 
   useEffect(() => {
     dispatch(getAllUser());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const Card = ({data}) => {
@@ -170,16 +165,15 @@ const Home = ({navigation}) => {
 
   const handleSelectCategory = category => () => {
     if (category.value === 'dog') {
-      setFilterData(dog);
       setCurrentCategory(categories[0]);
+      setFilterData(getAllUserAddress(items, categories[0]));
     } else if (category.value === 'cat') {
-      setFilterData(cat);
       setCurrentCategory(categories[1]);
+      setFilterData(getAllUserAddress(items, categories[1]));
     } else {
-      setFilterData(all);
       setCurrentCategory(categories[2]);
+      setFilterData(getAllUserAddress(items, categories[2]));
     }
-    // dispatch(userActions.setCurrentCategory(category));
   };
 
   return (
@@ -193,13 +187,20 @@ const Home = ({navigation}) => {
         }}>
         <View style={{padding: 20}}>
           <FlatList
-            data={cities}
+            data={[
+              {
+                value: 'all',
+                label: 'All',
+              },
+              ...cities,
+            ]}
             renderItem={({item, index, separators}) => (
               <TouchableOpacity
                 key={item.key}
                 onPress={() => {
                   setModalVisible(false);
                   setItems(item.label);
+                  setFilterData(getAllUserAddress(item.label, currentCategory));
                 }}>
                 <View
                   style={{

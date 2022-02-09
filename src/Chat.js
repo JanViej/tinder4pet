@@ -33,7 +33,6 @@ const Chat = ({navigation, route}) => {
   const partnerUser = useSelector(state => state.room?.partnerData);
   const {partnerData} = route?.params;
 
-  console.log('asd partnerUser', partnerUser);
   const dispatch = useDispatch();
   const [visible, setModalVisible] = useState(false);
   const [user, setVoximplantPartner] = useState();
@@ -89,52 +88,55 @@ const Chat = ({navigation, route}) => {
     }
   }, [partnerUser]);
 
-  const onSend = useCallback((messages = []) => {
-    setMessages(previousMessages =>
-      GiftedChat.append(previousMessages, messages),
-    );
-    const {_id, createdAt, text, user, image} = messages[0];
-    const messageObj = {
-      _id,
-      createdAt,
-      ...(text && {
-        text: text,
-      }),
-      user,
-      ...(image && {
-        image: image,
-      }),
-      matchId: partnerData?.matchId,
-      fcmToken: partnerUser?.fcmToken || '',
-    };
+  const onSend = useCallback(
+    (messages = []) => {
+      setMessages(previousMessages =>
+        GiftedChat.append(previousMessages, messages),
+      );
+      const {_id, createdAt, text, user, image} = messages[0];
+      const messageObj = {
+        _id,
+        createdAt,
+        ...(text && {
+          text: text,
+        }),
+        user,
+        ...(image && {
+          image: image,
+        }),
+        matchId: partnerData?.matchId,
+        fcmToken: partnerUser?.fcmToken || '',
+      };
 
-    firestore().collection('message').add(messageObj);
+      firestore().collection('message').add(messageObj);
 
-    dispatch(
-      setMatch({
-        data: {
-          currentText: text ? `you: ${text}` : 'You send an image',
-          status: 'done',
-          matchId: partnerData?.matchId,
-        },
-        id: currentUser.id,
-      }),
-    );
+      dispatch(
+        setMatch({
+          data: {
+            currentText: text ? `you: ${text}` : 'You send an image',
+            status: 'done',
+            matchId: partnerData?.matchId,
+          },
+          id: currentUser.id,
+        }),
+      );
 
-    dispatch(
-      setMatch({
-        data: {
-          currentText: text
-            ? `${currentUser.data.petName}: ${text}`
-            : `${currentUser.data.petName} send an image`,
-          status: 'undone',
-          matchId: partnerData?.matchId,
-        },
-        id: partnerData?.id,
-      }),
-    );
+      dispatch(
+        setMatch({
+          data: {
+            currentText: text
+              ? `${currentUser.data.petName}: ${text}`
+              : `${currentUser.data.petName} send an image`,
+            status: 'undone',
+            matchId: partnerData?.matchId,
+          },
+          id: partnerData?.id,
+        }),
+      );
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    [partnerUser?.fcmToken],
+  );
 
   const renderMessageText = props => (
     <MessageText
@@ -193,6 +195,7 @@ const Chat = ({navigation, route}) => {
     return (
       <Send
         {...props}
+        loading={!partnerUser?.fcmToken}
         {...(!props.text &&
           currentImg !== '' && {
             sendButtonProps: {
@@ -280,7 +283,10 @@ const Chat = ({navigation, route}) => {
   );
 
   const handleVideoCall = () => {
-    navigation.navigate('CallingScreen', {user});
+    navigation.navigate('CallingScreen', {
+      user: user,
+      partnerUser: partnerUser,
+    });
   };
 
   const getUrlImg = url => {

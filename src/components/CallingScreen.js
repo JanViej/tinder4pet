@@ -14,8 +14,9 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 // import {useNavigation, useRoute} from '@react-navigation/core';
 import {Voximplant} from 'react-native-voximplant';
 import {useSelector} from 'react-redux';
+import Notification from './Notification';
 import {useDispatch} from 'react-redux';
-// import {getUser} from '../redux/videocall/actions';
+import {voximplantLogin} from '../redux/auth/actions';
 
 const permissions = [
   PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
@@ -23,21 +24,34 @@ const permissions = [
 ];
 
 const CallingScreen = ({route, navigation}) => {
+  const dispatch = useDispatch();
   const [permissionGranted, setPermissionGranted] = useState(false);
   const [callStatus, setCallStatus] = useState('Initializing...');
   const [localVideoStreamId, setLocalVideoStreamId] = useState('');
   const [remoteVideoStreamId, setRemoteVideoStreamId] = useState('');
-  const userData = useSelector(state => state.auth.data);
+  const [isLocalVideo, setLocalVideo] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
+  const [reason, setReason] = useState('');
 
-  const {user, call: incomingCall, isIncomingCall, partnerUser} = route?.params;
+  const {
+    user,
+    call: incomingCall,
+    isIncomingCall,
+    partnerUser,
+    isVideoCall,
+  } = route?.params;
 
   const voximplant = Voximplant.getInstance();
 
   const call = useRef(incomingCall);
   const endpoint = useRef(null);
 
-  console.log('asd user', user, isIncomingCall);
+  console.log('asd call', call, endpoint);
 
+  // console.log(
+  //   'asd endpoint',
+  //   Voximplant.Hardware.CameraManager.getInstance().switchCamera('back'),
+  // );
   const goBack = () => {
     navigation.goBack();
   };
@@ -76,8 +90,8 @@ const CallingScreen = ({route, navigation}) => {
 
     const callSettings = {
       video: {
-        sendVideo: true,
-        receiveVideo: true,
+        sendVideo: isVideoCall,
+        receiveVideo: isVideoCall,
       },
     };
 
@@ -109,6 +123,7 @@ const CallingScreen = ({route, navigation}) => {
       });
       call.current.on(Voximplant.CallEvents.Disconnected, callEvent => {
         console.log('asd 1');
+        dispatch(voximplantLogin());
         navigation.goBack();
       });
       call.current.on(
@@ -128,19 +143,26 @@ const CallingScreen = ({route, navigation}) => {
       endpoint.current.on(
         Voximplant.EndpointEvents.RemoteVideoStreamAdded,
         endpointEvent => {
+          // console.log(
+          //   'asd videoStream',
+          //   endpointEvent,
+          //   endpointEvent.videoStream,
+          // );
           setRemoteVideoStreamId(endpointEvent.videoStream.id);
         },
       );
     };
 
     const showError = reason => {
-      console.log('asd 2');
-      Alert.alert('Call failed', `Reason: ${reason}`, [
-        {
-          text: 'Ok',
-          onPress: navigation.goBack(),
-        },
-      ]);
+      // console.log('asd 2');
+      // Alert.alert('Call failed', `Reason: ${reason}`, [
+      //   {
+      //     text: 'Ok',
+      //     onPress: navigation.goBack(),
+      //   },
+      // ]);
+      setReason(reason);
+      setIsVisible(true);
     };
 
     if (isIncomingCall) {
@@ -150,21 +172,52 @@ const CallingScreen = ({route, navigation}) => {
     }
 
     return () => {
-      call.current.off(Voximplant.CallEvents.Failed);
-      call.current.off(Voximplant.CallEvents.ProgressToneStart);
-      call.current.off(Voximplant.CallEvents.Connected);
-      call.current.off(Voximplant.CallEvents.Disconnected);
+      call.current?.off(Voximplant.CallEvents.Failed);
+      call.current?.off(Voximplant.CallEvents.ProgressToneStart);
+      call.current?.off(Voximplant.CallEvents.Connected);
+      call.current?.off(Voximplant.CallEvents.Disconnected);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [permissionGranted]);
 
   const onHangupPress = () => {
-    call.current.hangup();
-    console.log('asd close');
+    console.log('asd press hangup');
+    call?.current?.hangup();
+    call.current?.off(Voximplant.CallEvents.Failed);
+    call.current?.off(Voximplant.CallEvents.ProgressToneStart);
+    call.current?.off(Voximplant.CallEvents.Connected);
+    call.current?.off(Voximplant.CallEvents.Disconnected);
+    dispatch(voximplantLogin());
+    navigation.goBack();
   };
 
   return (
     <View style={styles.page}>
+      {isVisible && (
+        <Notification
+          title="Call Fail"
+          desc={reason}
+          height={120}
+          isVisible={isVisible}
+          setIsVisible={setIsVisible}
+          extraComponent={
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={{
+                borderTopWidth: 1,
+                borderTopColor: '#000',
+                flex: 1,
+                width: '100%',
+                alignItems: 'center',
+                marginTop: 10,
+                paddingTop: 10,
+              }}>
+              <Text>OK</Text>
+            </TouchableOpacity>
+          }
+        />
+      )}
+
       <ImageBackground
         source={{
           uri: partnerUser?.avatar,
@@ -173,22 +226,41 @@ const CallingScreen = ({route, navigation}) => {
         <TouchableOpacity onPress={goBack} style={styles.backButton}>
           <Ionicons name="chevron-back" color="white" size={25} />
         </TouchableOpacity>
-
-        <Voximplant.VideoView
+        {remoteVideoStreamId && isVideoCall ? (
+          <Voximplant.VideoView
+            videoStreamId={remoteVideoStreamId}
+            style={styles.remoteVideo}
+          />
+        ) : (
+          <View />
+        )}
+        {/* <Voximplant.VideoView
           videoStreamId={remoteVideoStreamId}
           style={styles.remoteVideo}
-        />
-        <Voximplant.VideoView
-          videoStreamId={localVideoStreamId}
-          style={styles.localVideo}
-        />
+        /> */}
+        {isLocalVideo && isVideoCall ? (
+          <Voximplant.VideoView
+            videoStreamId={localVideoStreamId}
+            style={styles.localVideo}
+            showOnTop
+          />
+        ) : (
+          <View />
+        )}
 
         <View style={styles.cameraPreview}>
-          <Text style={styles.name}>{partnerUser?.petName}</Text>
+          <Text style={styles.name}>
+            {partnerUser?.petName || endpoint.current?.displayName}
+          </Text>
           <Text style={styles.phoneNumber}>{callStatus}</Text>
         </View>
 
-        <CallActionBox onHangupPress={onHangupPress} />
+        <CallActionBox
+          onHangupPress={onHangupPress}
+          call={call}
+          setLocalVideo={setLocalVideo}
+          isVideoCall={isVideoCall}
+        />
       </ImageBackground>
     </View>
   );
@@ -196,14 +268,18 @@ const CallingScreen = ({route, navigation}) => {
 
 const styles = StyleSheet.create({
   page: {
-    height: '100%',
-    backgroundColor: '#7b4e80',
+    flex: 1,
+    position: 'relative',
+    backgroundColor: '#474443',
   },
   cameraPreview: {
     flex: 1,
+    width: '100%',
     alignItems: 'center',
     paddingTop: 10,
+    position: 'absolute',
     paddingHorizontal: 10,
+    justifyContent: 'center',
   },
   localVideo: {
     width: 100,
@@ -213,15 +289,18 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 20,
     bottom: 145,
+    elevation: 100,
   },
   remoteVideo: {
     backgroundColor: '#474443',
     borderRadius: 10,
+    flex: 1,
     position: 'absolute',
     left: 0,
     right: 0,
     top: 0,
     bottom: 100,
+    elevation: 0,
   },
   name: {
     fontSize: 25,
@@ -242,7 +321,6 @@ const styles = StyleSheet.create({
   },
   image: {
     flex: 1,
-    backgroundColor: 'red',
   },
 });
 

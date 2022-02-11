@@ -6,21 +6,25 @@ import {
   ImageBackground,
   TouchableOpacity,
   Dimensions,
+  Platform,
+  PermissionsAndroid,
+  Alert,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
 import {Voximplant} from 'react-native-voximplant';
+import {voximplantLogin} from '../redux/auth/actions';
 
 const IncomingCallScreen = ({route, navigation}) => {
   const [caller, setCaller] = useState('');
-  const {call} = route.params;
+  const {call, isVideoCall} = route.params;
 
   useEffect(() => {
     setCaller(call.getEndpoints()[0].displayName);
 
     call.on(Voximplant.CallEvents.Disconnected, callEvent => {
-      navigation.navigate('Home');
+      navigation.goBack();
     });
 
     return () => {
@@ -33,11 +37,50 @@ const IncomingCallScreen = ({route, navigation}) => {
     navigation.goBack();
   };
 
-  const onAccept = () => {
-    navigation.navigate('CallingScreen', {
-      call,
-      isIncomingCall: true,
-    });
+  const onAccept = async () => {
+    try {
+      if (Platform.OS === 'android') {
+        let permissions = [PermissionsAndroid.PERMISSIONS.RECORD_AUDIO];
+        // permissions.push(PermissionsAndroid.PERMISSIONS.CAMERA);
+
+        if (isVideoCall) {
+          permissions.push(PermissionsAndroid.PERMISSIONS.CAMERA);
+        }
+        const granted = await PermissionsAndroid.requestMultiple(permissions);
+        const recordAudioGranted =
+          granted['android.permission.RECORD_AUDIO'] === 'granted';
+        const cameraGranted =
+          granted['android.permission.CAMERA'] === 'granted';
+        if (recordAudioGranted) {
+          if (isVideoCall && !cameraGranted) {
+            console.warn(
+              'IncomingCallScreen: answerCall: camera permission is not granted',
+            );
+            Alert.alert('Permissions not granted');
+
+            call.decline();
+            return;
+          } else {
+            navigation.navigate('CallingScreen', {
+              call,
+              isIncomingCall: true,
+              isVideoCall: isVideoCall,
+            });
+          }
+        } else {
+          console.warn(
+            'IncomingCallScreen: answerCall: record audio permission is not granted',
+          );
+          Alert.alert('Permissions not granted');
+
+          call.decline();
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn('IncomingCallScreen: asnwerCall:' + e);
+      return;
+    }
   };
 
   return (
@@ -49,7 +92,9 @@ const IncomingCallScreen = ({route, navigation}) => {
       style={styles.bg}
       resizeMode="cover">
       <Text style={styles.name}>{caller}</Text>
-      <Text style={styles.phoneNumber}>Video Call...</Text>
+      <Text style={styles.phoneNumber}>
+        {isVideoCall ? 'Video Call...' : 'Phone Call...'}
+      </Text>
 
       <View style={styles.row}>
         {/* Decline Button */}

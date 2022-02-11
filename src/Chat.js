@@ -286,6 +286,15 @@ const Chat = ({navigation, route}) => {
     navigation.navigate('CallingScreen', {
       user: user,
       partnerUser: partnerUser,
+      isVideoCall: true,
+    });
+  };
+
+  const handlePhoneCall = () => {
+    navigation.navigate('CallingScreen', {
+      user: user,
+      partnerUser: partnerUser,
+      isVideoCall: false,
     });
   };
 
@@ -337,16 +346,20 @@ const Chat = ({navigation, route}) => {
               {partnerUser?.petName}
             </Text>
           </View>
-          <View style={{flexDirection: 'row'}}>
-            <TouchableOpacity style={styles.headerBtn}>
-              <Feather name="phone-call" color="#FF8C76" size={24} />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.headerBtn}
-              onPress={handleVideoCall}>
-              <SimpleLineIcons name="camera" color="#FF8C76" size={24} />
-            </TouchableOpacity>
-          </View>
+          {partnerUser?.petName && (
+            <View style={{flexDirection: 'row'}}>
+              <TouchableOpacity
+                style={styles.headerBtn}
+                onPress={handlePhoneCall}>
+                <Feather name="phone-call" color="#FF8C76" size={24} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.headerBtn}
+                onPress={handleVideoCall}>
+                <SimpleLineIcons name="camera" color="#FF8C76" size={24} />
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
 
         <GiftedChat

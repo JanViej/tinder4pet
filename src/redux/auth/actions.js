@@ -8,6 +8,7 @@ import {actions as authAction} from '../auth/slice';
 import {createUser} from '../videocall/action';
 import {Voximplant} from 'react-native-voximplant';
 import {APP_NAME, ACC_NAME} from '../../configs/Constants';
+import moment from 'moment';
 
 export const login = createAsyncThunk(
   'user/login',
@@ -101,6 +102,7 @@ export const register = createAsyncThunk(
           isActive: true,
           voximplantUserId: voximplantId?.payload?.user_id,
           voximplantUsername: response?.user?._user?.uid,
+          createdAt: moment().toISOString(),
         });
         thunkAPI.dispatch(
           authAction.setUserData({

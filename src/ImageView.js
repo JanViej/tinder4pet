@@ -34,9 +34,10 @@ const ImageView = ({navigation, route}) => {
   const userData = useSelector(state => state.auth.data);
   const partnerDetail = useSelector(state => state.home.partnerDetail);
   const [currentData, setCurrentData] = useState();
+  console.log('asdscreen', screen);
 
   useEffect(() => {
-    if (screen !== 'VetStore') {
+    if (screen === 'VetStore') {
     } else if (screen !== 'Account') {
       setCurrentData(partnerDetail);
     } else {

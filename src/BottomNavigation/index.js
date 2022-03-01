@@ -34,7 +34,7 @@ import FormProfile from '../FormProfile';
 import Questionnaire from '../Questionnaire';
 import Instruction from '../Instruction';
 import IncomingCallScreen from '../components/IncomingCallScreen'
-import Chat from '../Chat';
+import Chat from '../Chat'
 import BlockList from '../BlockList';
 import VetStore from '../VetStore';
 import DetailVetStore from '../DetailVetStore'

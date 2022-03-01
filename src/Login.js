@@ -151,6 +151,14 @@ const Login = ({navigation}) => {
           setIsVisible={setIsVisible}
         />
       )}
+      {responseLogin === 4 && (
+        <Notification
+          title="Login Fail"
+          desc="Your account is temporarily locked"
+          isVisible={isVisible}
+          setIsVisible={setIsVisible}
+        />
+      )}
       {/* <Modal style={styles.modal} isVisible={modalVisible}>
         <View style={styles.modalWrapper}>
           <AntDesign name="checkcircle" color="#5fa4b7" size={18} />
@@ -237,7 +245,7 @@ const Login = ({navigation}) => {
             </Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.signInRow} onPress={handleClickForgot}>
+        {/* <TouchableOpacity style={styles.signInRow} onPress={handleClickForgot}>
           <Text
             style={{
               color: '#6A9CFD',
@@ -246,7 +254,7 @@ const Login = ({navigation}) => {
             }}>
             Forgot Password
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <View style={styles.paw}>
           <Image source={paw} />
         </View>

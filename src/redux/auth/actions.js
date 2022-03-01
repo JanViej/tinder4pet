@@ -26,7 +26,7 @@ export const login = createAsyncThunk(
         });
       console.log('asdasd login', response);
       if (response !== 1 && response !== 2) {
-        thunkAPI.dispatch(getAccount(payload?.username));
+        await thunkAPI.dispatch(getAccount(payload?.username));
         return response;
       } else {
         thunkAPI.dispatch(actions.setModalErrorLogin(response));
@@ -156,6 +156,17 @@ export const getAccount = createAsyncThunk(
             data: querySnapshot?._docs?.[0]._data,
           };
         });
+      if (res?.data?.role === 'admin') {
+        thunkAPI.dispatch(actions.setModalErrorLogin(1));
+        thunkAPI.dispatch(logout());
+        return thunkAPI.rejectWithValue();
+      }
+      if (!res?.data?.isActive || res?.data?.role === 'admin') {
+        thunkAPI.dispatch(actions.setModalErrorLogin(4));
+        thunkAPI.dispatch(logout());
+        return thunkAPI.rejectWithValue();
+      }
+
       thunkAPI.dispatch(
         writeDataToAccount({
           id: res.id,

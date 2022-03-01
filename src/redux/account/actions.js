@@ -26,17 +26,17 @@ export const writeDataToAccount = createAsyncThunk(
           }),
         );
 
-        await firestore()
-          .collection('account')
-          .doc(`${thunkAPI.getState().auth?.data?.id}`)
-          .update({
-            voximplantUsername: payload?.petName,
-          });
-        thunkAPI.dispatch(
-          actions.setUserData({
-            voximplantUsername: payload?.petName,
-          }),
-        );
+        // await firestore()
+        //   .collection('account')
+        //   .doc(`${thunkAPI.getState().auth?.data?.id}`)
+        //   .update({
+        //     voximplantUsername: payload?.petName,
+        //   });
+        // thunkAPI.dispatch(
+        //   actions.setUserData({
+        //     voximplantUsername: payload?.petName,
+        //   }),
+        // );
       }
     } catch (error) {
       return thunkAPI.rejectWithValue(error);

@@ -70,17 +70,17 @@ const Detail = ({navigation, route}) => {
   }, [screen, partnerDetail]);
 
   const handleClickImage = current => {
-    if (
-      (screen !== 'Account' &&
-        isMatching(partnerDetail?.id, matchData, userData)) ||
-      screen === 'Account'
-    ) {
-      navigation.navigate('ImageView', {
-        index: current?._activeItem,
-        images: current?.props?.data,
-        screen: screen,
-      });
-    }
+    // if (
+    //   (screen !== 'Account' &&
+    //     isMatching(partnerDetail?.id, matchData, userData)) ||
+    //   screen === 'Account'
+    // ) {
+    navigation.navigate('ImageView', {
+      index: current?._activeItem,
+      images: current?.props?.data,
+      screen: screen,
+    });
+    // }
   };
 
   const _renderItem = ({item, index}, parallaxProps) => {
